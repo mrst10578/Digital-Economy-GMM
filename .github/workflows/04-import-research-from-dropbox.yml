@@ -1,0 +1,61 @@
+name: Import complete research bundle from Dropbox (one-time)
+on:
+  push:
+    paths:
+      - ".github/workflows/04-import-research-from-dropbox.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download original research ZIP from Dropbox and verify
+        env:
+          SOURCE_URL: "https://ucaa73963ef64b04c80155811cbc.dl.dropboxusercontent.com/cd/0/get/DJmTbIGgOw7wrUjwNCKCYj4q8Ng_zW1ViK_nPHKHvNV0RZUpmTWzFt0jmqgC-2J2szH51_KfHzVVSyv4n1yM2OaOkNSXsXfgufCDkHD4ilLqLkiEqer4I00PMEDtnZ94ORmWQsF0xXEGMRQL_5lG7z_g8lVclwjzry-OJM5uYv4YjA/file?c_luid=e2a8d15f"
+          ZIP_SHA256: "7db076e55fd1b18f5cd2ecb7d78beb974d8bed2b8fa8b236cf4ced99f2cd4c7a"
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 120 -o /tmp/original-research.zip "$SOURCE_URL"
+          echo "$ZIP_SHA256  /tmp/original-research.zip" | sha256sum -c -
+      - name: Extract checked research package and stage its full original inputs
+        env:
+          ZIP_NAME: "Digital_Economy_Ready_Package.zip"
+          EXCEL_NAME: "Balanced_Panel_Data.xlsx"
+        run: |
+          set -euo pipefail
+          mkdir -p research-packages data/raw
+          cp /tmp/original-research.zip "research-packages/$ZIP_NAME"
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile, hashlib, os, shutil
+          zpath=Path("/tmp/original-research.zip")
+          with zipfile.ZipFile(zpath) as z:
+              if z.testzip() is not None:
+                  raise RuntimeError("Corrupt archive")
+              names=set(z.namelist())
+              assert len(names) == 8, f"Expected 8 source package files, got {len(names)}"
+              for name in names:
+                  p=Path(name)
+                  if p.is_absolute() or ".." in p.parts or (p.parts[0] != "sources" and len(p.parts)!=1):
+                      raise RuntimeError("Archive path is not allowed: "+name)
+              z.extractall(".")
+          hashes=(Path("sources")/"SHA256SUMS.txt").read_text(encoding="utf-8").splitlines()
+          for line in hashes:
+              expected,name=line.split("  ",1)
+              got=hashlib.sha256(Path(name).read_bytes()).hexdigest()
+              assert expected==got, f"Internal checksum mismatch: {name}"
+          fn=os.environ["EXCEL_NAME"]
+          shutil.copy2(Path("sources")/fn, Path("data/raw")/fn)
+          print("Imported original ZIP, Word, Excel, dictionary, instructor screenshots, emails, prompt.")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f -- research-packages/ sources/ data/raw/ MASTER_PROMPT*.md
+          git diff --cached --name-only
+          git commit -m "data: import audited Digital-Economy-GMM source package from Dropbox"
+          git push origin HEAD:main
