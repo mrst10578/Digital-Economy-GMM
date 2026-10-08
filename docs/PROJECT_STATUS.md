@@ -1,17 +1,19 @@
-# Research execution status
+# Project status (post-Dropbox import)
 
-Project: `Digital-Economy-GMM`. The other research is not part of this repository.
+Project: `Digital-Economy-GMM`. Dataset scope is restricted to this study.
 
-| Stage | Current status |
+| Phase | Status |
 |---|---|
-| GitHub repository | Initialized: public code-only scaffold |
-| Original Word/Excel input | **NOT COMMITTED** (load from user's research ZIP in new chat) |
-| Source validation | Pending original workbook; Python preflight available |
-| Unit-root and multicollinearity tests | Not executed on research data |
-| R pgmm estimation | Not executed |
-| gretl dpanel validation | Not executed |
-| Hansen / Sargan / AR(1)/AR(2) / diff-in-Hansen | Not executed |
-| Stata xtabond2 | Not executed; awaiting licensed machine and approved instrument specification |
-| R/gretl/Stata comparison | Not executed |
+| Independent GitHub code scaffold | Complete on main |
+| Dropbox source ZIP uploaded | Complete: `/Digital_Economy_Ready_Package.zip` |
+| Original ZIP imported and SHA256 validated in GitHub Actions | Complete |
+| Unpacked Word, Excel, dictionary, screenshots, notes and prompt | Complete in `sources/` and repository root |
+| Machine-readable Excel in `data/raw/Balanced_Panel_Data.xlsx` | Complete |
+| Python / R / gretl environment checks | Previously succeeded |
+| Input statistical data audit and DTA export | Github workflow `05-validate-research-data.yml`: check its latest run/artifact |
+| Unit roots, correlations/VIF, instrument classification | NOT RUN as final research findings |
+| Difference/System GMM and post-estimation tests | NOT RUN |
+| Stata 18/xtabond2 | Requires licensed executable and finalized model specification |
+| Final paper/report | NOT GENERATED |
 
-Test artifacts proving that software launches **do not count** as econometric evidence.
+Do not treat an installation smoke test, workbook import, or DTA conversion as a statistical estimation. The research manuscript must be studied in full before defining the GMM equations.
