@@ -1,19 +1,35 @@
-# Project status (post-Dropbox import)
+# وضعیت واقعی تحقیق اقتصاد دیجیتال، ۸ اکتبر ۲۰۲۶
 
-Project: `Digital-Economy-GMM`. Dataset scope is restricted to this study.
+**مخزن مستقل:** mrst10578/Digital-Economy-GMM  
+**شاخه پژوهشی:** research/digital-economy-estimation-audit-20261008  
+**احتیاط:** اجرای موفق نرم‌افزار یا تخمین، معادل اعتبار تشخیصی یا اثبات سرریز فناوری نیست.
 
-| Phase | Status |
+| مرحله | وضعیت و مرجع |
 |---|---|
-| Independent GitHub code scaffold | Complete on main |
-| Dropbox source ZIP uploaded | Complete: `/Digital_Economy_Ready_Package.zip` |
-| Original ZIP imported and SHA256 validated in GitHub Actions | Complete |
-| Unpacked Word, Excel, dictionary, screenshots, notes and prompt | Complete in `sources/` and repository root |
-| Machine-readable Excel in `data/raw/Balanced_Panel_Data.xlsx` | Complete |
-| Python / R / gretl environment checks | Previously succeeded |
-| Input statistical data audit and DTA export | Github workflow `05-validate-research-data.yml`: check its latest run/artifact |
-| Unit roots, correlations/VIF, instrument classification | NOT RUN as final research findings |
-| Difference/System GMM and post-estimation tests | NOT RUN |
-| Stata 18/xtabond2 | Requires licensed executable and finalized model specification |
-| Final paper/report | NOT GENERATED |
+| متن Word، Excel، دیکشنری، تصاویر استاد و ایمیل | کاملاً بررسی شد، Workflow 06 |
+| ساختار پنل و ممیزی مقدماتی | ۴۷ کشور، ۱۸ سال، ۸۴۶ مشاهده، متوازن و بدون مقدار مفقود؛ Workflow 07 |
+| تطبیق مستقیم با WDI | تمام ۶٬۷۶۸ مقدار هشت سری با API فعلی بانک جهانی مطابقت کردند؛ Workflow 10 |
+| آمار توصیفی، نمودار، همبستگی، VIF | اجرا شد؛ Artifact 07 |
+| Pooled OLS و FE دوطرفه با خطای خوشه‌ای | در Python و R اجرا شد؛ Workflowهای 07 و 08 |
+| IPS، Fisher-MadWu و CIPS | واقعی در R، با مفروضات ثبت‌شده؛ Workflow 08 |
+| Pesaran CD | واقعی در R، وابستگی مقطعی قوی؛ Workflow 08 |
+| Difference/System GMM | ۱۰ برآورد واقعی plm در R و ۶ مدل dpanel در gretl؛ Workflowهای 08 و 09 |
+| شمار ابزار و حساسیت پنجره وقفه | بررسی شد، مدل System اصلی gretl ۵۲ ابزار در برابر ۴۷ گروه و نقص رتبه داشت؛ ۴۶ ابزار در حساسیت محدود |
+| Sargan، AR(1)، AR(2) و Hansen گزارش‌شده توسط gretl | واقعی و ثبت‌شده با برچسب دقیق؛ نباید یکسان با تشخیص‌های R فرض شود |
+| Difference-in-Hansen مستقل و هم‌انباشتگی جامع | **باقی‌مانده** |
+| منطق انتخاب کشورهای مشابه ایران | روش مستند؛ داده پایه ایران و انتخاب نهایی هنوز باقی‌مانده |
+| Stata 16+/xtabond2 | کد، فایل DTA و ZIP آماده؛ **Stata واقعاً اجرا نشده است** |
+| گزارش فارسی و راهنمای دفاع | Markdown قابل ویرایش و PDF/HTML تولیدشده در Workflow 11 |
+| پذیرش علمی نهایی / نتیجه علی | **مشروط/تأییدنشده**؛ نیازمند بازبینی مستقل |
 
-Do not treat an installation smoke test, workbook import, or DTA conversion as a statistical estimation. The research manuscript must be studied in full before defining the GMM equations.
+### مسیرهای اصلی
+
+- docs/FINAL_REPORT_FA.md: گزارش علمی فارسی، مستند به خروجی واقعی.
+- docs/DEFENSE_GUIDE_FA.md: آموزش و دفاع و ۳۸ سؤال با پاسخ.
+- docs/CHEATSHEET_FA.md: مرور سریع.
+- docs/IRAN_PEERS_FA.md: معیار انتخاب همتا.
+- docs/MODEL_SPECIFICATION.md: طراحی معادله و ابزار.
+- stata/RUN_ALL.do: اجرای Stata **بعداً** فقط با مجوز.
+- GitHub Actions > Artifacts: فایل‌های اصلی گزارش‌ها، جدول‌ها، لاگ‌ها، DTA و ZIP.
+
+**تعریف پایان:** صحت محاسبات و تولید گزارش با پذیرش ادعای علمی یکسان نیست؛ قبل از Merge حتماً ممیزی مستقل انجام شود.
