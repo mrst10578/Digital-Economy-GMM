@@ -1,14 +1,11 @@
-* Preserve actually estimated models for verification in licensed Stata.
-* xtabond2 diagnostics are printed in the preceding estimation log.
-foreach m in DIG_GROWTH_DIF DIG_GROWTH_SYS DIG_PRODUCTIVITY_DIF DIG_PRODUCTIVITY_SYS {
-    capture estimates restore `m'
-    if !_rc {
-        display as result "RESTORED_MODEL: `m'"
-        estimates save "outputs/stata/`m'.ster", replace
-        ereturn list
-    }
-    else {
-        display as error "NOT_AVAILABLE: `m'"
-    }
-}
-display as text "Read log outputs/stata/RUN_ALL_REAL_STATA.log for Hansen, Sargan, AR(1), AR(2), instrument counts."
+* These are execution statuses only. None of the numeric diagnostics proves validity.
+version 16.0
+postclose digital_post
+preserve
+use "outputs/stata/model_status.dta", clear
+sort model
+export delimited using "outputs/stata/model_status.csv", replace
+list, noobs abbreviate(20)
+restore
+display as result "STATA_STATUS_EXPORT_OK: outputs/stata/model_status.csv"
+display as text "Always inspect full RUN_ALL_REAL_STATA.log for warnings, instrument categories, and the real Difference-in-Hansen table."
