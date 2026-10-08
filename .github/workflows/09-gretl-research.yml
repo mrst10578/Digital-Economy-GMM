@@ -33,7 +33,12 @@ jobs:
       - name: Run gretl real dynamic-panel commands
         run: |
           mkdir -p outputs/gretl
-          gretlcli -b src/gretl/estimate.inp 2>&1 | tee outputs/gretl/estimate.log
+          set -o pipefail
+          test -s src/gretl/estimate.inp
+          cp src/gretl/estimate.inp estimate.inp
+          ls -l estimate.inp data/processed/panel_gretl.csv
+          gretlcli -b estimate.inp 2>&1 | tee outputs/gretl/estimate.log
+          grep -q GRETL_ESTIMATES_FINISHED outputs/gretl/estimate.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
