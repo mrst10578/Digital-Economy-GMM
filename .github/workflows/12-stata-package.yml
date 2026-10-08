@@ -1,0 +1,44 @@
+name: Digital economy licensed Stata handoff ZIP
+on:
+  push:
+    paths:
+      - ".github/workflows/12-stata-package.yml"
+      - "stata/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stata-handoff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install data conversion and audit libraries
+        run: python -m pip install -r requirements-python.txt matplotlib
+      - name: Generate verified DTA and source audit
+        run: python -m src.python.analysis
+      - name: Assemble full project-root-relative Stata handoff ZIP
+        run: |
+          set -euo pipefail
+          mkdir -p release/Digital_Economy_Stata_Ready/data/processed
+          mkdir -p release/Digital_Economy_Stata_Ready/data/raw
+          mkdir -p release/Digital_Economy_Stata_Ready/docs
+          cp -R stata release/Digital_Economy_Stata_Ready/
+          cp data/processed/stata_ready.dta release/Digital_Economy_Stata_Ready/data/processed/
+          cp data/raw/Balanced_Panel_Data.xlsx release/Digital_Economy_Stata_Ready/data/raw/
+          cp docs/FINAL_REPORT_FA.md docs/DEFENSE_GUIDE_FA.md docs/CHEATSHEET_FA.md docs/MODEL_SPECIFICATION.md release/Digital_Economy_Stata_Ready/docs/
+          cp requirements-python.txt release/Digital_Economy_Stata_Ready/
+          test -s release/Digital_Economy_Stata_Ready/data/processed/stata_ready.dta
+          test -s release/Digital_Economy_Stata_Ready/stata/RUN_ALL.do
+          (cd release && zip -qr Digital_Economy_Stata_Ready.zip Digital_Economy_Stata_Ready)
+          unzip -t release/Digital_Economy_Stata_Ready.zip | tail -1
+          sha256sum release/Digital_Economy_Stata_Ready.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-stata-one-click-laptop-handoff
+          path: release/Digital_Economy_Stata_Ready.zip
+          if-no-files-found: warn
