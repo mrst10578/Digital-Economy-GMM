@@ -1,23 +1,22 @@
-* Instructor's requested real panel pre-estimation checks.
+* Pre-estimation Stata-native tests. Errors logged but no test fabricated.
+version 16.0
 xtdescribe
-summ Growth Productivity ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD, detail
+summarize Growth Productivity ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD, detail
 pwcorr Growth ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD, sig
-reg Growth Internet Broadband ICT_Exports Unemployment Inflation RnD
+regress Growth Internet Broadband ICT_Exports Unemployment Inflation RnD
 estat vif
-capture noisily xtunitroot ips Growth, lags(1)
-capture noisily xtunitroot fisher Growth, dfuller lags(1)
-capture noisily xtunitroot ips ln_Productivity, lags(1)
-capture noisily xtunitroot fisher ln_Productivity, dfuller lags(1)
-capture noisily xtunitroot ips Internet, lags(1)
-capture noisily xtunitroot fisher Internet, dfuller lags(1)
-capture noisily xtunitroot ips Broadband, lags(1)
-capture noisily xtunitroot fisher Broadband, dfuller lags(1)
-capture noisily xtunitroot ips ICT_Exports, lags(1)
-capture noisily xtunitroot fisher ICT_Exports, dfuller lags(1)
-capture noisily xtunitroot ips Unemployment, lags(1)
-capture noisily xtunitroot fisher Unemployment, dfuller lags(1)
-capture noisily xtunitroot ips Inflation, lags(1)
-capture noisily xtunitroot fisher Inflation, dfuller lags(1)
-capture noisily xtunitroot ips RnD, lags(1)
-capture noisily xtunitroot fisher RnD, dfuller lags(1)
-* CD/CIPS: results from R must be cited separately, not silently substituted.
+regress ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD
+estat vif
+* VIF conditioning on country and year indicators is not the same as pooled VIF.
+regress Growth Internet Broadband ICT_Exports Unemployment Inflation RnD i.panel_id i.Year
+estat vif
+* Keep full variable-by-test status. IPS and Fisher assume cross-sectional independence.
+foreach v in Growth ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD {
+    capture noisily xtunitroot ips `v', lags(1)
+    local ipserr = _rc
+    display as result "STATA_TEST_STATUS IPS `v' rc=`ipserr'"
+    capture noisily xtunitroot fisher `v', dfuller lags(1)
+    local fisherr = _rc
+    display as result "STATA_TEST_STATUS FISHER `v' rc=`fisherr'"
+}
+display as text "Cross-sectional dependence/CIPS estimates already run in R. Do NOT mislabel IPS/Fisher as cross-sectionally robust."
