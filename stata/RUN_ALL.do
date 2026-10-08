@@ -11,5 +11,6 @@ do "stata/01_environment_and_data.do"
 do "stata/02_pre_estimation.do"
 do "stata/03_growth_models.do"
 do "stata/04_productivity_models.do"
+do "stata/05_post_estimation_and_export.do"
 display as result "STATA_SCRIPT_FINISHED: inspect diagnostics and failed model markers"
 log close
