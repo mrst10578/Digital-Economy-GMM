@@ -1,0 +1,28 @@
+name: Digital study source audit (no estimation)
+on:
+  push:
+    paths:
+      - ".github/workflows/06-review-sources.yml"
+      - "src/python/review_sources.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install source readers
+        run: python -m pip install "pandas>=2.1,<3" "openpyxl>=3.1,<4"
+      - name: Read full manuscript and independently inspect original Excel and dictionary
+        run: python -u -m src.python.review_sources | tee source_review.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-source-review-log
+          path: source_review.log
+          if-no-files-found: warn
