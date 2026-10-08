@@ -1,0 +1,2 @@
+# Gretl environment smoke test, NOT an estimated model.
+printf "GRETL_RUNTIME_READY=1\nNO_GMM_ESTIMATION=1\n"

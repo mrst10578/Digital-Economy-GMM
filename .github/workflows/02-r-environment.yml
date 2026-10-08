@@ -1,0 +1,28 @@
+name: R environment check
+on:
+  push:
+    paths:
+      - ".github/workflows/02-r-environment.yml"
+      - "src/r/**"
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  r-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install R and core econometrics packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends r-base r-cran-plm r-cran-lmtest r-cran-sandwich
+      - name: Check R runtime and plm
+        run: Rscript src/r/environment_check.R
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r-runtime-check
+          path: outputs/r_environment.txt
+          if-no-files-found: warn

@@ -1,0 +1,29 @@
+name: gretl environment check
+on:
+  push:
+    paths:
+      - ".github/workflows/03-gretl-environment.yml"
+      - "src/gretl/**"
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gretl-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gretl CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gretl
+          command -v gretlcli
+      - name: Check gretl runtime (NOT econometric estimation)
+        run: gretlcli -b src/gretl/healthcheck.inp | tee outputs/gretl_environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gretl-runtime-check
+          path: outputs/gretl_environment.txt
+          if-no-files-found: warn

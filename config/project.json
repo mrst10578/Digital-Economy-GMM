@@ -1,0 +1,26 @@
+{
+  "scope": "digital",
+  "repository": "Digital-Economy-GMM",
+  "source_workbook": "Balanced_Panel_Data.xlsx",
+  "initial_expected_countries": 47,
+  "initial_expected_rows": 846,
+  "initial_year_min": 2005,
+  "initial_year_max": 2022,
+  "required_columns": [
+    "ISO3",
+    "Year",
+    "Growth",
+    "Productivity",
+    "Internet",
+    "Broadband",
+    "ICT_Exports",
+    "Unemployment",
+    "Inflation",
+    "RnD"
+  ],
+  "outcomes": [
+    "Growth",
+    "Productivity"
+  ],
+  "notes": "Growth is measured in percentage points (do not log negative values). Productivity can be logged only after ensuring positive observations. Internet/Broadband correlations and long-T GMM instrument growth require scrutiny."
+}

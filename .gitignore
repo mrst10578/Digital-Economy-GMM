@@ -1,0 +1,21 @@
+# Confidential sources and model results MUST stay outside this public repository
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+outputs/*
+!outputs/.gitkeep
+reports/*
+!reports/.gitkeep
+.env
+*.lic
+*.dta
+*.log
+*.smcl
+*.xlsx
+*.xls
+*.docx
+*.pdf
+__pycache__/
+.pytest_cache/
+*.py[cod]
