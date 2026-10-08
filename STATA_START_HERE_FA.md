@@ -10,7 +10,7 @@
 
 ## ۲. محتوای فایل ZIP را درست استخراج کن
 
-فایل ZIP با عنوان `Digital_Economy_Stata_Ready.zip` را از بخش Artifacts اجرای موفق Workflow `Digital economy licensed Stata handoff ZIP` بگیر و Extract کن. پوشه حاصل باید دقیقاً چنین ساختاری داشته باشد:
+در صفحه اجرای موفق Workflow `Digital economy licensed Stata handoff ZIP`، بخش **Artifacts** را باز کن و بسته `digital-stata-one-click-laptop-handoff` را دانلود کن. GitHub فایل را به شکل یک ZIP بیرونی می‌دهد. **اول ZIP دانلودشده را Extract کن؛ داخل آن فایل `Digital_Economy_Stata_Ready.zip` قرار دارد. سپس این ZIP داخلی را نیز Extract کن.** سرانجام وارد پوشه `Digital_Economy_Stata_Ready` شو. ساختار آن باید چنین باشد:
 
 ```text
 Digital_Economy_Stata_Ready/
