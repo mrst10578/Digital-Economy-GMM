@@ -24,7 +24,6 @@ test_result=data.frame(variable=character(),test=character(),statistic=double(),
 test_run=function(v,label,expr){
     tryCatch({
         x=expr
-        if(v=="Growth" && label=="IPS_intercept_lag1") print(str(x, max.level=3))
         pv=if(!is.null(x$p.value)) x$p.value else if(!is.null(x$statistic$p.value)) x$statistic$p.value else NA_real_
         cat("PRETEST",v,label,"stat",as.numeric(unlist(x$statistic))[1],"p",pv,"\n")
         data.frame(variable=v,test=label,statistic=as.numeric(unlist(x$statistic))[1],
@@ -46,22 +45,28 @@ spec_x=c("Internet","Broadband","ICT_Exports","Unemployment","Inflation","RnD")
 spec_dep=c("Growth","ln_Productivity")
 cd_table=data.frame()
 for(dep in spec_dep){
-    for(method in c("pooling","within")){
+    lagdf=dat
+    lagdf$lag_y=ave(lagdf[[dep]],lagdf$ISO3,
+                    FUN=function(z)c(NA_real_,z[-length(z)]))
+    lagdf=lagdf[!is.na(lagdf$lag_y),]
+    for(method in c("pooling","two_way_FE")){
         tryCatch({
-            model=plm::plm(as.formula(paste(dep,"~ lag(",dep,",1) +",paste(spec_x,collapse="+"))),
-                           data=p,model=method,effect=if(method=="within")"twoways" else "individual")
-            estimates=lmtest::coeftest(model,vcov.=plm::vcovHC(model,method="arellano",type="HC1",cluster="group"))
+            formula=as.formula(paste(dep,"~ lag_y +",paste(spec_x,collapse="+"),
+                              if(method=="two_way_FE")"+ factor(ISO3) + factor(Year)" else ""))
+            mod=stats::lm(formula,data=lagdf)
+            estimates=lmtest::coeftest(mod,vcov.=sandwich::vcovCL(mod,cluster=lagdf$ISO3,type="HC1"))
             write.csv(data.frame(term=rownames(estimates),estimates,check.names=FALSE),
-                      paste0("outputs/r/",dep,"_",method,".csv"),row.names=FALSE)
-            if(method=="within"){
-                cd=plm::pcdtest(model,test="cd")
-                cd_table=rbind(cd_table,data.frame(model=dep,test="Pesaran_CD_on_FE_residuals",
-                                                  statistic=unname(cd$statistic),p_value=cd$p.value))
-                cat("PESARAN_CD_FE",dep,"stat",unname(cd$statistic),"p",cd$p.value,"\n")
-            }
-            cat("BASELINE_SUCCESS",dep,method,"obs",nobs(model),"\n")
+                paste0("outputs/r/",dep,"_",method,".csv"),row.names=FALSE)
+            cat("BASELINE_SUCCESS",dep,method,"obs",nobs(mod),"\n")
         },error=function(e){cat("BASELINE_ERROR",dep,method,conditionMessage(e),"\n")})
     }
+    tryCatch({
+        fcd=as.formula(paste(dep,"~",paste(spec_x,collapse="+")))
+        cd=plm::pcdtest(fcd,data=p,model="within",test="cd")
+        cd_table=rbind(cd_table,data.frame(model=dep,test="Pesaran_CD_on_static_FE_residuals",
+                                 statistic=unname(cd$statistic),p_value=cd$p.value))
+        cat("PESARAN_CD_FE",dep,"stat",unname(cd$statistic),"p",cd$p.value,"\n")
+    },error=function(e){cat("PESARAN_CD_FAILED",dep,conditionMessage(e),"\n")})
 }
 write.csv(cd_table,"outputs/r/fe_cross_section_dependence.csv",row.names=FALSE)
 gmm_tab=data.frame()
