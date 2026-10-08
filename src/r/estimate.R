@@ -54,8 +54,12 @@ for(dep in spec_dep){
             formula=as.formula(paste(dep,"~ lag_y +",paste(spec_x,collapse="+"),
                               if(method=="two_way_FE")"+ factor(ISO3) + factor(Year)" else ""))
             mod=stats::lm(formula,data=lagdf)
-            estimates=lmtest::coeftest(mod,vcov.=sandwich::vcovCL(mod,cluster=lagdf$ISO3,type="HC1"))
-            write.csv(data.frame(term=rownames(estimates),estimates,check.names=FALSE),
+            cat("BASELINE_LM_OK",dep,method,"obs",nobs(mod),"rank",mod$rank,"\n")
+            covm=sandwich::vcovCL(mod, cluster=stats::model.frame(mod)$ISO3, type="HC1")
+            cat("BASELINE_CLUSTER_VCOV_OK",dep,method,"shape",dim(covm),"\n")
+            estimates=lmtest::coeftest(mod,vcov.=covm)
+            write.csv(data.frame(term=rownames(estimates),as.data.frame(unclass(estimates)),
+                                 check.names=FALSE),
                 paste0("outputs/r/",dep,"_",method,".csv"),row.names=FALSE)
             cat("BASELINE_SUCCESS",dep,method,"obs",nobs(mod),"\n")
         },error=function(e){cat("BASELINE_ERROR",dep,method,conditionMessage(e),"\n")})
