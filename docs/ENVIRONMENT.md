@@ -1,24 +1,18 @@
-# Install matrix and reproducibility
+# Runtime and installation
 
-Research scope: **digital only**. This is not a shared multi-study runner.
+This repository contains the complete original research files imported from Dropbox into `sources/` and `data/raw/`. Public availability of these specific research inputs was authorized. Do not commit credentials or license information.
 
-## GitHub Actions (recommended for Android-only access)
-- Python 3.11 on `ubuntu-24.04`; `pip install -r requirements-python.txt` (pandas, numpy, scipy, statsmodels, linearmodels, openpyxl, pytest).
-- R: `sudo apt-get install -y r-base r-cran-plm r-cran-lmtest r-cran-sandwich`; `plm::pgmm`, `plm::mtest`, `plm::sargan`, `plm::purtest` are intended for subsequent empirical scripts. The `pdynmc` package is **optional** and must be version-tested before adoption.
-- gretl: `sudo apt-get install -y gretl`; verify `gretlcli`, then use `dpanel` only once estimator/instruments are agreed.
-- Stata is proprietary; NOT installed here. Use a licensed Windows/Linux/Mac installation tomorrow, and install `xtabond2` from SSC when available.
+## GitHub Actions
+1. `01-python-qa.yml`: Python 3.11, pandas/numpy/scipy/statsmodels/linearmodels/openpyxl/pytest and synthetic scaffold tests.
+2. `02-r-environment.yml`: Ubuntu apt installs `r-base r-cran-plm r-cran-lmtest r-cran-sandwich`; checks `plm`. Optional `pdynmc` requires separate compatibility testing.
+3. `03-gretl-environment.yml`: Ubuntu apt installs `gretl`; verifies `gretlcli`.
+4. `05-validate-research-data.yml`: verifies genuine input Excel schema/keys and generates Stata `.dta` artifact.
 
-## Termux controller (optional)
+The `stata_ready.dta` export is a format conversion, not a completed statistical model. GMM packages and settings must be selected based on source-specific methodology and then run and verified independently.
+
+## Android / Termux
 ```sh
 pkg update
 pkg install git python
-# Use your GitHub web app or an authorized gh CLI to dispatch workflows.
-# Actual R/gretl number-crunching stays in GitHub Actions.
 ```
-Do not assume the Android Termux ARM packages work the same as Ubuntu runner builds.
-
-## Reproducibility policy
-Currently CI validates only software availability and synthetic scaffold tests. Do not label status=waiting_for_source_files as a successful data audit. Save library versions, dataset checksum (not dataset itself in public), exact specifications and failed runs when real analyses start. Do not manufacture Stata output.
-
-## Data privacy
-Repository visibility is currently PUBLIC. All supplied Word/Excel research materials and email attachments stay out of Git history. Keep `data/raw/`, `data/processed/` and `outputs/` ignored. Prefer a private repository before adding non-public data and never use public CI artifacts for confidential datasets.
+Use Termux to control GitHub, not as the primary statistical runtime. Do not assume Linux-x86 builds can be installed into Android ARM. Actual Stata requires a licensed supported host OS.
