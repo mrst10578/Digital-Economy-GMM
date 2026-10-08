@@ -6,8 +6,12 @@ program define digital_success
     local inst = e(j)
     local groups = e(N_g)
     local verdict "DIAGNOSTIC_HOLD"
-    if missing(`inst') | missing(`groups') local verdict "MISSING_INSTRUMENT_DIAGNOSTIC"
-    else if `inst' >= `groups' local verdict "INSTRUMENTS_GE_GROUPS"
+    if missing(`inst') | missing(`groups') {
+        local verdict "MISSING_INSTRUMENT_DIAGNOSTIC"
+    }
+    if !missing(`inst') & !missing(`groups') {
+        if `inst' >= `groups' local verdict "INSTRUMENTS_GE_GROUPS"
+    }
     post digital_post ("`name'") ("`verdict'") (0) (e(N)) (e(N_g)) (e(j)) (e(sarganp)) (e(hansenp)) (e(ar1p)) (e(ar2p))
     display as result "STATA_MODEL_ESTIMATED=`name' status=`verdict' instruments=" e(j) " groups=" e(N_g)
     display as text "Sargan p=" e(sarganp) " Hansen p=" e(hansenp) " AR1 p=" e(ar1p) " AR2 p=" e(ar2p)
