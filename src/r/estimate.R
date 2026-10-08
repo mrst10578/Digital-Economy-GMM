@@ -24,9 +24,9 @@ test_result=data.frame(variable=character(),test=character(),statistic=double(),
 test_run=function(v,label,expr){
     tryCatch({
         x=expr
-        cat("PRETEST",v,label,"stat",as.numeric(x$statistic)[1],"p",x$p.value,"\n")
-        data.frame(variable=v,test=label,statistic=as.numeric(x$statistic)[1],
-                   p_value=as.numeric(x$p.value)[1],status="RAN",message="")
+        cat("PRETEST",v,label,"stat",as.numeric(unlist(x$statistic))[1],"p",x$p.value,"\n")
+        data.frame(variable=v,test=label,statistic=as.numeric(unlist(x$statistic))[1],
+                   p_value=as.numeric(unlist(x$p.value))[1],status="RAN",message="")
     },error=function(e){
         cat("PRETEST_FAILED",v,label,conditionMessage(e),"\n")
         data.frame(variable=v,test=label,statistic=NA_real_,p_value=NA_real_,
@@ -72,7 +72,7 @@ for(dep in spec_dep){
         for(transf in c("d","ld")){
             for(steps in c("onestep","twosteps")){
                 if(lagwin=="2:2" && (transf!="ld" || steps!="onestep")) next
-                label=paste(dep,lagwin,transf,steps,sep="_")
+                label=paste(dep,gsub(":", "-", lagwin),transf,steps,sep="_")
                 tryCatch({
                     fit=plm::pgmm(f,data=p,effect="twoways",model=steps,
                                    transformation=transf,collapse=TRUE)
