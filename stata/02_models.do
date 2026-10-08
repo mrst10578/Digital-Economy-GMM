@@ -1,3 +1,3 @@
-* Compatibility script for previous callers; full workflow uses RUN_ALL.do.
-do "stata/03_growth_models.do"
-do "stata/04_productivity_models.do"
+* Legacy compatibility path: invoke full audited runner to initialize panel and status log.
+* Do NOT run model files in isolation without preflight.
+do "stata/RUN_ALL.do"
