@@ -24,9 +24,11 @@ test_result=data.frame(variable=character(),test=character(),statistic=double(),
 test_run=function(v,label,expr){
     tryCatch({
         x=expr
-        cat("PRETEST",v,label,"stat",as.numeric(unlist(x$statistic))[1],"p",x$p.value,"\n")
+        if(v=="Growth" && label=="IPS_intercept_lag1") print(str(x, max.level=3))
+        pv=if(!is.null(x$p.value)) x$p.value else if(!is.null(x$statistic$p.value)) x$statistic$p.value else NA_real_
+        cat("PRETEST",v,label,"stat",as.numeric(unlist(x$statistic))[1],"p",pv,"\n")
         data.frame(variable=v,test=label,statistic=as.numeric(unlist(x$statistic))[1],
-                   p_value=as.numeric(unlist(x$p.value))[1],status="RAN",message="")
+                   p_value=as.numeric(unlist(pv))[1],status="RAN",message="")
     },error=function(e){
         cat("PRETEST_FAILED",v,label,conditionMessage(e),"\n")
         data.frame(variable=v,test=label,statistic=NA_real_,p_value=NA_real_,
