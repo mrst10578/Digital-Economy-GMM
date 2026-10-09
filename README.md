@@ -13,7 +13,7 @@ The full ZIP is committed at [research-packages/Digital_Economy_Ready_Package.zi
 - Python, R/plm and gretl installation/runtime checks were configured separately in GitHub Actions.
 - [Validate imported research dataset and build Stata DTA](.github/workflows/05-validate-research-data.yml) checks the real input and creates a `stata_ready.dta` downloadable artifact (if successful).
 - Original data are present; **Python OLS/FE, R IPS/Fisher/CIPS/CD + Difference/System GMM, and gretl dpanel were actually executed and audited**. Multiple specification diagnostics remain unfavorable or inconclusive. **Difference-in-Hansen and licensed Stata estimates have NOT been completed**, and no causal interpretation has been accepted.
-- The original Stata placeholder has been replaced by staged xtabond2 do-files, but **the code has not yet been executed on Stata**. Use the GitHub Actions one-click laptop handoff ZIP.
+- The original Stata placeholder has been replaced by staged xtabond2 do-files, but **a real licensed Stata execution was received on 2026-10-09 and independently audited; no model is scientifically accepted yet**. Use the GitHub Actions one-click laptop handoff ZIP.
 
 ## Tools
 
@@ -25,4 +25,8 @@ Start with [MASTER_PROMPT](./) and the study's `sources/` folder; audit independ
 
 ## Research outputs (branch only)
 
-See [Persian final report](docs/FINAL_REPORT_FA.md), [full defense guide](docs/DEFENSE_GUIDE_FA.md), [model pre-specification](docs/MODEL_SPECIFICATION.md), [Iran-peers design](docs/IRAN_PEERS_FA.md), and [current project status](docs/PROJECT_STATUS.md). New Actions workflows 06-12 produce source review logs, actual Python/R/gretl statistical outputs, WDI comparisons, Persian report PDF/HTML files and a one-click Stata laptop ZIP. **No claim is made that the GMM diagnostics establish a valid causal model or that Stata has been run.**
+See [Persian final report](docs/FINAL_REPORT_FA.md), [full defense guide](docs/DEFENSE_GUIDE_FA.md), [model pre-specification](docs/MODEL_SPECIFICATION.md), [Iran-peers design](docs/IRAN_PEERS_FA.md), and [current project status](docs/PROJECT_STATUS.md). New Actions workflows 06-12 produce source review logs, actual Python/R/gretl statistical outputs, WDI comparisons, Persian report PDF/HTML files and a one-click Stata laptop ZIP. **No claim is made that the GMM diagnostics establish a valid causal model or that any GMM model is validated. **Six real Stata runs were received and audited on 2026-10-09**, see [Stata real results](docs/STATA_REAL_RESULTS_AUDIT_FA.md).**
+
+## Verified real Stata evidence, 2026-10-09
+
+Original emailed ZIP: `evidence/stata-2026-10-09/outputs.zip`; independent parser: `src/python/audit_emailed_stata.py` and Workflow 13. Six models actually estimated; all remain diagnostic hold. See `docs/STATA_REAL_RESULTS_AUDIT_FA.md`. Preserve original file hashes and do not merge without independent scientific sign-off.
