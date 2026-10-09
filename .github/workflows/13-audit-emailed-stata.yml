@@ -1,0 +1,24 @@
+name: Audit real emailed Stata results
+on:
+  push:
+    paths:
+      - ".github/workflows/13-audit-emailed-stata.yml"
+      - "src/python/audit_emailed_stata.py"
+      - "evidence/stata-2026-10-09/outputs.zip"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-stata:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect exact emailed ZIP safely without executing Stata commands
+        run: python -u -m src.python.audit_emailed_stata
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-emailed-stata-audit
+          path: outputs/stata_mail_audit/
+          if-no-files-found: warn
