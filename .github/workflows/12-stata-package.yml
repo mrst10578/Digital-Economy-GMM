@@ -8,6 +8,8 @@ on:
       - "src/python/stata_static_audit.py"
       - "docs/PRE_STATA_AUDIT_FA.md"
       - "docs/DEFENSE_GUIDE_FA.md"
+      - "docs/STATA_REAL_RESULTS_AUDIT_FA.md"
+      - "evidence/stata-2026-10-09/outputs.zip"
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,16 +34,19 @@ jobs:
           mkdir -p release/Digital_Economy_Stata_Ready/data/processed
           mkdir -p release/Digital_Economy_Stata_Ready/data/raw
           mkdir -p release/Digital_Economy_Stata_Ready/docs
+          mkdir -p release/Digital_Economy_Stata_Ready/evidence/stata-2026-10-09
           cp -R stata release/Digital_Economy_Stata_Ready/
           cp STATA_START_HERE_FA.md release/Digital_Economy_Stata_Ready/
           cp outputs/stata_static/prestata_static_status.json release/Digital_Economy_Stata_Ready/
           cp data/processed/stata_ready.dta release/Digital_Economy_Stata_Ready/data/processed/
           cp data/raw/Balanced_Panel_Data.xlsx release/Digital_Economy_Stata_Ready/data/raw/
-          cp docs/FINAL_REPORT_FA.md docs/DEFENSE_GUIDE_FA.md docs/CHEATSHEET_FA.md docs/MODEL_SPECIFICATION.md docs/PRE_STATA_AUDIT_FA.md docs/STATA_HANDOFF.md release/Digital_Economy_Stata_Ready/docs/
+          cp evidence/stata-2026-10-09/outputs.zip release/Digital_Economy_Stata_Ready/evidence/stata-2026-10-09/
+          cp docs/FINAL_REPORT_FA.md docs/DEFENSE_GUIDE_FA.md docs/CHEATSHEET_FA.md docs/MODEL_SPECIFICATION.md docs/PRE_STATA_AUDIT_FA.md docs/STATA_HANDOFF.md docs/STATA_REAL_RESULTS_AUDIT_FA.md release/Digital_Economy_Stata_Ready/docs/
           cp requirements-python.txt release/Digital_Economy_Stata_Ready/
           test -s release/Digital_Economy_Stata_Ready/data/processed/stata_ready.dta
           test -s release/Digital_Economy_Stata_Ready/stata/RUN_ALL.do
           test -s release/Digital_Economy_Stata_Ready/STATA_START_HERE_FA.md
+          test -s release/Digital_Economy_Stata_Ready/docs/STATA_REAL_RESULTS_AUDIT_FA.md
           test -s release/Digital_Economy_Stata_Ready/stata/00_model_helpers.do
           (cd release && zip -qr Digital_Economy_Stata_Ready.zip Digital_Economy_Stata_Ready)
           unzip -t release/Digital_Economy_Stata_Ready.zip | tail -1
