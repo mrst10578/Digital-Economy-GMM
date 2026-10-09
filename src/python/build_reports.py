@@ -25,7 +25,7 @@ pre {white-space:pre-wrap;direction:ltr;unicode-bidi:embed;background:#eff3f5;pa
 strong {color:#102a3f}
 """
 Path("reports").mkdir(exist_ok=True)
-for name in ["FINAL_REPORT_FA","DEFENSE_GUIDE_FA","CHEATSHEET_FA"]:
+for name in ["FINAL_REPORT_FA","STATA_REAL_RESULTS_AUDIT_FA","DEFENSE_GUIDE_FA","CHEATSHEET_FA"]:
     src=Path("docs")/(name+".md")
     assert src.is_file(),src
     body=markdown(src.read_text(encoding="utf-8"),extensions=["tables","fenced_code"])
