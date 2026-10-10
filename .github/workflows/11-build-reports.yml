@@ -5,6 +5,8 @@ on:
       - ".github/workflows/11-build-reports.yml"
       - "src/python/build_reports.py"
       - "docs/FINAL_REPORT_FA.md"
+      - "docs/PHASE_A_VALIDATION_FA.md"
+      - "docs/PHASE_B_SPILLOVER_DESIGN_FA.md"
       - "docs/STATA_REAL_RESULTS_AUDIT_FA.md"
       - "docs/FINAL_SCIENTIFIC_VERDICT_FA.md"
       - "docs/FISHER_DISCREPANCY_RESOLVED_FA.md"
