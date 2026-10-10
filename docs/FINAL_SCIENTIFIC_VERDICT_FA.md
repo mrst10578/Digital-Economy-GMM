@@ -1,5 +1,8 @@
 # جمع‌بندی علمی نهایی موج دوم | اقتصاد دیجیتال و سرریز فناوری
 
+**حل قطعی اختلاف Fisher (۱۰ اکتبر):** در R با روش پیش‌فرض dfcor=FALSE و MacKinnon 1994، p=۰٫۰۴۳۶۷۸۹۵ ثبت شده بود؛ با اصلاح درجه آزادی واریانس پسماندهای ADF برای همه کشورها (dfcor=TRUE)، p=۰٫۴۸۳۵۱۵۳۸ شد و با Stata و Python مستقل انطباق یافت. با MacKinnon 1996 و dfcor=TRUE نیز p=۰٫۴۷۹۱۷۴۸۲ بود. بنابراین علت اصلی اختلاف **اصلاح درجه آزادی در رگرسیون‌های ADF** است، نه تغییر داده یا گزینش نتیجه. تمام آزمون‌های IPS/Fisher در کد R به‌صورت یکنواخت اصلاح و در Workflow 08 بازاجرا شدند؛ برای شرح محاسبات به [ممیزی کامل اختلاف Fisher](FISHER_DISCREPANCY_RESOLVED_FA.md) مراجعه شود. این تطبیق محاسباتی، مفروضه استقلال مقاطع یا اعتبار GMM را تضمین نمی‌کند.
+
+
 **تاریخ:** ۱۰ اکتبر ۲۰۲۶. **نتیجه:** داده‌ها و اجرای نرم‌افزارها ممیزی شده‌اند؛ اما **هیچ‌یک از شش برآورد GMM معتبر نهایی اعلام نشده** و داده موجود برای اثبات انتقال فناوری بین کشورها کافی نیست.
 
 **منشأ شواهد:** کتاب کار اصلی data/raw/Balanced_Panel_Data.xlsx؛ فایل واقعی Stata موجود در evidence/stata-2026-10-09/outputs.zip با SHA256 برابر 92e8a3098b2538c8f3fc51c6554777e3df696988f9ef7d0727eb68ebf71b7b1c؛ آزمون‌های واقعی R در [Workflow 14](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38027827589) و تکرار مستقل Fisher در [Workflow 15](https://github.com/mrst10578/Digital-Economy-GMM/actions/workflows/15-crosscheck-fisher.yml). اعداد اولیه Stata در docs/STATA_REAL_RESULTS_AUDIT_FA.md مستند شده‌اند.
