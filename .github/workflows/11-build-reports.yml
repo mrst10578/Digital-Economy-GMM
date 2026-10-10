@@ -30,7 +30,10 @@ jobs:
         run: python src/python/build_reports.py
       - name: Verify PDF page counts and Persian text extraction
         run: |
-          for f in reports/*_FA.pdf; do pdfinfo "$f" | grep -E "Pages:|File size:"; pdftotext "$f" - | grep -q "اقتصاد"; done
+          for f in reports/*_FA.pdf; do
+            pdfinfo "$f" | grep -E "Pages:|File size:"
+            pdftotext "$f" - | python -c 'import sys; t=sys.stdin.read(); assert len(t)>200 and sum("\u0600"<=c<="\u06ff" for c in t)>20, "No significant Persian text extracted"'
+          done
           ls -lh reports/
       - uses: actions/upload-artifact@v4
         if: always()
