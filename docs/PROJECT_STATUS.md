@@ -1,5 +1,8 @@
 # وضعیت به‌روزشده پروژه اقتصاد دیجیتال | ۱۰ اکتبر ۲۰۲۶
 
+**گزارش وضعیت ۱۰ اکتبر ۲۰۲۶، فازهای تکمیلی:** فاز A با اجرای واقعی ۲۰۸ مدل FE/LOO و پنجره‌های حساسیت کامل شد؛ [Workflow 17](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38037472731). فاز B طراحی مسیر واردات دوجانبه HS85، ۷ تست واحد موفق و کد ورود فایل واقعی BACI را تکمیل کرد، ولی دانلود رسمی CEPII در GitHub Actions با HTTP 403 و UN Comtrade با HTTP 429/500 مواجه شد؛ بنابراین **اجرای تجربی کامل مدل شبکه و اعتبار علی آن انجام نشده است**. [گزارش A](PHASE_A_VALIDATION_FA.md)، [گزارش B](PHASE_B_SPILLOVER_DESIGN_FA.md). نتیجه علمی هنوز تأیید علی ندارد. 
+
+
 **مخزن:** mrst10578/Digital-Economy-GMM
 **شاخه:** research/digital-economy-estimation-audit-20261008
 **PR:** #1، در وضعیت Draft و بدون Merge.
