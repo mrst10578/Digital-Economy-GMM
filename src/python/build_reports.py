@@ -25,7 +25,7 @@ pre {white-space:pre-wrap;direction:ltr;unicode-bidi:embed;background:#eff3f5;pa
 strong {color:#102a3f}
 """
 Path("reports").mkdir(exist_ok=True)
-for name in ["FINAL_REPORT_FA","PHASE_A_VALIDATION_FA","PHASE_B_SPILLOVER_DESIGN_FA","PHASE_B_HARVARD_REAL_RESULTS_FA","FINAL_SCIENTIFIC_VERDICT_FA","FISHER_DISCREPANCY_RESOLVED_FA","STATA_REAL_RESULTS_AUDIT_FA","DEFENSE_GUIDE_FA","CHEATSHEET_FA"]:
+for name in ["FINAL_REPORT_FA","PHASE_A_VALIDATION_FA","PHASE_B_SPILLOVER_DESIGN_FA","PHASE_B_HARVARD_REAL_RESULTS_FA","PROFESSOR_ORIGINAL_REQUIREMENTS_AUDIT_FA","IRAN_PEERS_ACTUAL_2026-10-10_FA","FINAL_SCIENTIFIC_VERDICT_FA","FISHER_DISCREPANCY_RESOLVED_FA","STATA_REAL_RESULTS_AUDIT_FA","DEFENSE_GUIDE_FA","CHEATSHEET_FA"]:
     src=Path("docs")/(name+".md")
     assert src.is_file(),src
     body=markdown(src.read_text(encoding="utf-8"),extensions=["tables","fenced_code"])
