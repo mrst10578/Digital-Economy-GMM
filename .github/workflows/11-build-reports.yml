@@ -6,6 +6,7 @@ on:
       - "src/python/build_reports.py"
       - "docs/FINAL_REPORT_FA.md"
       - "docs/STATA_REAL_RESULTS_AUDIT_FA.md"
+      - "docs/FINAL_SCIENTIFIC_VERDICT_FA.md"
       - "docs/DEFENSE_GUIDE_FA.md"
       - "docs/CHEATSHEET_FA.md"
   workflow_dispatch:
