@@ -1,0 +1,31 @@
+name: Phase B - complete BACI panel methodology and coverage gate
+on:
+  push:
+    paths:
+      - "src/python/phase_b_baci_exposure.py"
+      - "tests/test_phase_b_baci.py"
+      - ".github/workflows/19-phase-b-baci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-mapping:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install econometric and source verification dependencies
+        run: python -m pip install "pandas>=2,<3" "numpy>=1.26,<3" "openpyxl>=3,<4" "pycountry>=22" "statsmodels>=0.14,<1" "pytest>=8,<10"
+      - name: Verify network construction with explicitly synthetic UNIT TEST FIXTURES
+        run: python -m pytest -q tests/test_phase_b_baci.py
+      - name: Record real-data gate status WITHOUT synthetic replacement
+        run: python src/python/phase_b_baci_exposure.py || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-economy-phase-b-BACI-real-data-gate
+          path: outputs/phase_b_full/
+          if-no-files-found: warn

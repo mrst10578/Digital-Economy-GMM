@@ -1,0 +1,31 @@
+name: Digital economy second-wave unit-root CD and robust baselines
+on:
+  push:
+    paths:
+      - "src/r/robustness.R"
+      - ".github/workflows/14-second-wave-robustness.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  second-wave:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install R panel econometrics
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends r-base r-cran-plm r-cran-readxl r-cran-lmtest r-cran-sandwich
+      - name: Execute prespecified CIPS trend/difference, DK-FE, CCE diagnostics
+        run: Rscript src/r/robustness.R
+      - name: Validate audit CSV presence
+        run: |
+          test -s outputs/r_robustness/cips_level_and_differences.csv
+          test -s outputs/r_robustness/robustness_models.csv
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-second-wave-real-robustness
+          path: outputs/r_robustness/
+          if-no-files-found: warn

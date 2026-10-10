@@ -1,0 +1,39 @@
+name: Retrospective Iran similar-economy feasibility (WDI 2005-07)
+on:
+  push:
+    paths:
+      - "src/python/iran_peer_matching.py"
+      - ".github/workflows/24-iran-peer-similarity.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-project-iran-peer-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install scientific packages
+        run: python -m pip install "numpy>=1.26,<3" "pandas>=2,<3" "openpyxl>=3,<4"
+      - name: Real WDI baseline data and published 47-country vs Iran feasibility
+        run: python src/python/iran_peer_matching.py
+      - name: Verify no causal GMM and full rank manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("outputs/iran_peers/manifest.json").read_text())
+          assert m["status"]=="COMPLETED_DESCRIPTIVE_NOT_CAUSAL"
+          assert m["original_gmm_validated"] is False
+          assert m["results"]["eligible_original_countries"]>=10
+          print("IRAN_PRESPECIFIED_FEASIBILITY_PASS",m["results"]["closest_10"])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iran-peer-WDI-retrospective-baseline-descriptive
+          path: outputs/iran_peers/
+          if-no-files-found: warn

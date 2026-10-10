@@ -1,0 +1,46 @@
+name: Digital economy Persian reports and PDF
+on:
+  push:
+    paths:
+      - ".github/workflows/11-build-reports.yml"
+      - "src/python/build_reports.py"
+      - "docs/FINAL_REPORT_FA.md"
+      - "docs/PHASE_A_VALIDATION_FA.md"
+      - "docs/PHASE_B_SPILLOVER_DESIGN_FA.md"
+      - "docs/PHASE_B_HARVARD_REAL_RESULTS_FA.md"
+      - "docs/PROFESSOR_ORIGINAL_REQUIREMENTS_AUDIT_FA.md"
+      - "docs/IRAN_PEERS_ACTUAL_2026-10-10_FA.md"
+      - "docs/STATA_REAL_RESULTS_AUDIT_FA.md"
+      - "docs/FINAL_SCIENTIFIC_VERDICT_FA.md"
+      - "docs/FISHER_DISCREPANCY_RESOLVED_FA.md"
+      - "docs/DEFENSE_GUIDE_FA.md"
+      - "docs/CHEATSHEET_FA.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pdf-export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Persian typography and PDF tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core fonts-dejavu-core poppler-utils libpango-1.0-0 libpangocairo-1.0-0
+          python -m pip install "weasyprint>=61,<69" "markdown>=3.4,<4"
+      - name: Render editable HTML and Persian PDFs
+        run: python src/python/build_reports.py
+      - name: Verify PDF page counts and Persian text extraction
+        run: |
+          for f in reports/*_FA.pdf; do
+            pdfinfo "$f" | grep -E "Pages:|File size:"
+            pdftotext "$f" - | python -c 'import sys; t=sys.stdin.read(); assert len(t)>200 and sum("\u0600"<=c<="\u06ff" for c in t)>20, "No significant Persian text extracted"'
+          done
+          ls -lh reports/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-persian-pdf-and-html-reports
+          path: reports/
+          if-no-files-found: warn

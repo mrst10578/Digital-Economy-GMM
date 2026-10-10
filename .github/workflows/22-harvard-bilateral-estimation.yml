@@ -1,0 +1,54 @@
+name: Phase B - REAL Harvard bilateral trade noncausal audit
+on:
+  push:
+    paths:
+      - ".github/workflows/22-harvard-bilateral-estimation.yml"
+      - "src/python/phase_b_harvard_real.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  genuine-harvard-bilateral-estimations:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install statistical research environment
+        run: python -m pip install "pandas>=2,<3" "numpy>=1.26,<3" "openpyxl>=3,<4" "statsmodels>=0.14,<1"
+      - name: Fetch original actual Harvard bilateral CSV by immutable Dataverse file ID
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/harvard_verified
+          curl --fail --location --retry 3 --retry-delay 5 --retry-all-errors --connect-timeout 30 --max-time 420 \
+            --user-agent 'AcademicResearchReproducibility/1.0' \
+            "https://dataverse.harvard.edu/api/access/datafile/13685107" \
+            -o outputs/harvard_verified/hs92_country_country_year.csv
+      - name: Analyze real original 47-country panel with official verified imports
+        run: python src/python/phase_b_harvard_real.py
+      - name: Inspect all four mandatory noncausal outcomes and population coverage
+        shell: bash
+        run: |
+          test -s outputs/harvard_spillover/manifest.json
+          test -s outputs/harvard_spillover/MAIN_four_real_FE_models_NONCAUSAL.csv
+          test -s outputs/harvard_spillover/leave_one_country_out_summary.csv
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("outputs/harvard_spillover/manifest.json").read_text())
+          assert d["status"]=="EXECUTED_REAL_HARVARD_DESCRIPTIVE_NONCAUSAL"
+          assert d["coverage_audit"]["eligible_country_years"]==481
+          assert d["coverage_audit"]["eligible_countries"]==35
+          assert d["reported_coefficient_rows"]==592
+          assert d["scientifically_accepted_gmm_models"]==0
+          print("SCIENTIFIC_CAUSAL_BOUNDARY_ENFORCED")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-phase-B-real-Harvard-trade-descriptive-models
+          path: outputs/harvard_spillover/
+          if-no-files-found: warn

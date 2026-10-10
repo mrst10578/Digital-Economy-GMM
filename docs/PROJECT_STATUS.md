@@ -1,19 +1,73 @@
-# Project status (post-Dropbox import)
+## ممیزی دستور اولیه و نتیجه ایران | ۱۰ اکتبر ۲۰۲۶
 
-Project: `Digital-Economy-GMM`. Dataset scope is restricted to this study.
+- بازخوانی مستقل **Word اولیه ۴ صفحه، دو تصویر دستورهای Pre/Post-estimation، دیکشنری و ایمیل ۳۰ سپتامبر**؛ [ممیزی خواسته اولیه](PROFESSOR_ORIGINAL_REQUIREMENTS_AUDIT_FA.md). درخواست اصلی **دو مدل پانل پویا با System GMM و آزمون‌های معتبرشان** است؛ شبکه تجارت هاروارد توسعه پژوهشی فراتر از دستور اولیه است.
+- اجرای واقعی WDI بانک جهانی: مقایسه ایران با ۴۷ کشور در ۲۰۰۵–۲۰۰۷، پنج بُعد درآمد، ساختار، منابع طبیعی، تجارت، دیجیتال؛ پوشش کامل ایران و ۴۶ کشور، فقط TTO با تجارت پایه ناقص؛ رتبه اول تا پنجم **مصر، قزاقستان، چین، روسیه، مغولستان**. [گزارش جزئیات](IRAN_PEERS_ACTUAL_2026-10-10_FA.md)، [Workflow موفق](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38041459908).
+- این همتاسازی زمانی **بعد از تخمین‌های قبلی** انجام شد؛ نه گزینش واقعاً پیشاتخمین، نه تأیید اثر علّی، نه مجوز اجرای GMM با ۵/۱۰ کشور. خواسته ایمیل «۳۰ کشور» به مطالعه ۴۷کشوری تسری داده نشد.
+- **۰ مدل GMM دارای پذیرش علمی نهایی**؛ PR شماره ۱ Draft و بدون Merge.
 
-| Phase | Status |
+---
+
+## تازه‌ترین وضعیت اجرای هاروارد | ۱۰ اکتبر ۲۰۲۶
+
+- داده واقعی Harvard HS92 تجارت دوجانبه، فایل ۳۰٬۷۶۷٬۲۵۱ بایتی با MD5 منطبق بر منبع رسمی؛ ۸۷۹٬۰۱۴ ردیف و ۲۳۲ کشور.
+- اتصال به داده اصلی ۴۷ کشور و ۲۰۰۵ تا ۲۰۲۲؛ ۱۵۳٬۵۲۲ ردیف وارداتی در سال‌های ۲۰۰۵–۲۰۲۱، پوشش ≥۸۰٪ برای **۴۸۱ از ۷۹۹ کشور-سال**، ۳۵ کشور و ۱۷ سال.
+- اجرای واقعی چهار مدل FE ایستا/پویا برای Growth و ln_Productivity، سناریوی حذف ۲۰۲۰ و ۳۵ حذف تک‌کشوری برای هر مدل، **۵۹۲ ردیف ضریب**، [Workflow 22 موفق](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38040679639).
+- نشانه منفی و مقدار p<۰٫۰۵ برای نماینده Internet شرکای تجاری در دو مدل رشد **رابطه مشروط است نه اثر علی**. هیچ‌یک از ضرایب خارجی مدل بهره‌وری معنادار ۵٪ نبود.
+- **۱۲ کشور مهم از جمله CHN، JPN، FRA با پوشش ناکافی کنار می‌مانند**؛ سوگیری انتخاب جدی، تجارت کل کالاها نه فناوری، مشکل ابزار/هم‌انباشتگی و GMM همچنان حل‌نشده‌اند.
+- گزارش داده/برآورد جدید: [docs/PHASE_B_HARVARD_REAL_RESULTS_FA.md](PHASE_B_HARVARD_REAL_RESULTS_FA.md) و [Artifact محاسبات واقعی](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38040679639).
+- وضعیت PR شماره ۱: Draft، Merge نشده. **تعداد مدل‌های GMM پذیرفته‌شده همچنان صفر**.
+
+---
+
+# وضعیت به‌روزشده پروژه اقتصاد دیجیتال | ۱۰ اکتبر ۲۰۲۶
+
+**گزارش وضعیت ۱۰ اکتبر ۲۰۲۶، فازهای تکمیلی:** فاز A با اجرای واقعی ۲۰۸ مدل FE/LOO و پنجره‌های حساسیت کامل شد؛ [Workflow 17](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38037472731). فاز B طراحی مسیر واردات دوجانبه HS85، ۷ تست واحد موفق و کد ورود فایل واقعی BACI را تکمیل کرد، ولی دانلود رسمی CEPII در GitHub Actions با HTTP 403 و UN Comtrade با HTTP 429/500 مواجه شد؛ بنابراین **اجرای تجربی کامل مدل شبکه و اعتبار علی آن انجام نشده است**. [گزارش A](PHASE_A_VALIDATION_FA.md)، [گزارش B](PHASE_B_SPILLOVER_DESIGN_FA.md). نتیجه علمی هنوز تأیید علی ندارد. 
+
+
+**مخزن:** mrst10578/Digital-Economy-GMM
+**شاخه:** research/digital-economy-estimation-audit-20261008
+**PR:** #1، در وضعیت Draft و بدون Merge.
+
+## بررسی منابع و داده
+- فایل Word، Excel، دیکشنری، تصاویر استاد و یادداشت ایمیل اصلی خوانده و با هش و منشأ پژوهش منطبق شده‌اند.
+- ۴۷ کشور × ۱۸ سال ۲۰۰۵ تا ۲۰۲۲ = ۸۴۶ مشاهده؛ متوازن، بدون مقدار مفقود و کلید تکراری.
+- ۶٬۷۶۸ مقایسه سلولی با API فعلی بانک جهانی در آستانه تعریف‌شده مطابق بود. محدودیت تغییر نسخه تاریخی WDI محفوظ است.
+- ایران در نمونه اصلی حضور ندارد.
+
+## اجراهای واقعی
+| مرحله | وضعیت و شاهد |
 |---|---|
-| Independent GitHub code scaffold | Complete on main |
-| Dropbox source ZIP uploaded | Complete: `/Digital_Economy_Ready_Package.zip` |
-| Original ZIP imported and SHA256 validated in GitHub Actions | Complete |
-| Unpacked Word, Excel, dictionary, screenshots, notes and prompt | Complete in `sources/` and repository root |
-| Machine-readable Excel in `data/raw/Balanced_Panel_Data.xlsx` | Complete |
-| Python / R / gretl environment checks | Previously succeeded |
-| Input statistical data audit and DTA export | Github workflow `05-validate-research-data.yml`: check its latest run/artifact |
-| Unit roots, correlations/VIF, instrument classification | NOT RUN as final research findings |
-| Difference/System GMM and post-estimation tests | NOT RUN |
-| Stata 18/xtabond2 | Requires licensed executable and finalized model specification |
-| Final paper/report | NOT GENERATED |
+| Python: آمار، VIF، FE و roundtrip DTA | انجام شد، Workflow 07 |
+| R: IPS، Fisher، CIPS، Pesaran CD و ۱۰ برآورد pgmm | انجام شد، Workflow 08 |
+| gretl: شش برآورد، محدودسازی ابزار و هشدار رتبه | انجام شد، Workflow 09 |
+| Stata واقعی و xtabond2 3.7.2 | **هر شش مدل اجرا شدند**، خروجی ایمیل ۹ اکتبر ۲۰۲۶ و Workflow 13 |
+| Hansen، Sargan، AR(1)/AR(2) در Stata | **اجرا شده‌اند**، دارای هشدارهای اعتبار |
+| Difference-in-Hansen در Stata | **واقعاً انجام شده**؛ گروه‌های ابزار بهره‌وری در برخی System رد شده‌اند |
+| CIPS drift/trend سطح/تفاضل، lag1/2 | **۶۴ آزمون موفق R** در Workflow 14 |
+| Pesaran CD بعد از FE دوطرفه | انجام شد، برخی مدل‌ها همچنان CD معنادار داشتند، Workflow 14 |
+| FE دوطرفه با Driscoll–Kraay و CCE ایستا | اجرا شدند، ۸ مشخصه مقایسه‌ای؛ بدون ادعای علی، Workflow 14 |
+| تکرار مستقل ADF Fisher | **p=۰٫۴۸۳۵۱۵** برای سطح ln بهره‌وری با عرض از مبدأ و lag1؛ همسان با Stata، Workflow 15 |
+| حل اختلاف قبلی R و Stata | **حل شد:** dfcor=FALSE در R قبلی p=۰٫۰۴۳۶۷۹، dfcor=TRUE p=۰٫۴۸۳۵۱۵؛ Workflow 16 و بازاجرای اصلاح‌شده 08 |
+| گزارش علمی فارسی، راهنمای دفاع، PDF | بخش‌های اصلی تولید و به‌روزرسانی شدند؛ Workflow 11 |
+| مدل علّی GMM معتبر نهایی | **هیچ‌کدام تأیید نشده‌اند** |
+| اثبات سرریز فناوری خارجی | **قابل شناسایی با داده حاضر نیست** |
+| آزمون هم‌انباشتگی/شکست ساختاری جامع | **انجام نشده و محدودیت علمی است** |
+| همتاسازی و تعمیم به ایران | **حل نشده، ایران در نمونه نیست** |
 
-Do not treat an installation smoke test, workbook import, or DTA conversion as a statistical estimation. The research manuscript must be studied in full before defining the GMM equations.
+## اسناد و مسیرهای کلیدی
+- docs/FINAL_SCIENTIFIC_VERDICT_FA.md: **جمع‌بندی روش‌شناختی تکمیلی، مهم‌ترین سند برای تصمیم درباره نتیجه پژوهش**.
+- docs/STATA_REAL_RESULTS_AUDIT_FA.md: ممیزی شش مدل واقعی Stata و Difference-in-Hansen.
+- docs/FINAL_REPORT_FA.md: گزارش قابل ارائه در فارسی.
+- docs/DEFENSE_GUIDE_FA.md: مباحث آموزشی و پرسش‌های دفاع.
+- docs/MODEL_SPECIFICATION.md: فرضیات، متغیرها و لحظات GMM.
+- data/raw/Balanced_Panel_Data.xlsx: داده واقعی.
+- evidence/stata-2026-10-09/outputs.zip: پیوست بدون تغییر بایت ایمیل Stata.
+- src/r/robustness.R: آزمون‌های CIPS سطح/تفاضل، FE با DK، CCE، Pesaran CD.
+- src/python/adf_fisher_crosscheck.py: راستی‌آزمایی مستقل ADF و Fisher.
+- src/python/audit_emailed_stata.py: استخراج/ممیزی ایمن ZIP خروجی Stata.
+- stata/RUN_ALL.do: مسیر بازتولید لپ‌تاپی.
+
+## نتیجه و مرزهای ادعا
+تحویل کد/داده/خروجی/گزارش قابل بازتولید **تمام شده**؛ ادعای مثبت و علی درباره سرریز خارجی یا پذیرش علمی یک مدل GMM **تمام نشده و با این طراحی/داده قابل تضمین نیست**. بهترین مدل مقایسه‌ای، Growth Difference GMM، هنوز تحت هشدار ماتریس و فرضیات ابزار است. نباید برای مطلوب شدن ضریب یا آزمون، مشخصات را دستکاری کرد.
+
+پیش از هر Merge باید ممیزی علمی مستقل و در صورت نیاز طراحی داده انتقال فناوری خارجی انجام شود.

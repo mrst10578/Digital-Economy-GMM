@@ -1,0 +1,28 @@
+name: Independently reproduce Stata Fisher ADF and trend sensitivity
+on:
+  push:
+    paths:
+      - ".github/workflows/15-crosscheck-fisher.yml"
+      - "src/python/adf_fisher_crosscheck.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  adf-replication:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install independent econometrics libraries
+        run: python -m pip install pandas openpyxl statsmodels scipy numpy
+      - name: Reproduce genuine per-country fixed-lag ADF and Fisher p-values
+        run: python -m src.python.adf_fisher_crosscheck
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-fisher-crosssoftware-replication
+          path: outputs/python_adf/
+          if-no-files-found: warn

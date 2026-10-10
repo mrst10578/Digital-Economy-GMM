@@ -1,0 +1,27 @@
+name: Explain R versus Stata Fisher test discrepancy
+on:
+  push:
+    paths:
+      - ".github/workflows/16-fisher-forensics.yml"
+      - "src/r/fisher_forensics.R"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  forensic-reproduction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install R unit root test libraries and MacKinnon reference
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends r-base r-cran-plm r-cran-readxl r-cran-urca
+      - name: Trace package-dependent Fisher p-value approximation
+        run: Rscript src/r/fisher_forensics.R
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-R-Fisher-discrepancy-forensics
+          path: outputs/r_fisher_forensics/
+          if-no-files-found: warn
