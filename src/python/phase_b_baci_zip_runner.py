@@ -2,7 +2,7 @@
 Source data MUST be real. Records only research proxy; no causal inference.
 """
 from __future__ import annotations
-import hashlib,json,re,zipfile,urllib.request,shutil,os,sys
+import argparse,hashlib,json,re,zipfile,urllib.request,shutil,os,sys
 from pathlib import Path
 from datetime import datetime,timezone
 import numpy as np
@@ -71,6 +71,9 @@ def filter_network(archive,importer_codes):
             print("OFFICIAL_BACI_YEAR",year,"sample_pairs",len(row),"HS85_ROWS",n_hs85,flush=True)
     return pd.concat(results,ignore_index=True),meta
 def main():
+    parser=argparse.ArgumentParser(description='BACI full real-source processing; no synthetic data')
+    parser.add_argument('--source-zip',type=Path,default=None,help='Path to authentic CEPII BACI_HS02_V202601.zip, when network download is forbidden')
+    args=parser.parse_args()
     OUT.mkdir(parents=True,exist_ok=True)
     manifest=dict(source=ARCHIVE,upstream="CEPII BACI 202601 HS02",
          source_url="https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37",
@@ -85,7 +88,15 @@ def main():
         panel=pd.read_excel(SOURCE)
         assert len(panel)==846 and panel.ISO3.nunique()==47
         cw=country_m49(set(panel.ISO3))
-        archive,sha,size=download_archive()
+        if args.source_zip is not None:
+            archive=args.source_zip
+            if not archive.is_file():raise FileNotFoundError(f'BACI ZIP not found: {archive}')
+            size=archive.stat().st_size
+            sha=hashlib.sha256(archive.read_bytes()).hexdigest()
+            manifest['archive_delivery']='local_user_supplied_from_official_CEPII'
+        else:
+            archive,sha,size=download_archive()
+            manifest['archive_delivery']='direct_official_download'
         manifest.update(zip_sha256=sha,zip_size_bytes=size)
         trade,years=filter_network(archive,set(cw.values()))
         manifest["file_metadata"]=years
