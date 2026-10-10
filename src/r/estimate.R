@@ -10,7 +10,7 @@ suppressPackageStartupMessages(library(sandwich))
 cat("R_VERSION",R.version.string,"\n")
 cat("PLM_VERSION",as.character(packageVersion("plm")),"\n")
 cat("READXL_VERSION",as.character(packageVersion("readxl")),"\n")
-cat("DESIGN_PRESPECIFIED=laged dependent and all six covariates instrumented at lags 2:3; collapsed; two-way year effects.\n")
+cat("DESIGN_PRESPECIFIED=lagged dependent and six covariates instrumented at 2:3, collapsed. ADF dfcor=TRUE; Fisher MacKinnon1994 to align Stata and independent country ADF.\n")
 dat=as.data.frame(readxl::read_xlsx("data/raw/Balanced_Panel_Data.xlsx"))
 dat=dat[order(dat$ISO3,dat$Year),]
 dat$ln_Productivity=log(dat$Productivity)
@@ -36,8 +36,8 @@ test_run=function(v,label,expr){
 }
 for(v in vars){
     test_result=rbind(test_result,
-      test_run(v,"IPS_intercept_lag1",plm::purtest(p[[v]],test="ips",exo="intercept",lags=1)),
-      test_run(v,"Fisher_MadWu_intercept_lag1",plm::purtest(p[[v]],test="madwu",exo="intercept",lags=1)),
+      test_run(v,"IPS_intercept_lag1_dfcor_TRUE",plm::purtest(p[[v]],test="ips",exo="intercept",lags=1,dfcor=TRUE)),
+      test_run(v,"Fisher_MadWu_intercept_lag1_dfcor_TRUE_MacKinnon1994",plm::purtest(p[[v]],test="madwu",exo="intercept",lags=1,dfcor=TRUE,p.approx="MacKinnon1994")),
       test_run(v,"CIPS_drift_lag1",plm::cipstest(p[[v]],lags=1,type="drift",model="cmg")))
 }
 write.csv(test_result,"outputs/r/unit_roots.csv",row.names=FALSE)
