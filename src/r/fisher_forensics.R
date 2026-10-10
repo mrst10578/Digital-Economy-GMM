@@ -9,10 +9,16 @@ d$ln_Productivity=log(d$Productivity)
 p=plm::pdata.frame(d,index=c("ISO3","Year"))
 cat("R",R.version.string,"plm",as.character(packageVersion("plm")),"urca_installed",requireNamespace("urca",quietly=TRUE),"\n")
 out=data.frame()
-for(spec in c("package_default","MacKinnon1994","MacKinnon1996")){
+for(spec in c("package_default","MacKinnon1994","MacKinnon1996","dfcor_TRUE_1994","dfcor_TRUE_1996")){
   tryCatch({
     if(spec=="package_default"){
       fit=plm::purtest(p[["ln_Productivity"]],test="madwu",exo="intercept",lags=1)
+    } else if(spec=="dfcor_TRUE_1994") {
+      fit=plm::purtest(p[["ln_Productivity"]],test="madwu",exo="intercept",
+                      lags=1,p.approx="MacKinnon1994",dfcor=TRUE)
+    } else if(spec=="dfcor_TRUE_1996") {
+      fit=plm::purtest(p[["ln_Productivity"]],test="madwu",exo="intercept",
+                      lags=1,p.approx="MacKinnon1996",dfcor=TRUE)
     } else {
       fit=plm::purtest(p[["ln_Productivity"]],test="madwu",exo="intercept",
                       lags=1,p.approx=spec)
