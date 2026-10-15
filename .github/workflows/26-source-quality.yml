@@ -1,0 +1,50 @@
+name: Source data quality and WDI snapshot integrity
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'sources/Balanced_Panel_Data.xlsx'
+      - 'src/python/audit_workbook_quality.py'
+      - 'src/python/verify_wdi_change_snapshot.py'
+      - 'evidence/tablet-stata-2026-10-15/wdi_*'
+      - '.github/workflows/26-source-quality.yml'
+  pull_request:
+    paths:
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'sources/Balanced_Panel_Data.xlsx'
+      - 'src/python/audit_workbook_quality.py'
+      - 'src/python/verify_wdi_change_snapshot.py'
+      - 'evidence/tablet-stata-2026-10-15/wdi_*'
+      - '.github/workflows/26-source-quality.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-source-provenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install XLSX reader (pure-Python)
+        run: python -m pip install "openpyxl>=3.1,<4"
+      - name: Check source structure, variable domains and original workbook hash
+        env:
+          SOURCE_AUDIT_OFFLINE: "1"
+        run: python -m src.python.audit_workbook_quality
+      - name: Verify 2026-10-15 WDI archival source comparison and all revised cells
+        run: python -m src.python.verify_wdi_change_snapshot
+      - name: Verify genuine Stata results preserved from tablet
+        run: python -m src.python.audit_tablet_diagnostics
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-integrity-audit-only-not-live-WDI
+          path: |
+            outputs/quality_review/source_quality_latest.json
+            outputs/tablet_audit/latest.json
+          if-no-files-found: warn
