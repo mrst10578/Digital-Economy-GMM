@@ -63,7 +63,7 @@ def main():
     assert "INTEGRATION_GROWTH_SCRIPT_RC=0" in integration_log
     assert "INTEGRATION_PROD_SCRIPT_RC=0" in integration_log
     assert "INTEGRATION_FULL_RANK_EXECUTION_COMPLETED" in integration_log
-    assert not re.search(r"^Warning:|dropped due to collinearity|^STATA_MODEL_FAILED=|^r\\(\\d+\\);",
+    assert not re.search(r"^Warning:|dropped due to collinearity|^STATA_MODEL_FAILED=|^r\(\d+\);",
                          integration_log,re.M), "Original production scripts reintroduced a numerical warning"
     status={"result":"PASS: six real Stata models, no covariance/collinearity warnings, historical numerical equivalence",
             "gmm_models_reproduced":6,"production_integrated_models_reproduced":6,"max_absolute_historical_diagnostic_delta":str(max_deviation),
