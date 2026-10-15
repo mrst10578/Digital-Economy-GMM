@@ -39,6 +39,12 @@ bysort ISO3: assert _N == 18
 xtset panel_id Year
 capture drop yd_*
 quietly tabulate Year, generate(yd_)
-global digital_year_dummies "yd_2-yd_18"
+* Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+* verified against all six archived Stata estimates before changing code.
+* Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+* System GMM: yd_4 was auto-omitted for perfect collinearity.
+* Explicitly omit the aliases rather than passing singular moment matrices.
+global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
 display as result "STATA_DATA_PREFLIGHT_OK n=" _N
 display as text "The raw data and two-way time indicators passed structure checks; no GMM was fitted yet."
