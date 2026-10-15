@@ -1,0 +1,35 @@
+name: Verify archived tablet Stata evidence (no Stata execution)
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_tablet_diagnostics.py'
+      - 'evidence/tablet-stata-2026-10-15/**'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/25-tablet-stata-evidence.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_tablet_diagnostics.py'
+      - 'evidence/tablet-stata-2026-10-15/**'
+      - '.github/workflows/25-tablet-stata-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-preserved-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify native Stata results and method guardrails, NOT re-run Stata
+        run: python -m src.python.audit_tablet_diagnostics
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tablet-stata-archived-evidence-audit
+          path: outputs/tablet_audit/latest.json
+          if-no-files-found: warn
