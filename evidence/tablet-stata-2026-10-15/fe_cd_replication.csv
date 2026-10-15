@@ -1,0 +1,5 @@
+model,N,years,groups,cd_stat,cd_p,b_internet
+Growth_static,846,18,47,1.90774,.056424823,-.11116575
+Growth_dynamic,799,17,47,2.7659373,.005675945,-.085404627
+ln_Productivity_static,846,18,47,2.8255219,.0047203642,.0036846697
+ln_Productivity_dynamic,799,17,47,1.214179,.22467937,-.00046076172
