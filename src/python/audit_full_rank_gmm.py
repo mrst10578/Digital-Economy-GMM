@@ -65,8 +65,22 @@ def main():
     assert "INTEGRATION_FULL_RANK_EXECUTION_COMPLETED" in integration_log
     assert not re.search(r"^Warning:|dropped due to collinearity|^STATA_MODEL_FAILED=|^r\(\d+\);",
                          integration_log,re.M), "Original production scripts reintroduced a numerical warning"
+    # Additional full native Stata rerun on 162 latest-WDI-sensitivity cells.
+    latest_old=read_csv((EVIDENCE/"wdi_gmm_model_status.csv").read_text(encoding="utf-8"))
+    latest_new=read_csv((EVIDENCE/"wdi_production_full_rank_model_status.csv").read_text(encoding="utf-8"))
+    assert len(latest_new)==len(latest_old)==6 and set(latest_new)==set(latest_old)
+    for name, row in latest_new.items():
+        assert row["status"]=="DIAGNOSTIC_HOLD" and row["rc"]=="0",f"WDI integration error: {name}"
+        for field in NUMERIC:
+            assert abs(Decimal(row[field])-Decimal(latest_old[name][field]))<=Decimal("0.000001"),f"WDI source/basis drift: {name}/{field}"
+    updated_log=(EVIDENCE/"wdi_production_full_rank_integration.log").read_text(encoding="utf-8")
+    assert len(re.findall(r"^STATA_MODEL_ESTIMATED=",updated_log,re.M))==6
+    assert "INTEGRATION_FULL_RANK_EXECUTION_COMPLETED" in updated_log
+    assert "INTEGRATION_GROWTH_SCRIPT_RC=0" in updated_log and "INTEGRATION_PROD_SCRIPT_RC=0" in updated_log
+    assert not re.search(r"^Warning:|dropped due to collinearity|^STATA_MODEL_FAILED=|^r\(\d+\);",
+                         updated_log,re.M), "WDI revised actual Stata run emitted a numerical warning"
     status={"result":"PASS: six real Stata models, no covariance/collinearity warnings, historical numerical equivalence",
-            "gmm_models_reproduced":6,"production_integrated_models_reproduced":6,"max_absolute_historical_diagnostic_delta":str(max_deviation),
+            "gmm_models_reproduced":6,"production_integrated_models_reproduced":6,"updated_WDI_clean_models":6,"max_absolute_historical_diagnostic_delta":str(max_deviation),
             "numerical_warnings":0,"models_accepted_as_causal":0,
             "note":"No statistical software warning is not proof of valid GMM instruments or causal spillovers."}
     out=ROOT/"outputs/full_rank_audit";out.mkdir(parents=True,exist_ok=True)
