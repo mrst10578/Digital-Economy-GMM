@@ -1,0 +1,487 @@
+{
+  "timestamp_utc": "2026-10-15T17:32:19.095375+00:00",
+  "source_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "source_twin_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "records": 846,
+  "countries": 47,
+  "years": 18,
+  "formulas": 0,
+  "excel_errors": 0,
+  "structural_errors": [],
+  "domain_violations": [],
+  "ranges": {
+    "Growth": {
+      "minimum": {
+        "iso3": "MAC",
+        "year": 2020,
+        "value": -54.4020925789353
+      },
+      "maximum": {
+        "iso3": "AZE",
+        "year": 2006,
+        "value": 34.4662096226792
+      },
+      "top_absolute_yearly_changes": [
+        [
+          76.86429458127151,
+          "MAC",
+          2021,
+          76.86429
+        ],
+        [
+          51.941183178261404,
+          "MAC",
+          2020,
+          -51.94118
+        ],
+        [
+          41.4191434968332,
+          "MAC",
+          2022,
+          -41.41914
+        ]
+      ]
+    },
+    "Productivity": {
+      "minimum": {
+        "iso3": "KGZ",
+        "year": 2005,
+        "value": 9728.8192393761
+      },
+      "maximum": {
+        "iso3": "LUX",
+        "year": 2007,
+        "value": 320335.617919495
+      },
+      "top_absolute_yearly_changes": [
+        [
+          122451.988689759,
+          "MAC",
+          2020,
+          -122451.98869
+        ],
+        [
+          62119.70128079201,
+          "MAC",
+          2015,
+          -62119.70128
+        ],
+        [
+          40768.076523622,
+          "MAC",
+          2010,
+          40768.07652
+        ]
+      ]
+    },
+    "Internet": {
+      "minimum": {
+        "iso3": "KAZ",
+        "year": 2005,
+        "value": 2.961699963
+      },
+      "maximum": {
+        "iso3": "DNK",
+        "year": 2021,
+        "value": 98.8658506
+      },
+      "top_absolute_yearly_changes": [
+        [
+          29.5599995702077,
+          "MDA",
+          2014,
+          29.56
+        ],
+        [
+          23.415701724898902,
+          "MNG",
+          2018,
+          23.4157
+        ],
+        [
+          20.246962494844503,
+          "ISR",
+          2007,
+          20.24696
+        ]
+      ]
+    },
+    "Broadband": {
+      "minimum": {
+        "iso3": "KAZ",
+        "year": 2005,
+        "value": 0.0187623875751912
+      },
+      "maximum": {
+        "iso3": "FRA",
+        "year": 2022,
+        "value": 48.250226559098
+      },
+      "top_absolute_yearly_changes": [
+        [
+          7.3854465430624,
+          "MLT",
+          2007,
+          7.38545
+        ],
+        [
+          7.117936845241701,
+          "DNK",
+          2006,
+          7.11794
+        ],
+        [
+          6.579376222693401,
+          "NLD",
+          2006,
+          6.57938
+        ]
+      ]
+    },
+    "ICT_Exports": {
+      "minimum": {
+        "iso3": "MAC",
+        "year": 2019,
+        "value": 0.0572161047456357
+      },
+      "maximum": {
+        "iso3": "ISR",
+        "year": 2020,
+        "value": 62.4761560624935
+      },
+      "top_absolute_yearly_changes": [
+        [
+          21.274522854124204,
+          "FIN",
+          2008,
+          21.27452
+        ],
+        [
+          11.660751781125903,
+          "ISR",
+          2020,
+          11.66075
+        ],
+        [
+          10.141590547076703,
+          "FIN",
+          2020,
+          10.14159
+        ]
+      ]
+    },
+    "Unemployment": {
+      "minimum": {
+        "iso3": "MDA",
+        "year": 2021,
+        "value": 0.794
+      },
+      "maximum": {
+        "iso3": "MKD",
+        "year": 2005,
+        "value": 37.32
+      },
+      "top_absolute_yearly_changes": [
+        [
+          8.407,
+          "PAN",
+          2020,
+          8.407
+        ],
+        [
+          7.9590000000000005,
+          "LTU",
+          2009,
+          7.959
+        ],
+        [
+          6.758000000000003,
+          "GRC",
+          2012,
+          6.758
+        ]
+      ]
+    },
+    "Inflation": {
+      "minimum": {
+        "iso3": "IRL",
+        "year": 2009,
+        "value": -4.44754686876746
+      },
+      "maximum": {
+        "iso3": "TUR",
+        "year": 2022,
+        "value": 72.3088359891207
+      },
+      "top_absolute_yearly_changes": [
+        [
+          52.712343297788294,
+          "TUR",
+          2022,
+          52.71234
+        ],
+        [
+          23.630886386595243,
+          "MDA",
+          2022,
+          23.63089
+        ],
+        [
+          20.3361590894365,
+          "MNG",
+          2009,
+          -20.33616
+        ]
+      ]
+    },
+    "RnD": {
+      "minimum": {
+        "iso3": "TTO",
+        "year": 2008,
+        "value": 0.03072
+      },
+      "maximum": {
+        "iso3": "ISR",
+        "year": 2022,
+        "value": 6.17831
+      },
+      "top_absolute_yearly_changes": [
+        [
+          0.6439199999999998,
+          "GBR",
+          2014,
+          0.64392
+        ],
+        [
+          0.4768100000000004,
+          "ISR",
+          2020,
+          0.47681
+        ],
+        [
+          0.4688300000000001,
+          "SGP",
+          2009,
+          -0.46883
+        ]
+      ]
+    }
+  },
+  "wdi_current_comparison": {
+    "Productivity": {
+      "indicator": "SL.GDP.PCAP.EM.KD",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/SL.GDP.PCAP.EM.KD?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "Growth": {
+      "indicator": "NY.GDP.MKTP.KD.ZG",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.KD.ZG?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "Internet": {
+      "indicator": "IT.NET.USER.ZS",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/IT.NET.USER.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "Unemployment": {
+      "indicator": "SL.UEM.TOTL.ZS",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/SL.UEM.TOTL.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "Broadband": {
+      "indicator": "IT.NET.BBND.P2",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/IT.NET.BBND.P2?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "ICT_Exports": {
+      "indicator": "BX.GSR.CCIS.ZS",
+      "verified": true,
+      "matched": 814,
+      "different": 32,
+      "missing_in_current_WDI": 0,
+      "example_differences": [
+        {
+          "country": "HKG",
+          "year": 2022,
+          "raw": 4.78802732568447,
+          "latest_WDI": 4.78837319289006,
+          "absolute_delta": 0.00034586720559026674
+        },
+        {
+          "country": "ISR",
+          "year": 2012,
+          "raw": 40.3559148020794,
+          "latest_WDI": 42.1897814977055,
+          "absolute_delta": 1.8338666956261065
+        },
+        {
+          "country": "ISR",
+          "year": 2013,
+          "raw": 36.9158985515544,
+          "latest_WDI": 36.8448322255237,
+          "absolute_delta": 0.07106632603069585
+        },
+        {
+          "country": "ISR",
+          "year": 2014,
+          "raw": 42.040455381079,
+          "latest_WDI": 41.851479900689,
+          "absolute_delta": 0.188975480389999
+        },
+        {
+          "country": "ISR",
+          "year": 2015,
+          "raw": 44.0915379294443,
+          "latest_WDI": 43.7198279886424,
+          "absolute_delta": 0.37170994080189956
+        },
+        {
+          "country": "ISR",
+          "year": 2016,
+          "raw": 48.2150757275074,
+          "latest_WDI": 48.1182517070606,
+          "absolute_delta": 0.09682402044679606
+        },
+        {
+          "country": "ISR",
+          "year": 2017,
+          "raw": 42.3964779719851,
+          "latest_WDI": 42.3236896429307,
+          "absolute_delta": 0.07278832905439714
+        },
+        {
+          "country": "ISR",
+          "year": 2018,
+          "raw": 46.1277501635694,
+          "latest_WDI": 47.4238985652736,
+          "absolute_delta": 1.296148401704201
+        },
+        {
+          "country": "ISR",
+          "year": 2019,
+          "raw": 50.8154042813676,
+          "latest_WDI": 50.8758947990033,
+          "absolute_delta": 0.06049051763569935
+        },
+        {
+          "country": "ISR",
+          "year": 2020,
+          "raw": 62.4761560624935,
+          "latest_WDI": 62.4773442626069,
+          "absolute_delta": 0.001188200113396931
+        }
+      ],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "Inflation": {
+      "indicator": "FP.CPI.TOTL.ZG",
+      "verified": true,
+      "matched": 716,
+      "different": 130,
+      "missing_in_current_WDI": 0,
+      "example_differences": [
+        {
+          "country": "BEL",
+          "year": 2006,
+          "raw": 1.79120770070454,
+          "latest_WDI": 1.79131581197151,
+          "absolute_delta": 0.000108111266970079
+        },
+        {
+          "country": "BEL",
+          "year": 2008,
+          "raw": 4.48944420508404,
+          "latest_WDI": 4.48627430659013,
+          "absolute_delta": 0.0031698984939101393
+        },
+        {
+          "country": "BEL",
+          "year": 2009,
+          "raw": -0.0531456741254177,
+          "latest_WDI": -0.0520742926575202,
+          "absolute_delta": 0.0010713814678975017
+        },
+        {
+          "country": "BEL",
+          "year": 2010,
+          "raw": 2.18929920422458,
+          "latest_WDI": 2.18950032253256,
+          "absolute_delta": 0.00020111830797997499
+        },
+        {
+          "country": "BEL",
+          "year": 2011,
+          "raw": 3.5320821072274,
+          "latest_WDI": 3.5325394224116,
+          "absolute_delta": 0.0004573151842000023
+        },
+        {
+          "country": "BEL",
+          "year": 2012,
+          "raw": 2.83966343445899,
+          "latest_WDI": 2.83865067360794,
+          "absolute_delta": 0.0010127608510499542
+        },
+        {
+          "country": "BEL",
+          "year": 2013,
+          "raw": 1.1130959402754,
+          "latest_WDI": 1.11278332649242,
+          "absolute_delta": 0.00031261378297986475
+        },
+        {
+          "country": "BEL",
+          "year": 2014,
+          "raw": 0.340002833356922,
+          "latest_WDI": 0.349555725948367,
+          "absolute_delta": 0.009552892591444984
+        },
+        {
+          "country": "BEL",
+          "year": 2015,
+          "raw": 0.561429152790158,
+          "latest_WDI": 0.561835629368236,
+          "absolute_delta": 0.0004064765780779078
+        },
+        {
+          "country": "BEL",
+          "year": 2016,
+          "raw": 1.97385264653163,
+          "latest_WDI": 1.97443404027092,
+          "absolute_delta": 0.0005813937392900037
+        }
+      ],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/FP.CPI.TOTL.ZG?format=json&date=2005%3A2022&per_page=20000"
+    },
+    "RnD": {
+      "indicator": "GB.XPD.RSDV.GD.ZS",
+      "verified": true,
+      "matched": 846,
+      "different": 0,
+      "missing_in_current_WDI": 0,
+      "example_differences": [],
+      "URL": "https://api.worldbank.org/v2/country/all/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2005%3A2022&per_page=20000"
+    }
+  },
+  "note": "Current WDI revisions and gaps do not automatically mean historical input was corrupted; no raw data changed."
+}
