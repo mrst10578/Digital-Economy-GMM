@@ -1,0 +1,164 @@
+{
+  "source_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "sensitivity_file_sha256": "ecc83af99ec690fc871e0b43f2efaf0f3522677f9ec248fcd344f2038b05b40b",
+  "timestamp_utc": "2026-10-15T17:34:24.852686+00:00",
+  "changed_cell_count": 162,
+  "by_column": {
+    "ICT_Exports": 32,
+    "Inflation": 130
+  },
+  "worst_absolute_revision": [
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2021,
+      "original": 57.8514755887662,
+      "current_WDI": 60.4465730207237,
+      "delta": 2.595097431957498,
+      "relative_change": 0.04485792982022784,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2012,
+      "original": 40.3559148020794,
+      "current_WDI": 42.1897814977055,
+      "delta": 1.8338666956261065,
+      "relative_change": 0.045442327466000444,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2018,
+      "original": 46.1277501635694,
+      "current_WDI": 47.4238985652736,
+      "delta": 1.296148401704201,
+      "relative_change": 0.02809910297181301,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2022,
+      "original": 54.8894254416436,
+      "current_WDI": 53.9536220727557,
+      "delta": -0.9358033688879033,
+      "relative_change": -0.017048882573617294,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2015,
+      "original": 44.0915379294443,
+      "current_WDI": 43.7198279886424,
+      "delta": -0.37170994080189956,
+      "relative_change": -0.008430414502590347,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "Inflation",
+      "indicator": "FP.CPI.TOTL.ZG",
+      "ISO3": "PAN",
+      "Year": 2005,
+      "original": 2.85588324760957,
+      "current_WDI": 3.18170519512806,
+      "delta": 0.3258219475184898,
+      "relative_change": 0.11408797883849388,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/FP.CPI.TOTL.ZG?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2014,
+      "original": 42.040455381079,
+      "current_WDI": 41.851479900689,
+      "delta": -0.188975480389999,
+      "relative_change": -0.004495086427514069,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2016,
+      "original": 48.2150757275074,
+      "current_WDI": 48.1182517070606,
+      "delta": -0.09682402044679606,
+      "relative_change": -0.002008169000791521,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "Inflation",
+      "indicator": "FP.CPI.TOTL.ZG",
+      "ISO3": "KAZ",
+      "Year": 2020,
+      "original": 6.71815454861458,
+      "current_WDI": 6.80371915011852,
+      "delta": 0.08556460150394063,
+      "relative_change": 0.012736325263845827,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/FP.CPI.TOTL.ZG?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "Inflation",
+      "indicator": "FP.CPI.TOTL.ZG",
+      "ISO3": "KAZ",
+      "Year": 2021,
+      "original": 8.04147134028401,
+      "current_WDI": 7.96011920034767,
+      "delta": -0.0813521399363406,
+      "relative_change": -0.010116574006650305,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/FP.CPI.TOTL.ZG?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2017,
+      "original": 42.3964779719851,
+      "current_WDI": 42.3236896429307,
+      "delta": -0.07278832905439714,
+      "relative_change": -0.0017168484868600282,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    },
+    {
+      "column": "ICT_Exports",
+      "indicator": "BX.GSR.CCIS.ZS",
+      "ISO3": "ISR",
+      "Year": 2013,
+      "original": 36.9158985515544,
+      "current_WDI": 36.8448322255237,
+      "delta": -0.07106632603069585,
+      "relative_change": -0.001925087261019778,
+      "request_url": "https://api.worldbank.org/v2/country/all/indicator/BX.GSR.CCIS.ZS?format=json&date=2005%3A2022&per_page=20000"
+    }
+  ],
+  "country_counts": {
+    "HKG": 1,
+    "ISR": 11,
+    "MEX": 1,
+    "TTO": 1,
+    "USA": 18,
+    "BEL": 16,
+    "DNK": 18,
+    "FIN": 8,
+    "FRA": 15,
+    "GRC": 9,
+    "HUN": 9,
+    "KAZ": 3,
+    "NLD": 13,
+    "PAN": 4,
+    "SVN": 16,
+    "SWE": 17,
+    "TUR": 2
+  },
+  "important": "Retains original in Git, revised workbook only for scenario comparison; not a replacement or proven correction."
+}
