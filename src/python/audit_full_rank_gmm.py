@@ -49,8 +49,24 @@ def main():
         assert len(calls)==3
         assert calls[0].count("$digital_year_dummies_diff")==2
         assert all(x.count("$digital_year_dummies_sys")==2 for x in calls[1:])
+    # Independent integration rerun using the actual patched production .do files.
+    integrated=read_csv((EVIDENCE/"production_full_rank_model_status.csv").read_text(encoding="utf-8"))
+    assert len(integrated)==6 and set(integrated)==set(old)
+    for name, row in integrated.items():
+        assert row["status"]=="DIAGNOSTIC_HOLD" and row["rc"]=="0",f"Integration failed: {name}"
+        for field in NUMERIC:
+            a=Decimal(old[name][field])
+            b=Decimal(row[field])
+            assert abs(a-b)<=Decimal("0.000001"),f"Integration drift: {name}/{field}"
+    integration_log=(EVIDENCE/"production_full_rank_integration.log").read_text(encoding="utf-8")
+    assert len(re.findall(r"^STATA_MODEL_ESTIMATED=",integration_log,re.M))==6
+    assert "INTEGRATION_GROWTH_SCRIPT_RC=0" in integration_log
+    assert "INTEGRATION_PROD_SCRIPT_RC=0" in integration_log
+    assert "INTEGRATION_FULL_RANK_EXECUTION_COMPLETED" in integration_log
+    assert not re.search(r"^Warning:|dropped due to collinearity|^STATA_MODEL_FAILED=|^r\\(\\d+\\);",
+                         integration_log,re.M), "Original production scripts reintroduced a numerical warning"
     status={"result":"PASS: six real Stata models, no covariance/collinearity warnings, historical numerical equivalence",
-            "gmm_models_reproduced":6,"max_absolute_historical_diagnostic_delta":str(max_deviation),
+            "gmm_models_reproduced":6,"production_integrated_models_reproduced":6,"max_absolute_historical_diagnostic_delta":str(max_deviation),
             "numerical_warnings":0,"models_accepted_as_causal":0,
             "note":"No statistical software warning is not proof of valid GMM instruments or causal spillovers."}
     out=ROOT/"outputs/full_rank_audit";out.mkdir(parents=True,exist_ok=True)
