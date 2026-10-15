@@ -10,6 +10,8 @@ on:
       - 'src/python/audit_full_rank_gmm.py'
       - 'evidence/tablet-stata-2026-10-15/full_rank_*'
       - 'evidence/tablet-stata-2026-10-15/production_full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/wdi_production_full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/wdi_gmm_model_status.csv'
       - '.github/workflows/27-full-rank-stata.yml'
   pull_request:
     paths:
@@ -19,6 +21,8 @@ on:
       - 'src/python/audit_full_rank_gmm.py'
       - 'evidence/tablet-stata-2026-10-15/full_rank_*'
       - 'evidence/tablet-stata-2026-10-15/production_full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/wdi_production_full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/wdi_gmm_model_status.csv'
       - '.github/workflows/27-full-rank-stata.yml'
   workflow_dispatch:
 permissions:
