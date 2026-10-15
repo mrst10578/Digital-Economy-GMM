@@ -1,0 +1,291 @@
+{
+  "timestamp_utc": "2026-10-15T17:43:21.824475+00:00",
+  "model_count": 6,
+  "original_models_failed": 0,
+  "wdi_models_failed": 0,
+  "current_WDI_log_sha256": "733af58d38aed0e427682722eb1ee77ac304a51aa94e31573ff65e2c4f251d8e",
+  "full_stata_pipeline_finished": true,
+  "singular_covariance_warnings": 6,
+  "year_dummy_collinearity_omissions": [
+    "yd_17 dropped due to collinearity",
+    "yd_4 dropped due to collinearity",
+    "yd_4 dropped due to collinearity",
+    "yd_17 dropped due to collinearity",
+    "yd_4 dropped due to collinearity",
+    "yd_4 dropped due to collinearity"
+  ],
+  "model_comparisons": [
+    {
+      "model": "GROWTH_DIFF_L23",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "752",
+          "current_WDI": "752",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "30",
+          "current_WDI": "30",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "0.35006931",
+          "current_WDI": "0.34872809",
+          "difference": "-0.00134122"
+        },
+        "hansen_p": {
+          "historical": "0.46556112",
+          "current_WDI": "0.46557772",
+          "difference": "0.00001660"
+        },
+        "ar1_p": {
+          "historical": "0.034784086",
+          "current_WDI": "0.034894388",
+          "difference": "0.000110302"
+        },
+        "ar2_p": {
+          "historical": "0.28036368",
+          "current_WDI": "0.28205243",
+          "difference": "0.00168875"
+        }
+      },
+      "p_threshold_crossings": []
+    },
+    {
+      "model": "GROWTH_SYS_L22",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "799",
+          "current_WDI": "799",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "31",
+          "current_WDI": "31",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "2.5354148E-9",
+          "current_WDI": "2.5312104E-9",
+          "difference": "-4.2044E-12"
+        },
+        "hansen_p": {
+          "historical": "0.77158344",
+          "current_WDI": "0.76907182",
+          "difference": "-0.00251162"
+        },
+        "ar1_p": {
+          "historical": "0.098791353",
+          "current_WDI": "0.099161573",
+          "difference": "0.000370220"
+        },
+        "ar2_p": {
+          "historical": "0.41289032",
+          "current_WDI": "0.41408867",
+          "difference": "0.00119835"
+        }
+      },
+      "p_threshold_crossings": []
+    },
+    {
+      "model": "GROWTH_SYS_L23_AUDIT",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "799",
+          "current_WDI": "799",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "38",
+          "current_WDI": "38",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "2.0038432E-7",
+          "current_WDI": "1.9946353E-7",
+          "difference": "-9.2079E-10"
+        },
+        "hansen_p": {
+          "historical": "0.80986029",
+          "current_WDI": "0.80641311",
+          "difference": "-0.00344718"
+        },
+        "ar1_p": {
+          "historical": "0.11272343",
+          "current_WDI": "0.11286501",
+          "difference": "0.00014158"
+        },
+        "ar2_p": {
+          "historical": "0.46692631",
+          "current_WDI": "0.46706349",
+          "difference": "0.00013718"
+        }
+      },
+      "p_threshold_crossings": []
+    },
+    {
+      "model": "PROD_DIFF_L23",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "752",
+          "current_WDI": "752",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "30",
+          "current_WDI": "30",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "0.79724592",
+          "current_WDI": "0.79717809",
+          "difference": "-0.00006783"
+        },
+        "hansen_p": {
+          "historical": "0.32439509",
+          "current_WDI": "0.33367011",
+          "difference": "0.00927502"
+        },
+        "ar1_p": {
+          "historical": "0.13338913",
+          "current_WDI": "0.13296697",
+          "difference": "-0.00042216"
+        },
+        "ar2_p": {
+          "historical": "0.42250559",
+          "current_WDI": "0.42299423",
+          "difference": "0.00048864"
+        }
+      },
+      "p_threshold_crossings": []
+    },
+    {
+      "model": "PROD_SYS_L22",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "799",
+          "current_WDI": "799",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "31",
+          "current_WDI": "31",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "0.57964462",
+          "current_WDI": "0.57103652",
+          "difference": "-0.00860810"
+        },
+        "hansen_p": {
+          "historical": "0.035448708",
+          "current_WDI": "0.035559401",
+          "difference": "0.000110693"
+        },
+        "ar1_p": {
+          "historical": "0.14162306",
+          "current_WDI": "0.14179575",
+          "difference": "0.00017269"
+        },
+        "ar2_p": {
+          "historical": "0.45162004",
+          "current_WDI": "0.45208347",
+          "difference": "0.00046343"
+        }
+      },
+      "p_threshold_crossings": []
+    },
+    {
+      "model": "PROD_SYS_L23_AUDIT",
+      "historical_rc": 0,
+      "wdi_rc": 0,
+      "historical_verdict": "DIAGNOSTIC_HOLD",
+      "wdi_verdict": "DIAGNOSTIC_HOLD",
+      "changes": {
+        "N": {
+          "historical": "799",
+          "current_WDI": "799",
+          "difference": "0"
+        },
+        "Ng": {
+          "historical": "47",
+          "current_WDI": "47",
+          "difference": "0"
+        },
+        "instruments": {
+          "historical": "38",
+          "current_WDI": "38",
+          "difference": "0"
+        },
+        "sargan_p": {
+          "historical": "0.9242118",
+          "current_WDI": "0.9211238",
+          "difference": "-0.0030880"
+        },
+        "hansen_p": {
+          "historical": "0.12474504",
+          "current_WDI": "0.12694913",
+          "difference": "0.00220409"
+        },
+        "ar1_p": {
+          "historical": "0.14302003",
+          "current_WDI": "0.14316086",
+          "difference": "0.00014083"
+        },
+        "ar2_p": {
+          "historical": "0.47218636",
+          "current_WDI": "0.47182506",
+          "difference": "-0.00036130"
+        }
+      },
+      "p_threshold_crossings": []
+    }
+  ],
+  "status": "COMPUTATIONAL_COMPLETE_WITH_SCIENTIFIC_CAVEATS",
+  "science_note": "Diagnostic warnings, causal identification and peer review matter; never choose a specification because a p-value improves."
+}
