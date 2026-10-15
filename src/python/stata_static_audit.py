@@ -47,6 +47,20 @@ def main():
           "Panel identification incomplete")
     check("which xtabond2" in pre and "confirm file" in pre,
           "Missing xtabond2 or DTA preflight")
+    # Guard the exact, numerically verified time-indicator rank fix.
+    check('global digital_year_dummies_diff "yd_2-yd_16 yd_18"' in pre,
+          "Difference GMM full-rank dummy basis changed or missing")
+    check('global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"' in pre,
+          "System GMM full-rank dummy basis changed or missing")
+    for modelpath in ("stata/03_growth_models.do", "stata/04_productivity_models.do"):
+        commands=[line.strip() for line in contents[modelpath].splitlines()
+                  if line.strip().startswith("capture noisily xtabond2 ")]
+        check(len(commands)==3, f"Unexpected model count in {modelpath}")
+        for command in commands:
+            basis = "$digital_year_dummies_diff" if " noleveleq " in command else "$digital_year_dummies_sys"
+            check(command.count(basis)==2, f"Rank fix not applied consistently to regressors and year instruments in {modelpath}")
+            check("$digital_year_dummies," not in command,
+                  f"Old redundant year dummy basis reintroduced in {modelpath}")
     check("xtunitroot ips" in contents["stata/02_pre_estimation.do"]
           and "xtunitroot fisher" in contents["stata/02_pre_estimation.do"],
           "Missing real Stata requested pre-estimation tests")
