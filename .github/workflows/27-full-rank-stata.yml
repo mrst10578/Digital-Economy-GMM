@@ -9,6 +9,7 @@ on:
       - 'stata/04_productivity_models.do'
       - 'src/python/audit_full_rank_gmm.py'
       - 'evidence/tablet-stata-2026-10-15/full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/production_full_rank_*'
       - '.github/workflows/27-full-rank-stata.yml'
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - 'stata/04_productivity_models.do'
       - 'src/python/audit_full_rank_gmm.py'
       - 'evidence/tablet-stata-2026-10-15/full_rank_*'
+      - 'evidence/tablet-stata-2026-10-15/production_full_rank_*'
       - '.github/workflows/27-full-rank-stata.yml'
   workflow_dispatch:
 permissions:
