@@ -2,6 +2,8 @@
 
 ## Current verified status | 2026-10-15
 
+**Complete reviewed handoff:** [Final data-quality, Stata/GMM and scientific assessment](docs/FINAL_QUALITY_AND_GMM_RECHECK_2026-10-15_FA.md). Production Stata scripts and both historical/current-WDI runs have now been tested without numerical or execution warnings; causal claims remain on hold.
+
 - The unchanged 47-country, 2005–2022 historical workbook passed structural checks (846 rows, zero nulls/duplicate keys/formulas/Excel errors). A fresh official WDI comparison found **6,606/6,768 near-equal cells**, and documented **162 current-source revisions** (130 Inflation; 32 ICT service exports). The original workbook was not overwritten. [Full data quality review](docs/DATA_QUALITY_RECHECK_2026-10-15_FA.md).
 - All six original Stata/MP 17 GMM specifications were actually rerun on the tablet **with an explicit full-rank year-indicator basis, zero singular moment covariance warnings and zero dropped-year-collinearity warnings**, preserving the historical diagnostic statistics within numerical precision. [Native Stata evidence](evidence/tablet-stata-2026-10-15/full_rank_all_models.log) and [successful independent audit CI](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38781158012).
 - **No model is endorsed as causal evidence**: productivity System GMM Hansen p≈.03545; Growth System GMM Sargan rejects; cross-sectional dependence/integration/technology-transfer identification remain unresolved. PR #1 remains **draft, not merged**.
