@@ -1,0 +1,38 @@
+name: Verify professor lag3-only System GMM sensitivity evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_lag3_sensitivity.py'
+      - 'stata/tablet_diagnostics/14_professor_system_lag3_instrument_stress.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_lag3_instrument_stress*'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/33-professor-lag3-sensitivity.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_lag3_sensitivity.py'
+      - 'stata/tablet_diagnostics/14_professor_system_lag3_instrument_stress.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_lag3_instrument_stress*'
+      - '.github/workflows/33-professor-lag3-sensitivity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-preserved-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify native tablet Stata lag-3 sensitivity and subset matrix extraction
+        run: python -m src.python.audit_professor_lag3_sensitivity
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lag3-stata-archive-audit-not-causal-approval
+          path: outputs/professor_lag3_audit/latest.json
+          if-no-files-found: warn
