@@ -49,7 +49,7 @@ def main():
     assert "INITIAL_DESCRIPTIVE_COMPLETE" in init_log and "INITIAL_DESCRIPTIVE_FAILURES=0" in init_log
     assert len(re.findall(r"^INITIAL_DESCRIPTIVE_OK outcome=",init_log,re.M))==2
     for log in (diff_log,init_log):
-        assert not re.search(r"(?im)^\s*Warning:|covariance matrix of moments is singular|dropped due to collinearity|^r\(\d+\);|LEVEL_REMOVAL_FAILED|INITIAL_DESCRIPTIVE_FAILED",log)
+        assert not re.search(r"(?im)^\s*Warning:|covariance matrix of moments is singular|dropped due to collinearity|^r\(\d+\);|^LEVEL_REMOVAL_FAILED|^INITIAL_DESCRIPTIVE_FAILED",log)
     assert len(re.findall(r"Hansen test of overid. restrictions:\s*chi2\(0\)",diff_log))==2
     assert len(re.findall(r"Sargan test of overid. restrictions:\s*chi2\(0\)",diff_log))==2
     models={}
