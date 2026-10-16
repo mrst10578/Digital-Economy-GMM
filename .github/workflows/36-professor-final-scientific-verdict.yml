@@ -1,0 +1,55 @@
+name: Verify professor final scientific verdict and complete tables
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_final_primary_delivery.py'
+      - 'stata/tablet_diagnostics/19_professor_final_coefficient_export.do'
+      - 'evidence/scientific-gates-2026-10-16/professor_two_primary_system_gmm_full_coefficients.csv'
+      - 'evidence/scientific-gates-2026-10-16/professor_full_coefficient_export_real_stata.log'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv'
+      - 'evidence/tablet-stata-2026-10-16/professor_joint_restrictions.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md'
+      - '.github/workflows/36-professor-final-scientific-verdict.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_final_primary_delivery.py'
+      - 'stata/tablet_diagnostics/19_professor_final_coefficient_export.do'
+      - 'evidence/scientific-gates-2026-10-16/professor_two_primary_system_gmm_full_coefficients.csv'
+      - 'evidence/scientific-gates-2026-10-16/professor_full_coefficient_export_real_stata.log'
+      - 'docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md'
+      - '.github/workflows/36-professor-final-scientific-verdict.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-original-scientific-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Audit 14 full real Stata coefficients, t-based confidence intervals and diagnostic statuses
+        run: python -m src.python.audit_professor_final_primary_delivery
+      - name: Audit original 64 R CIPS and 24 native Stata science gates
+        run: python -m src.python.audit_professor_exogeneity_stationarity
+      - name: Audit exact professor primary System GMM specification
+        run: python -m src.python.audit_professor_system_gmm
+      - name: Check primary report exists and contains explicit scientific limitation
+        run: |
+          test -s docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md
+          grep -q 'صفر مدل دارای تأیید علّی نهایی' docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md
+          grep -q 'Difference-in-Hansen' docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: professor-reviewed-data-not-causal-approval
+          path: |
+            outputs/professor_final_primary_audit/latest.json
+            outputs/professor_science_gates/latest.json
+            outputs/professor_system_gmm_audit/latest.json
+          if-no-files-found: warn
