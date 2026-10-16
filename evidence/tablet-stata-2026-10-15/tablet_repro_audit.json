@@ -1,0 +1,23 @@
+{
+  "source_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "new_models": 6,
+  "historical_models": 6,
+  "all_exactly_matching": true,
+  "differences": [],
+  "pretests_ok": 16,
+  "models_estimated": [
+    "GROWTH_DIFF_L23",
+    "GROWTH_SYS_L22",
+    "GROWTH_SYS_L23_AUDIT",
+    "PROD_DIFF_L23",
+    "PROD_SYS_L22",
+    "PROD_SYS_L23_AUDIT"
+  ],
+  "script_completed": true,
+  "singular_warnings": 6,
+  "dinh_occurrences": 6,
+  "nonzero_failure_markers": [],
+  "log_bytes": 87240,
+  "logs_sha256": "85a59e2ea9f1510ec5dd2dca96083dd4ca9d1a9be9242e9f011cf53bdd2c2abc",
+  "status_sha256": "4500031a1847d8f8105f66c6b4c6342e73d984be726509e6ea6225422419f54c"
+}

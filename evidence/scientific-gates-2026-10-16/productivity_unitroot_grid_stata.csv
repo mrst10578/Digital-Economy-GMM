@@ -1,0 +1,17 @@
+variable,form,test,deterministic,lag,rc,p1,p2
+ln_Productivity,level,IPS,drift,1,0,.99693769,
+ln_Productivity,level,Fisher,drift,1,0,.48351538,.99827772
+ln_Productivity,level,IPS,trend,1,0,.002545391,
+ln_Productivity,level,Fisher,trend,1,0,9.6452948e-07,.00027985059
+ln_Productivity,level,IPS,drift,2,0,.99998677,
+ln_Productivity,level,Fisher,drift,2,0,.96998739,.99999988
+ln_Productivity,level,IPS,trend,2,0,.60556638,
+ln_Productivity,level,Fisher,trend,2,0,.43529144,.94216496
+D_ln_Productivity,difference,IPS,drift,1,0,0,
+D_ln_Productivity,difference,Fisher,drift,1,0,0,0
+D_ln_Productivity,difference,IPS,trend,1,0,2.5732540e-29,
+D_ln_Productivity,difference,Fisher,trend,1,0,0,0
+D_ln_Productivity,difference,IPS,drift,2,0,6.2478768e-22,
+D_ln_Productivity,difference,Fisher,drift,2,0,3.7757354e-29,1.1876536e-26
+D_ln_Productivity,difference,IPS,trend,2,0,3.5522532e-16,
+D_ln_Productivity,difference,Fisher,trend,2,0,5.9074338e-24,1.2721303e-18

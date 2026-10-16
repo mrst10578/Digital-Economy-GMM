@@ -1,0 +1,42 @@
+name: Verify professor System level-moment and initial-condition evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_level_moments.py'
+      - 'stata/tablet_diagnostics/15_professor_matched_difference_removal.do'
+      - 'stata/tablet_diagnostics/16_professor_initial_condition_descriptive.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_level_equation_removal*'
+      - 'evidence/tablet-stata-2026-10-16/professor_initial_condition_descriptives.csv'
+      - 'evidence/tablet-stata-2026-10-16/professor_initial_condition_descriptive_real_stata.log'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/34-professor-system-level-moments.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_level_moments.py'
+      - 'stata/tablet_diagnostics/15_professor_matched_difference_removal.do'
+      - 'stata/tablet_diagnostics/16_professor_initial_condition_descriptive.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_level_equation_removal*'
+      - 'evidence/tablet-stata-2026-10-16/professor_initial_condition_descriptives.csv'
+      - '.github/workflows/34-professor-system-level-moments.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-saved-stata-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check real Stata difference-only and initial-state archived evidence
+        run: python -m src.python.audit_professor_level_moments
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: system-gmm-initial-conditions-evidence-audit-not-native-stata
+          path: outputs/professor_level_moment_audit/latest.json
+          if-no-files-found: warn

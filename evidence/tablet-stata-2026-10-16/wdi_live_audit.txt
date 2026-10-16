@@ -1,0 +1,10 @@
+STRUCTURAL_AND_DOMAIN_CHECKS_PASS 846 47 8
+WDI_CHECK Internet match 846 different 0 currently_missing 0
+WDI_CHECK Productivity match 846 different 0 currently_missing 0
+WDI_CHECK Growth match 846 different 0 currently_missing 0
+WDI_CHECK Broadband match 846 different 0 currently_missing 0
+WDI_CHECK ICT_Exports match 814 different 32 currently_missing 0
+WDI_CHECK RnD match 846 different 0 currently_missing 0
+WDI_CHECK Inflation match 716 different 130 currently_missing 0
+WDI_CHECK Unemployment match 846 different 0 currently_missing 0
+SUMMARY_CHECK {"structural_ok": true, "WDI_success": 8, "WDI_disagree": 162, "WDI_missing": 0}

@@ -1,0 +1,3 @@
+outcome,rc,N,Ng,instruments,lag_coef,lag_se,joint_rc,joint_F,joint_p,persistence_rc,persistence_F,persistence_p,hansen_p,ar1_p,ar2_p
+Growth,0,799,47,31,.25622633,.13196197,0,2.4581811,.07473579,0,31.767572,1.0125187e-06,.77158344,.098791353,.41289032
+ln_Productivity,0,799,47,31,.99904889,.038723301,0,.96845675,.41574016,0,.00060330069,.98051041,.035448708,.14162306,.45162007

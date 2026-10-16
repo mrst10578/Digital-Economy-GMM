@@ -1,0 +1,49 @@
+name: Digital economy gretl real dynamic GMM
+on:
+  push:
+    paths:
+      - ".github/workflows/09-gretl-research.yml"
+      - "src/gretl/estimate.inp"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gretl-estimation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gretl and Python Excel reader
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gretl python3-pandas python3-openpyxl
+      - name: Build panel CSV from original workbook, not other project
+        run: |
+          /usr/bin/python3 - <<'PY'
+          import pandas as pd, numpy as np
+          df=pd.read_excel("data/raw/Balanced_Panel_Data.xlsx")
+          df=df.sort_values(["ISO3","Year"]).reset_index(drop=True)
+          assert df.groupby("ISO3").Year.nunique().eq(18).all()
+          df["country_id"]=pd.factorize(df.ISO3,sort=True)[0]+1
+          df["ln_Productivity"]=np.log(df.Productivity)
+          cols=["country_id","Year","Growth","ln_Productivity","Internet","Broadband","ICT_Exports","Unemployment","Inflation","RnD"]
+          df[cols].to_csv("data/processed/panel_gretl.csv",index=False)
+          print("Gretl prepared rows:",len(df), "countries:",df.country_id.nunique())
+          PY
+      - name: Run gretl real dynamic-panel commands
+        run: |
+          mkdir -p outputs/gretl
+          set -o pipefail
+          test -s src/gretl/estimate.inp
+          cp src/gretl/estimate.inp estimate.inp
+          ls -l estimate.inp data/processed/panel_gretl.csv
+          gretlcli -b estimate.inp 2>&1 | tee outputs/gretl/estimate.log
+          grep -q GRETL_ESTIMATES_FINISHED outputs/gretl/estimate.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-gretl-gmm-results
+          path: |
+            outputs/gretl/
+            data/processed/panel_gretl.csv
+          if-no-files-found: warn

@@ -1,5 +1,14 @@
 # Digital Economy & Technology Spillovers
 
+## Current verified status | 2026-10-15
+
+**Complete reviewed handoff:** [Final data-quality, Stata/GMM and scientific assessment](docs/FINAL_QUALITY_AND_GMM_RECHECK_2026-10-15_FA.md). Production Stata scripts and both historical/current-WDI runs have now been tested without numerical or execution warnings; causal claims remain on hold.
+
+- The unchanged 47-country, 2005–2022 historical workbook passed structural checks (846 rows, zero nulls/duplicate keys/formulas/Excel errors). A fresh official WDI comparison found **6,606/6,768 near-equal cells**, and documented **162 current-source revisions** (130 Inflation; 32 ICT service exports). The original workbook was not overwritten. [Full data quality review](docs/DATA_QUALITY_RECHECK_2026-10-15_FA.md).
+- All six original Stata/MP 17 GMM specifications were actually rerun on the tablet **with an explicit full-rank year-indicator basis, zero singular moment covariance warnings and zero dropped-year-collinearity warnings**, preserving the historical diagnostic statistics within numerical precision. [Native Stata evidence](evidence/tablet-stata-2026-10-15/full_rank_all_models.log) and [successful independent audit CI](https://github.com/mrst10578/Digital-Economy-GMM/actions/runs/38781158012).
+- **No model is endorsed as causal evidence**: productivity System GMM Hansen p≈.03545; Growth System GMM Sargan rejects; cross-sectional dependence/integration/technology-transfer identification remain unresolved. PR #1 remains **draft, not merged**.
+
+
 **One research project per repository.** This repo is dedicated exclusively to GDP growth and labor productivity (47 expected countries, 2005–2022; verify before estimation). It is independent of the other study and of Shakhsi2/3/4.
 
 ## Original source package imported from Dropbox
@@ -12,8 +21,8 @@ The full ZIP is committed at [research-packages/Digital_Economy_Ready_Package.zi
 
 - Python, R/plm and gretl installation/runtime checks were configured separately in GitHub Actions.
 - [Validate imported research dataset and build Stata DTA](.github/workflows/05-validate-research-data.yml) checks the real input and creates a `stata_ready.dta` downloadable artifact (if successful).
-- The original research data are present; **econometric modeling, IPS/Fisher, GMM, Hansen, Sargan, AR(1)/AR(2), difference-in-Hansen, and genuine Stata estimates are NOT completed**.
-- Stata placeholder `stata/02_models.do` intentionally refuses to run until the new chat reviews model assumptions, endogeneity, lags and instruments.
+- Original data are present; **Python OLS/FE, R IPS/Fisher/CIPS/CD + Difference/System GMM, and gretl dpanel were actually executed and audited**. Multiple specification diagnostics remain unfavorable or inconclusive. **Difference-in-Hansen and licensed Stata estimates have NOT been completed**, and no causal interpretation has been accepted.
+- The original Stata placeholder has been replaced by staged xtabond2 do-files, but **a real licensed Stata execution was received on 2026-10-09 and independently audited; no model is scientifically accepted yet**. Use the GitHub Actions one-click laptop handoff ZIP.
 
 ## Tools
 
@@ -22,3 +31,11 @@ Python: `pip install -r requirements-python.txt`. R: `r-base r-cran-plm r-cran-l
 ## Continue in a new chat
 
 Start with [MASTER_PROMPT](./) and the study's `sources/` folder; audit independently, build appropriate estimators, and preserve all unsuccessful and incompatible model specifications in reports. See `docs/STATA_HANDOFF.md`. Never mislabel R/Python results as authentic Stata output.
+
+## Research outputs (branch only)
+
+See [Persian final report](docs/FINAL_REPORT_FA.md), [full defense guide](docs/DEFENSE_GUIDE_FA.md), [model pre-specification](docs/MODEL_SPECIFICATION.md), [Iran-peers design](docs/IRAN_PEERS_FA.md), and [current project status](docs/PROJECT_STATUS.md). New Actions workflows 06-12 produce source review logs, actual Python/R/gretl statistical outputs, WDI comparisons, Persian report PDF/HTML files and a one-click Stata laptop ZIP. **No claim is made that the GMM diagnostics establish a valid causal model or that any GMM model is validated. **Six real Stata runs were received and audited on 2026-10-09**, see [Stata real results](docs/STATA_REAL_RESULTS_AUDIT_FA.md).**
+
+## Verified real Stata evidence, 2026-10-09
+
+Original emailed ZIP: `evidence/stata-2026-10-09/outputs.zip`; independent parser: `src/python/audit_emailed_stata.py` and Workflow 13. Six models actually estimated; all remain diagnostic hold. See `docs/STATA_REAL_RESULTS_AUDIT_FA.md`. Preserve original file hashes and do not merge without independent scientific sign-off.

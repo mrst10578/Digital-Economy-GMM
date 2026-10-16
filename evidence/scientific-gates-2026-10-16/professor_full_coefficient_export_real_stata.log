@@ -1,0 +1,243 @@
+--------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_FULL_COEFFICIENT_EXPORT.lo
+> g
+  log type:  text
+ opened on:  16 Oct 2026, 10:03:05
+
+. postfile coefs str20 outcome str26 term double estimate robust_se t_stat p_value ci95_low ci95_h
+> igh N countries instruments using "outputs/professor/professor_two_system_full_coefficients.dta"
+> , replace
+(file outputs/professor/professor_two_system_full_coefficients.dta not found)
+
+. foreach y in Growth ln_Productivity {
+  2.     display as result "FINAL_STER_LOAD_START outcome=`y'"
+  3.     capture noisily estimates use "outputs/professor/`y'_twostep.ster"
+  4.     local readrc=_rc
+  5.     if `readrc' {
+  6.         display as error "FINAL_STER_LOAD_FAILED outcome=`y' rc=`readrc'"
+  7.         postclose coefs
+  8.         log close
+  9.         exit `readrc'
+ 10.     }
+ 11.     local n=e(N)
+ 12.     local ng=e(N_g)
+ 13.     local instr=e(j)
+ 14.     local df=`ng'-1
+ 15.     assert `n'==799
+ 16.     assert `ng'==47
+ 17.     assert `instr'==31
+ 18.     local critical=invttail(`df', .025)
+ 19.     display as result "FINAL_STER_LOADED outcome=`y' N=`n' Ng=`ng' instruments=`instr' critic
+> al=`critical'"
+ 20.     foreach v in L.`y' Internet Broadband ICT_Exports Unemployment Inflation RnD {
+ 21.         local b=_b[`v']
+ 22.         local se=_se[`v']
+ 23.         if missing(`b',`se') | `se'<=0 {
+ 24.            display as error "FINAL_COEFFICIENT_ERROR outcome=`y' term=`v'"
+ 25.            postclose coefs
+ 26.            log close
+ 27.            exit 459
+ 28.         }
+ 29.         local t=`b'/`se'
+ 30.         local p=2*ttail(`df', abs(`t'))
+ 31.         local low=`b'-`critical'*`se'
+ 32.         local high=`b'+`critical'*`se'
+ 33.         post coefs ("`y'") ("`v'") (`b') (`se') (`t') (`p') (`low') (`high') (`n') (`ng') (`i
+> nstr')
+ 34.         display as result "FINAL_COEFFICIENT_OK outcome=`y' term=`v' estimate=`b' se=`se' p=`
+> p'"
+ 35.     }
+ 36. }
+FINAL_STER_LOAD_START outcome=Growth
+FINAL_STER_LOADED outcome=Growth N=799 Ng=47 instruments=31 critical=2.012895598919427
+FINAL_COEFFICIENT_OK outcome=Growth term=L.Growth estimate=.2562263322936201 se=.1319619697336511 
+> p=.0583166364742194
+FINAL_COEFFICIENT_OK outcome=Growth term=Internet estimate=-.01866986839629 se=.0358186083418481 p
+> =.6047043970470165
+FINAL_COEFFICIENT_OK outcome=Growth term=Broadband estimate=-.1291895079664923 se=.085698370844358
+> 1 p=.1385225258334108
+FINAL_COEFFICIENT_OK outcome=Growth term=ICT_Exports estimate=-.0388244715441197 se=.0406594411355
+> 144 p=.344634842956691
+FINAL_COEFFICIENT_OK outcome=Growth term=Unemployment estimate=-.4354861748089082 se=.198566264921
+> 6639 p=.0333900104328254
+FINAL_COEFFICIENT_OK outcome=Growth term=Inflation estimate=-.030972110862431 se=.0663729946357248
+>  p=.6429620066743051
+FINAL_COEFFICIENT_OK outcome=Growth term=RnD estimate=.4840510151129536 se=.4490563150221591 p=.28
+> 66856198281451
+FINAL_STER_LOAD_START outcome=ln_Productivity
+FINAL_STER_LOADED outcome=ln_Productivity N=799 Ng=47 instruments=31 critical=2.012895598919427
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=L.ln_Productivity estimate=.9990488712994079 se=
+> .0387233005377064 p=5.29371418420e-29
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=Internet estimate=-.0005413258693725 se=.0003783
+> 054108991 p=.1592111135713238
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=Broadband estimate=-.0007215270169532 se=.001058
+> 9503332389 p=.4990594181752723
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=ICT_Exports estimate=.0000127385513098 se=.00070
+> 822005351 p=.985727243837358
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=Unemployment estimate=-.0022569878668506 se=.001
+> 7828309896062 p=.2119024370887707
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=Inflation estimate=-.0009206032605666 se=.001093
+> 7308872366 p=.4043055121459047
+FINAL_COEFFICIENT_OK outcome=ln_Productivity term=RnD estimate=.003840903349392 se=.00596635804911
+> 1 p=.5229278660794404
+
+. postclose coefs
+
+. preserve
+
+. use "outputs/professor/professor_two_system_full_coefficients.dta", clear
+
+. isid outcome term
+
+. count
+  14
+
+. assert r(N)==14
+
+. count if missing(estimate) | missing(robust_se) | missing(p_value) | missing(ci95_low) | missing
+> (ci95_high)
+  0
+
+. assert r(N)==0
+
+. count if p_value<0 | p_value>1 | ci95_low>estimate | ci95_high<estimate
+  0
+
+. assert r(N)==0
+
+. export delimited using "outputs/professor/professor_two_system_full_coefficients.csv", replace
+(file outputs/professor/professor_two_system_full_coefficients.csv not found)
+file outputs/professor/professor_two_system_full_coefficients.csv saved
+
+. display as result "FINAL_FULL_TABLE_ROWS=" _N
+FINAL_FULL_TABLE_ROWS=14
+
+. list outcome term estimate robust_se p_value ci95_low ci95_high, noobs abbreviate(22)
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |          L.Growth |  .25622633 |   .131962 | .0583166 | -.0093993 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                        .521852                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |          Internet | -.01866987 |  .0358186 | .6047044 |  -.090769 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0534292                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |         Broadband | -.12918951 |  .0856984 | .1385225 | -.3016914 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0433124                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |       ICT_Exports | -.03882447 |  .0406594 | .3446348 | -.1206677 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0430187                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |      Unemployment | -.43548617 |  .1985663 |   .03339 | -.8351793 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       -.035793                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |         Inflation | -.03097211 |   .066373 |  .642962 |  -.164574 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .1026298                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  |          Growth |               RnD |  .48405102 |  .4490563 | .2866856 | -.4198525 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       1.387954                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity | L.ln_Productivity |  .99904887 |  .0387233 | 5.29e-29 |  .9211029 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       1.076995                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |          Internet | -.00054133 |  .0003783 | .1592111 | -.0013028 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0002202                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |         Broadband | -.00072153 |   .001059 | .4990594 | -.0028531 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                         .00141                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |       ICT_Exports |  .00001274 |  .0007082 | .9857273 | -.0014128 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0014383                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |      Unemployment | -.00225699 |  .0017828 | .2119024 | -.0058456 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0013317                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |         Inflation |  -.0009206 |  .0010937 | .4043055 | -.0031222 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                        .001281                                      |
+  +-------------------------------------------------------------------------------------+
+
+  +-------------------------------------------------------------------------------------+
+  |         outcome |              term |   estimate | robust_se |  p_value |  ci95_low |
+  | ln_Productivity |               RnD |   .0038409 |  .0059664 | .5229279 | -.0081688 |
+  |-------------------------------------------------------------------------------------|
+  |                                      ci95_high                                      |
+  |                                       .0158506                                      |
+  +-------------------------------------------------------------------------------------+
+
+. restore
+
+. display as result "FINAL_FULL_COEFFICIENT_EXPORT_COMPLETED: archived original models only; no ne
+> w fitting and no causal approval"
+FINAL_FULL_COEFFICIENT_EXPORT_COMPLETED: archived original models only; no new fitting and no caus
+> al approval
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_FULL_COEFFICIENT_EXPORT.lo
+> g
+  log type:  text
+ closed on:  16 Oct 2026, 10:03:08
+--------------------------------------------------------------------------------------------------

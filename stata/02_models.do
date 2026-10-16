@@ -1,6 +1,3 @@
-* INTENTIONALLY NOT IMPLEMENTED.
-* The new research chat must read the original manuscript and workbook,
-* choose endogeneity classes, lags, instruments, time effects,
-* and test assumptions BEFORE writing executable xtabond2 specifications.
-display as error "MODEL_SPEC_NOT_APPROVED: No System GMM run was performed."
-exit 459
+* Legacy compatibility path: invoke full audited runner to initialize panel and status log.
+* Do NOT run model files in isolation without preflight.
+do "stata/RUN_ALL.do"

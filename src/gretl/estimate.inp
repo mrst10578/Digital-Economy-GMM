@@ -1,0 +1,18 @@
+# Real gretl dynamic-panel estimation; diagnostics printed by dpanel.
+# The input file is prepared from this repository's real xlsx, sorted by ISO3 Year.
+open data/processed/panel_gretl.csv --quiet
+setobs country_id Year --panel-vars
+printf "GRETL_ACTUAL_STUDY_ESTIMATION=1\n"
+printf "Growth difference GMM, one step, collapsed instruments, two year effects\n"
+dpanel 1 ; Growth Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,3) GMM(Broadband,2,3) GMM(ICT_Exports,2,3) GMM(Unemployment,2,3) GMM(Inflation,2,3) GMM(RnD,2,3) --collapse --time-dummies
+printf "Growth system GMM, two step, collapsed instruments\n"
+dpanel 1 ; Growth Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,3) GMM(Broadband,2,3) GMM(ICT_Exports,2,3) GMM(Unemployment,2,3) GMM(Inflation,2,3) GMM(RnD,2,3) GMMlevel(Internet,1,1) GMMlevel(Broadband,1,1) GMMlevel(ICT_Exports,1,1) GMMlevel(Unemployment,1,1) GMMlevel(Inflation,1,1) GMMlevel(RnD,1,1) --collapse --time-dummies --system --two-step
+printf "Productivity difference GMM, one step, collapsed instruments\n"
+dpanel 1 ; ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,3) GMM(Broadband,2,3) GMM(ICT_Exports,2,3) GMM(Unemployment,2,3) GMM(Inflation,2,3) GMM(RnD,2,3) --collapse --time-dummies
+printf "Productivity system GMM, two step, collapsed instruments\n"
+dpanel 1 ; ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,3) GMM(Broadband,2,3) GMM(ICT_Exports,2,3) GMM(Unemployment,2,3) GMM(Inflation,2,3) GMM(RnD,2,3) GMMlevel(Internet,1,1) GMMlevel(Broadband,1,1) GMMlevel(ICT_Exports,1,1) GMMlevel(Unemployment,1,1) GMMlevel(Inflation,1,1) GMMlevel(RnD,1,1) --collapse --time-dummies --system --two-step
+printf "Prespecified instrument-reduction sensitivity: system 2-step, lags 2 only\n"
+dpanel 1 ; Growth Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,2) GMM(Broadband,2,2) GMM(ICT_Exports,2,2) GMM(Unemployment,2,2) GMM(Inflation,2,2) GMM(RnD,2,2) GMMlevel(Internet,1,1) GMMlevel(Broadband,1,1) GMMlevel(ICT_Exports,1,1) GMMlevel(Unemployment,1,1) GMMlevel(Inflation,1,1) GMMlevel(RnD,1,1) --collapse --time-dummies --system --two-step
+printf "Prespecified instrument-reduction sensitivity: productivity, lags 2 only\n"
+dpanel 1 ; ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD ; GMM(Internet,2,2) GMM(Broadband,2,2) GMM(ICT_Exports,2,2) GMM(Unemployment,2,2) GMM(Inflation,2,2) GMM(RnD,2,2) GMMlevel(Internet,1,1) GMMlevel(Broadband,1,1) GMMlevel(ICT_Exports,1,1) GMMlevel(Unemployment,1,1) GMMlevel(Inflation,1,1) GMMlevel(RnD,1,1) --collapse --time-dummies --system --two-step
+printf "GRETL_ESTIMATES_FINISHED\n"

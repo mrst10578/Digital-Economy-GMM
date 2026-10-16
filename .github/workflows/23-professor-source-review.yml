@@ -1,0 +1,36 @@
+name: Original professor source packet for independent review
+on:
+  push:
+    paths:
+      - ".github/workflows/23-professor-source-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-source-snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact original professor files and record hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "sources/بررسی اثر سرریز فناوری و اقتصاد دیجیتال بر بهره_وری نیروی کار و رشد اقتصادی.docx"
+          test -s "sources/01_Pre_estimation_2026-10-07.png"
+          test -s "sources/02_Post_estimation_2026-10-07.png"
+          test -s "sources/Data_Dictionary.xlsx"
+          test -s "sources/EMAIL_NOTE_2026-09-30.txt"
+          sha256sum sources/*.docx sources/*.png sources/Data_Dictionary.xlsx sources/EMAIL_NOTE_2026-09-30.txt > professor_origins.sha256
+          cat professor_origins.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: original-professor-instructions-Word-screenshots-dictionary
+          path: |
+            sources/*.docx
+            sources/*.png
+            sources/Data_Dictionary.xlsx
+            sources/EMAIL_NOTE_2026-09-30.txt
+            professor_origins.sha256
+          retention-days: 5
+          if-no-files-found: error

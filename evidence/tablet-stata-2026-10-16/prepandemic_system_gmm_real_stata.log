@@ -1,0 +1,392 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_PREPANDEMIC_SYSTEM_GMM.lo
+> g
+  log type:  text
+ opened on:  16 Oct 2026, 02:03:09
+
+. capture noisily do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was f
+> itted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. local ready_rc = _rc
+
+. if `ready_rc' != 0 {
+.     display as error "PREPANDEMIC_PREFLIGHT_FAILED rc=`ready_rc'"
+.     log close
+.     exit `ready_rc'
+. }
+
+. quietly keep if Year <= 2019
+
+. isid ISO3 Year
+
+. bysort ISO3: assert _N == 15
+
+. assert _N == 705
+
+. quietly xtset panel_id Year
+
+. capture drop pyd_*
+
+. quietly tab Year, generate(pyd_)
+
+. * Same non-redundant year basis rule: 2005 base, omit 2008 alias.
+. global pre_years "pyd_2-pyd_3 pyd_5-pyd_15"
+
+. postfile pp str20 outcome double rc N Ng instruments lag_b lag_se internet_b internet_se intern
+> et_p sargan_p hansen_p ar1_p ar2_p diffh_dep_level_p diffh_controls_p using "outputs/professor/
+> prepandemic_system_gmm_stats.dta", replace
+(file outputs/professor/prepandemic_system_gmm_stats.dta not found)
+
+. display as result "PREPANDEMIC_SAMPLE=2005-2019 countries=47 raw_country_years=705"
+PREPANDEMIC_SAMPLE=2005-2019 countries=47 raw_country_years=705
+
+. foreach y in Growth ln_Productivity {
+  2.     display as result "PREPANDEMIC_START outcome=`y' two-step System GMM, fixed lag(2 2) col
+> lapsed"
+  3.     capture noisily xtabond2 `y' L.`y' Internet Broadband ICT_Exports Unemployment Inflation
+>  RnD $pre_years, gmmstyle(`y', lag(2 2) collapse split) gmmstyle(Internet Broadband ICT_Exports
+>  RnD, lag(2 2) collapse) gmmstyle(Unemployment Inflation, lag(2 2) collapse) ivstyle($pre_years
+> ) twostep robust small artests(2)
+  4.     local rc = _rc
+  5.     if `rc' == 0 {
+  6.         local n = e(N)
+  7.         local ng = e(N_g)
+  8.         local j = e(j)
+  9.         local bl = _b[L.`y']
+ 10.         local sl = _se[L.`y']
+ 11.         local bi = _b[Internet]
+ 12.         local si = _se[Internet]
+ 13.         local pi = 2*ttail(`ng'-1,abs(`bi'/`si'))
+ 14.         local sg = e(sarganp)
+ 15.         local ha = e(hansenp)
+ 16.         local a1 = e(ar1p)
+ 17.         local a2 = e(ar2p)
+ 18.         local dhy = .
+ 19.         local dhc = .
+ 20.         capture matrix __dh = e(diffsargan)
+ 21.         if _rc == 0 {
+ 22.             if rowsof(__dh)>=5 & colsof(__dh)>=4 {
+ 23.                 local dhy = el(__dh,5,3)
+ 24.                 local dhc = el(__dh,5,4)
+ 25.             }
+ 26.         }
+ 27.         post pp ("`y'") (0) (`n') (`ng') (`j') (`bl') (`sl') (`bi') (`si') (`pi') (`sg') (`h
+> a') (`a1') (`a2') (`dhy') (`dhc')
+ 28.         display as result "PREPANDEMIC_OK outcome=`y' N=`n' Ng=`ng' instruments=`j' bInterne
+> t=`bi' Hansen=`ha' AR1=`a1' AR2=`a2' DHlevel=`dhy'"
+ 29.     }
+ 30.     else {
+ 31.         post pp ("`y'") (`rc') (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.)
+ 32.         display as error "PREPANDEMIC_FAILED outcome=`y' rc=`rc'"
+ 33.     }
+ 34. }
+PREPANDEMIC_START outcome=Growth two-step System GMM, fixed lag(2 2) collapsed
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       658
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 28                      Obs per group: min =        14
+F(20, 46)     =     35.39                                      avg =     14.00
+Prob > F      =     0.000                                      max =        14
+------------------------------------------------------------------------------
+             |              Corrected
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .6299611   .1515534     4.16   0.000     .3249001    .9350222
+             |
+    Internet |  -.0464143   .0246225    -1.89   0.066    -.0959769    .0031483
+   Broadband |  -.0468728   .0589491    -0.80   0.431    -.1655311    .0717855
+ ICT_Exports |  -.0467798   .0490041    -0.95   0.345      -.14542    .0518604
+Unemployment |  -.1689463    .145155    -1.16   0.250    -.4611282    .1232355
+   Inflation |  -.0623849   .1735142    -0.36   0.721    -.4116508    .2868811
+         RnD |    .577934   .6790916     0.85   0.399    -.7890065    1.944875
+       pyd_2 |   2.606989   .9189624     2.84   0.007     .7572133    4.456764
+       pyd_3 |   2.281217   .8476948     2.69   0.010      .574896    3.987538
+       pyd_5 |  -3.883507   1.370203    -2.83   0.007    -6.641582   -1.125432
+       pyd_6 |   6.785796   1.278195     5.31   0.000     4.212922    9.358669
+       pyd_7 |   2.488026   .6205391     4.01   0.000     1.238946    3.737106
+       pyd_8 |   .9727782   .8417035     1.16   0.254    -.7214831    2.667039
+       pyd_9 |   3.100419   .7743025     4.00   0.000     1.541829    4.659009
+      pyd_10 |   2.745094   .9536856     2.88   0.006     .8254244    4.664763
+      pyd_11 |    2.51986   1.180928     2.13   0.038     .1427746    4.896945
+      pyd_12 |   2.565817   .7763836     3.30   0.002     1.003038    4.128596
+      pyd_13 |   4.156138    .755813     5.50   0.000     2.634765    5.677511
+      pyd_14 |   2.863855   .6231505     4.60   0.000     1.609519    4.118192
+      pyd_15 |   2.607946   .6169368     4.23   0.000     1.366117    3.849776
+       _cons |   3.707342   2.851199     1.30   0.200    -2.031824    9.446508
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(pyd_2 pyd_3 pyd_5 pyd_6 pyd_7 pyd_8 pyd_9 pyd_10 pyd_11 pyd_12 pyd_13
+    pyd_14 pyd_15)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.Growth collapsed
+Instruments for levels equation
+  Standard
+    pyd_2 pyd_3 pyd_5 pyd_6 pyd_7 pyd_8 pyd_9 pyd_10 pyd_11 pyd_12 pyd_13
+    pyd_14 pyd_15
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -2.96  Pr > z =  0.003
+Arellano-Bond test for AR(2) in first differences: z =  -0.84  Pr > z =  0.400
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =  19.29  Prob > chi2 =  0.007
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =  13.40  Prob > chi2 =  0.063
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =  13.40  Prob > chi2 =  0.063
+  gmm(Growth, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =   4.69  Prob > chi2 =  0.585
+    Difference (null H = exogenous): chi2(1)    =   8.72  Prob > chi2 =  0.003
+  gmm(Growth, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   4.89  Prob > chi2 =  0.558
+    Difference (null H = exogenous): chi2(1)    =   8.51  Prob > chi2 =  0.004
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   2.91  Prob > chi2 =  0.405
+    Difference (null H = exogenous): chi2(4)    =  10.49  Prob > chi2 =  0.033
+
+PREPANDEMIC_OK outcome=Growth N=658 Ng=47 instruments=28 bInternet=-.0464142747445324 Hansen=.062
+> 903190179234 AR1=.0030283415813168 AR2=.400403166203183 DHlevel=.0035272279287355
+PREPANDEMIC_START outcome=ln_Productivity two-step System GMM, fixed lag(2 2) collapsed
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       658
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 28                      Obs per group: min =        14
+F(20, 46)     =  1.43e+06                                      avg =     14.00
+Prob > F      =     0.000                                      max =        14
+---------------------------------------------------------------------------------
+                |              Corrected
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9987433   .0322524    30.97   0.000     .9338227    1.063664
+                |
+       Internet |  -.0006221   .0005702    -1.09   0.281    -.0017698    .0005256
+      Broadband |  -.0008288   .0017183    -0.48   0.632    -.0042875    .0026299
+    ICT_Exports |   -.000013   .0008514    -0.02   0.988    -.0017268    .0017007
+   Unemployment |  -.0033276   .0033464    -0.99   0.325    -.0100635    .0034083
+      Inflation |  -.0015781   .0021052    -0.75   0.457    -.0058156    .0026595
+            RnD |  -.0014245   .0069411    -0.21   0.838    -.0153961    .0125471
+          pyd_2 |   .0089607   .0119189     0.75   0.456    -.0150307    .0329522
+          pyd_3 |   .0116922   .0082698     1.41   0.164    -.0049541    .0283385
+          pyd_5 |  -.0325768   .0104938    -3.10   0.003    -.0536998   -.0114538
+          pyd_6 |    .023638   .0138081     1.71   0.094    -.0041562    .0514322
+          pyd_7 |   .0200227    .012141     1.65   0.106     -.004416    .0444613
+          pyd_8 |   .0063357   .0116176     0.55   0.588    -.0170493    .0297207
+          pyd_9 |   .0172516   .0139485     1.24   0.222    -.0108254    .0453285
+         pyd_10 |   .0132452   .0119162     1.11   0.272    -.0107409    .0372313
+         pyd_11 |   .0146941   .0111806     1.31   0.195    -.0078113    .0371995
+         pyd_12 |    .012112   .0153045     0.79   0.433    -.0186944    .0429183
+         pyd_13 |   .0210363   .0159696     1.32   0.194    -.0111087    .0531814
+         pyd_14 |   .0154561   .0155908     0.99   0.327    -.0159266    .0468388
+         pyd_15 |   .0161967   .0157271     1.03   0.308    -.0154602    .0478537
+          _cons |   .1137215   .3118762     0.36   0.717    -.5140526    .7414957
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(pyd_2 pyd_3 pyd_5 pyd_6 pyd_7 pyd_8 pyd_9 pyd_10 pyd_11 pyd_12 pyd_13
+    pyd_14 pyd_15)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.ln_Productivity collapsed
+Instruments for levels equation
+  Standard
+    pyd_2 pyd_3 pyd_5 pyd_6 pyd_7 pyd_8 pyd_9 pyd_10 pyd_11 pyd_12 pyd_13
+    pyd_14 pyd_15
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -3.23  Pr > z =  0.001
+Arellano-Bond test for AR(2) in first differences: z =  -1.24  Pr > z =  0.215
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =  34.61  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   8.92  Prob > chi2 =  0.258
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =   8.92  Prob > chi2 =  0.258
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =   8.92  Prob > chi2 =  0.178
+    Difference (null H = exogenous): chi2(1)    =   0.00  Prob > chi2 =  0.949
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.65  Prob > chi2 =  0.724
+    Difference (null H = exogenous): chi2(1)    =   5.27  Prob > chi2 =  0.022
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   1.93  Prob > chi2 =  0.588
+    Difference (null H = exogenous): chi2(4)    =   7.00  Prob > chi2 =  0.136
+
+PREPANDEMIC_OK outcome=ln_Productivity N=658 Ng=47 instruments=28 bInternet=-.0006220548331504 Ha
+> nsen=.2581840947163914 AR1=.0012501707836024 AR2=.2146188454919816 DHlevel=.02164203201926
+
+. postclose pp
+
+. preserve
+
+. use "outputs/professor/prepandemic_system_gmm_stats.dta", clear
+
+. export delimited using "outputs/professor/prepandemic_system_gmm_stats.csv", replace
+(file outputs/professor/prepandemic_system_gmm_stats.csv not found)
+file outputs/professor/prepandemic_system_gmm_stats.csv saved
+
+. count if rc != 0
+  0
+
+. display as result "PREPANDEMIC_FAILURE_COUNT=" r(N)
+PREPANDEMIC_FAILURE_COUNT=0
+
+. count
+  2
+
+. display as result "PREPANDEMIC_TOTAL_COUNT=" r(N)
+PREPANDEMIC_TOTAL_COUNT=2
+
+. list, noobs abbreviate(20)
+
+  +------------------------------------------------------------------------------------------+
+  |         outcome  | rc  |   N  | Ng  | instruments  |    lag_b  |   lag_se  | internet_b  |
+  |          Growth  |  0  | 658  | 47  |          28  | .6299611  | .1515533  |  -.0464143  |
+  |-------------------------------------+----------------------------------------------------|
+  | internet_se | internet_p | sargan_p | hansen_p |    ar1_p |    ar2_p | diffh_dep_level_p |
+  |    .0246225 |   .0657516 | .0073379 | .0629032 | .0030283 | .4004032 |          .0035272 |
+  |------------------------------------------------------------------------------------------|
+  |                                     diffh_controls_p                                     |
+  |                                             .0329616                                     |
+  +------------------------------------------------------------------------------------------+
+
+  +------------------------------------------------------------------------------------------+
+  |         outcome  | rc  |   N  | Ng  | instruments  |    lag_b  |   lag_se  | internet_b  |
+  | ln_Productivity  |  0  | 658  | 47  |          28  | .9987433  | .0322524  |  -.0006221  |
+  |-------------------------------------+----------------------------------------------------|
+  | internet_se | internet_p | sargan_p | hansen_p |    ar1_p |    ar2_p | diffh_dep_level_p |
+  |    .0005702 |   .2809566 | .0000132 | .2581841 | .0012502 | .2146188 |           .021642 |
+  |------------------------------------------------------------------------------------------|
+  |                                     diffh_controls_p                                     |
+  |                                             .1361097                                     |
+  +------------------------------------------------------------------------------------------+
+
+. restore
+
+. display as result "PREPANDEMIC_RUN_COMPLETE: model sensitivity only, not proof of valid instrum
+> ents or spillovers"
+PREPANDEMIC_RUN_COMPLETE: model sensitivity only, not proof of valid instruments or spillovers
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_PREPANDEMIC_SYSTEM_GMM.lo
+> g
+  log type:  text
+ closed on:  16 Oct 2026, 02:03:49
+-------------------------------------------------------------------------------------------------

@@ -1,0 +1,27 @@
+name: Digital economy R real IPS Fisher CIPS GMM
+on:
+  push:
+    paths:
+      - ".github/workflows/08-r-research.yml"
+      - "src/r/estimate.R"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  r-estimation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install production R econometrics
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends r-base r-cran-plm r-cran-readxl r-cran-lmtest r-cran-sandwich
+      - name: Execute real two-outcome tests and dynamic panel estimates
+        run: Rscript src/r/estimate.R
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-r-tests-gmm-results
+          path: outputs/r/
+          if-no-files-found: warn

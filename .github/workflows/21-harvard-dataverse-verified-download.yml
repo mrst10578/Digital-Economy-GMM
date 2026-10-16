@@ -1,0 +1,60 @@
+name: Source intake - Harvard Dataverse verified bilateral-trade CSV
+on:
+  push:
+    paths:
+      - ".github/workflows/21-harvard-dataverse-verified-download.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verified-harvard-data:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact open Harvard Dataverse file ID 13685107 (not larger product-level files)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/harvard_verified
+          curl --fail --location --retry 3 --retry-delay 5 --retry-all-errors --connect-timeout 25 --max-time 360 \
+            --user-agent 'AcademicResearchReproducibility/1.0' \
+            'https://dataverse.harvard.edu/api/access/datafile/13685107' \
+            --output outputs/harvard_verified/hs92_country_country_year.csv
+      - name: Cryptographic checksum, exact metadata size and headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, csv
+          p=Path("outputs/harvard_verified/hs92_country_country_year.csv")
+          expected_md5="9c39659168dd5212f745572ba35b2a5c"
+          expected_bytes=30767251
+          b=p.read_bytes()
+          md5=hashlib.md5(b).hexdigest()
+          sha256=hashlib.sha256(b).hexdigest()
+          assert len(b)==expected_bytes,(len(b),expected_bytes)
+          assert md5==expected_md5,(md5,expected_md5)
+          assert b"html" not in b[:300].lower(), "Invalid HTML response"
+          with p.open(newline='',encoding='utf-8-sig') as f:
+              header=next(csv.reader(f))
+          assert any("year" in h.lower() for h in header),header
+          manifest=dict(source="Harvard Growth Lab Atlas HS92 international trade data",
+             dataset_doi="10.7910/DVN/T4CHWJ",file_id=13685107,
+             source_url="https://dataverse.harvard.edu/api/access/datafile/13685107",
+             filename=p.name,md5=md5,sha256=sha256,bytes=len(b),columns=header,
+             verification="MD5 and exact file size MATCH Harvard Dataverse metadata",
+             academic_limitation="country-country aggregate trade; no product/technology transfer granularity",
+             license="CC0 1.0 as displayed on original Dataverse dataset",
+             no_causal_claim=True)
+          (p.parent/"source_manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False))
+          print("VERIFIED_HARVARD_DATA",json.dumps(manifest))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Harvard-HS92-bilateral-country-year-verified-original
+          path: outputs/harvard_verified/
+          if-no-files-found: warn
+          compression-level: 6

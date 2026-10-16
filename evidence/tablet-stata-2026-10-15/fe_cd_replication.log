@@ -1,0 +1,157 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_Stata_Ready\outputs/diagnostics/FE_CD_REPLICATION.log
+  log type:  text
+ opened on:  15 Oct 2026, 17:20:22
+
+. use "data/processed/stata_ready.dta", clear
+
+. capture confirm variable panel_id
+
+. if _rc encode ISO3, gen(panel_id)
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. postfile cdp str36 model double N years groups cd_stat cd_p b_internet using "outputs/diagnosti
+> cs/fe_cd_repl.dta", replace
+
+. capture program drop _fe_cd
+
+. program define _fe_cd
+  1.     version 16.0
+  2.     syntax, OUTCOME(name) DYNAMIC(integer)
+  3.     preserve
+  4.     local rhs ""
+  5.     if `dynamic' == 1 local rhs "L.`outcome'"
+  6.     quietly regress `outcome' `rhs' Internet Broadband ICT_Exports Unemployment Inflation Rn
+> D i.panel_id i.Year
+  7.     local num_obs = e(N)
+  8.     local beta = _b[Internet]
+  9.     gen byte __cd_in = e(sample)
+ 10.     predict double __cd_r if __cd_in, residuals
+ 11.     keep if __cd_in
+ 12.     keep Year panel_id __cd_r
+ 13.     reshape wide __cd_r, i(Year) j(panel_id)
+ 14.     quietly ds __cd_r*
+ 15.     local vars `r(varlist)'
+ 16.     mata: X = st_data(., tokens(st_local("vars")))
+ 17.     mata: CC = correlation(X)
+ 18.     mata: NN = cols(X)
+ 19.     mata: TT = rows(X)
+ 20.     mata: sumrho = (sum(vec(CC))-NN)/2
+ 21.     mata: zcd = sqrt(2*TT/(NN*(NN-1))) * sumrho
+ 22.     mata: st_numscalar("__cd_z", zcd)
+ 23.     mata: st_numscalar("__cd_p", 2*normal(-abs(zcd)))
+ 24.     mata: st_numscalar("__cd_N", NN)
+ 25.     mata: st_numscalar("__cd_T", TT)
+ 26.     local label "static"
+ 27.     if `dynamic' == 1 local label "dynamic"
+ 28.     post cdp ("`outcome'_`label'") (`num_obs') (__cd_T) (__cd_N) (__cd_z) (__cd_p) (`beta')
+ 29.     display as result "CD_ESTIMATED outcome=`outcome' model=`label' T=" __cd_T " N=" __cd_N 
+> " z=" __cd_z " p=" __cd_p " internet=" `beta'
+ 30.     restore
+ 31. end
+
+. foreach y in Growth ln_Productivity {
+  2.     foreach dynamic in 0 1 {
+  3.         capture noisily _fe_cd, outcome(`y') dynamic(`dynamic')
+  4.         display as result "CD_RUN_RC y=`y' dynamic=`dynamic' rc=" _rc
+  5.     }
+  6. }
+(0 observations deleted)
+(j = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+>  35 36 37 38 39 40 41 42 43 44 45 46 47)
+
+Data                               Long   ->   Wide
+-----------------------------------------------------------------------------
+Number of observations              846   ->   18          
+Number of variables                   3   ->   48          
+j variable (47 values)         panel_id   ->   (dropped)
+xij variables:
+                                 __cd_r   ->   __cd_r1 __cd_r2 ... __cd_r47
+-----------------------------------------------------------------------------
+CD_ESTIMATED outcome=Growth model=static T=18 N=47 z=1.90774 p=.05642482 internet=-.11116575
+CD_RUN_RC y=Growth dynamic=0 rc=0
+(47 missing values generated)
+(47 observations deleted)
+(j = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+>  35 36 37 38 39 40 41 42 43 44 45 46 47)
+
+Data                               Long   ->   Wide
+-----------------------------------------------------------------------------
+Number of observations              799   ->   17          
+Number of variables                   3   ->   48          
+j variable (47 values)         panel_id   ->   (dropped)
+xij variables:
+                                 __cd_r   ->   __cd_r1 __cd_r2 ... __cd_r47
+-----------------------------------------------------------------------------
+CD_ESTIMATED outcome=Growth model=dynamic T=17 N=47 z=2.7659373 p=.00567595 internet=-.08540462
+CD_RUN_RC y=Growth dynamic=1 rc=0
+(0 observations deleted)
+(j = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+>  35 36 37 38 39 40 41 42 43 44 45 46 47)
+
+Data                               Long   ->   Wide
+-----------------------------------------------------------------------------
+Number of observations              846   ->   18          
+Number of variables                   3   ->   48          
+j variable (47 values)         panel_id   ->   (dropped)
+xij variables:
+                                 __cd_r   ->   __cd_r1 __cd_r2 ... __cd_r47
+-----------------------------------------------------------------------------
+CD_ESTIMATED outcome=ln_Productivity model=static T=18 N=47 z=2.825522 p=.00472036 internet=.0036
+> 8467
+CD_RUN_RC y=ln_Productivity dynamic=0 rc=0
+(47 missing values generated)
+(47 observations deleted)
+(j = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+>  35 36 37 38 39 40 41 42 43 44 45 46 47)
+
+Data                               Long   ->   Wide
+-----------------------------------------------------------------------------
+Number of observations              799   ->   17          
+Number of variables                   3   ->   48          
+j variable (47 values)         panel_id   ->   (dropped)
+xij variables:
+                                 __cd_r   ->   __cd_r1 __cd_r2 ... __cd_r47
+-----------------------------------------------------------------------------
+CD_ESTIMATED outcome=ln_Productivity model=dynamic T=17 N=47 z=1.214179 p=.22467936 internet=-.00
+> 046076
+CD_RUN_RC y=ln_Productivity dynamic=1 rc=0
+
+. postclose cdp
+
+. preserve
+
+. use "outputs/diagnostics/fe_cd_repl.dta", clear
+
+. export delimited using "outputs/diagnostics/fe_cd_repl.csv", replace
+(file outputs/diagnostics/fe_cd_repl.csv not found)
+file outputs/diagnostics/fe_cd_repl.csv saved
+
+. list, noobs
+
+  +----------------------------------------------------------------------------------+
+  |                   model     N   years   groups    cd_stat       cd_p   b_inter~t |
+  |----------------------------------------------------------------------------------|
+  |           Growth_static   846      18       47    1.90774   .0564248   -.1111657 |
+  |          Growth_dynamic   799      17       47   2.765937   .0056759   -.0854046 |
+  |  ln_Productivity_static   846      18       47   2.825522   .0047204    .0036847 |
+  | ln_Productivity_dynamic   799      17       47   1.214179   .2246794   -.0004608 |
+  +----------------------------------------------------------------------------------+
+
+. restore
+
+. display as result "CD_TEST_SCRIPT_COMPLETE (descriptive, no causal validation)"
+CD_TEST_SCRIPT_COMPLETE (descriptive, no causal validation)
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_Stata_Ready\outputs/diagnostics/FE_CD_REPLICATION.log
+  log type:  text
+ closed on:  15 Oct 2026, 17:20:47
+-------------------------------------------------------------------------------------------------

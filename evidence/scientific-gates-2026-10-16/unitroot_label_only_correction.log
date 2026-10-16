@@ -1,0 +1,36 @@
+--------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/UNITROOT_LABEL_CORRECTION.log
+  log type:  text
+ opened on:  16 Oct 2026, 09:49:45
+
+. use "outputs/professor/productivity_unitroot_grid.dta", clear
+
+. assert _N == 16
+
+. recast str12 form
+
+. quietly count if form == "differen"
+
+. assert r(N) == 8
+
+. replace form = "difference" if form == "differen"
+(8 real changes made)
+
+. assert form == "level" | form == "difference"
+
+. export delimited using "outputs/professor/productivity_unitroot_grid.csv", replace
+file outputs/professor/productivity_unitroot_grid.csv saved
+
+. display "UNITROOT_FORMAT_FIXED=1"
+UNITROOT_FORMAT_FIXED=1
+
+. display "UNITROOT_RECORDS_PRESERVED=" _N
+UNITROOT_RECORDS_PRESERVED=16
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/UNITROOT_LABEL_CORRECTION.log
+  log type:  text
+ closed on:  16 Oct 2026, 09:49:46
+--------------------------------------------------------------------------------------------------

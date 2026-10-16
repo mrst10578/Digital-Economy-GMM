@@ -1,0 +1,587 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log
+  log type:  text
+ opened on:  16 Oct 2026, 01:42:36
+
+. display as result "PROFESSOR_GMM_SOURCE=research/digital-economy-estimation-audit-20261008"
+PROFESSOR_GMM_SOURCE=research/digital-economy-estimation-audit-20261008
+
+. display as result "PROFESSOR_GMM_DATA=original_846_observations_not_WDI_revised"
+PROFESSOR_GMM_DATA=original_846_observations_not_WDI_revised
+
+. capture noisily do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was f
+> itted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. if _rc {
+.     display as error "PROFESSOR_PREFLIGHT_FAILED"
+.     log close
+.     exit 459
+. }
+
+. postfile prof str20 outcome str10 method double rc N Ng instruments b_lag se_lag b_internet se_
+> internet p_internet b_broadband se_broadband b_ict se_ict sargan_p hansen_p ar1_p ar2_p diffh_d
+> ep_level_p diffh_ctrl_p using "outputs/professor/professor_system_gmm_stats.dta", replace
+(file outputs/professor/professor_system_gmm_stats.dta not found)
+
+. foreach y in Growth ln_Productivity {
+  2.     foreach mode in twostep onestep {
+  3.         display as result "PROFESSOR_START outcome=`y' method=`mode'"
+  4.         if "`mode'" == "twostep" {
+  5.             capture noisily xtabond2 `y' L.`y' Internet Broadband ICT_Exports Unemployment I
+> nflation RnD $digital_year_dummies_sys, gmmstyle(`y', lag(2 2) collapse split) gmmstyle(Interne
+> t Broadband ICT_Exports RnD, lag(2 2) collapse) gmmstyle(Unemployment Inflation, lag(2 2) colla
+> pse) ivstyle($digital_year_dummies_sys) twostep robust small artests(2)
+  6.         }
+  7.         else {
+  8.             capture noisily xtabond2 `y' L.`y' Internet Broadband ICT_Exports Unemployment I
+> nflation RnD $digital_year_dummies_sys, gmmstyle(`y', lag(2 2) collapse split) gmmstyle(Interne
+> t Broadband ICT_Exports RnD, lag(2 2) collapse) gmmstyle(Unemployment Inflation, lag(2 2) colla
+> pse) ivstyle($digital_year_dummies_sys) robust small artests(2)
+  9.         }
+ 10.         local rc = _rc
+ 11.         if `rc' == 0 {
+ 12.             local n = e(N)
+ 13.             local ng = e(N_g)
+ 14.             local j = e(j)
+ 15.             local sarg = e(sarganp)
+ 16.             local hans = e(hansenp)
+ 17.             local ar1 = e(ar1p)
+ 18.             local ar2 = e(ar2p)
+ 19.             local lag_b = _b[L.`y']
+ 20.             local lag_se = _se[L.`y']
+ 21.             local internet_b = _b[Internet]
+ 22.             local internet_se = _se[Internet]
+ 23.             local broadband_b = _b[Broadband]
+ 24.             local broadband_se = _se[Broadband]
+ 25.             local ict_b = _b[ICT_Exports]
+ 26.             local ict_se = _se[ICT_Exports]
+ 27.             local t_internet = `internet_b' / `internet_se'
+ 28.             local p_internet = 2*ttail(e(N_g)-1, abs(`t_internet'))
+ 29.             local diffh_dep_level = .
+ 30.             local diffh_ctrl = .
+ 31.             capture matrix __prof_dh = e(diffsargan)
+ 32.             if _rc == 0 {
+ 33.                 if rowsof(__prof_dh) >= 5 & colsof(__prof_dh) >= 4 {
+ 34.                     local diffh_dep_level = el(__prof_dh,5,3)
+ 35.                     local diffh_ctrl = el(__prof_dh,5,4)
+ 36.                 }
+ 37.             }
+ 38.             post prof ("`y'") ("`mode'") (0) (`n') (`ng') (`j') (`lag_b') (`lag_se') (`inter
+> net_b') (`internet_se') (`p_internet') (`broadband_b') (`broadband_se') (`ict_b') (`ict_se') (`
+> sarg') (`hans') (`ar1') (`ar2') (`diffh_dep_level') (`diffh_ctrl')
+ 39.             capture estimates save "outputs/professor/`y'_`mode'.ster", replace
+ 40.             display as result "PROFESSOR_OK outcome=`y' method=`mode' N=`n' instruments=`j' 
+> Hansen=`hans' AR1=`ar1' AR2=`ar2' DHlevel=`diffh_dep_level'"
+ 41.         }
+ 42.         else {
+ 43.             post prof ("`y'") ("`mode'") (`rc') (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) 
+> (.) (.) (.) (.) (.) (.) (.)
+ 44.             display as error "PROFESSOR_FAILED outcome=`y' method=`mode' rc=`rc'"
+ 45.         }
+ 46.     }
+ 47. }
+PROFESSOR_START outcome=Growth method=twostep
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =     55.44                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+------------------------------------------------------------------------------
+             |              Corrected
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .2562263    .131962     1.94   0.058    -.0093993     .521852
+             |
+    Internet |  -.0186699   .0358186    -0.52   0.605     -.090769    .0534293
+   Broadband |  -.1291895   .0856984    -1.51   0.139    -.3016914    .0433124
+ ICT_Exports |  -.0388245   .0406594    -0.95   0.345    -.1206677    .0430187
+Unemployment |  -.4354862   .1985663    -2.19   0.033    -.8351793    -.035793
+   Inflation |  -.0309721    .066373    -0.47   0.643     -.164574    .1026298
+         RnD |    .484051   .4490563     1.08   0.287    -.4198525    1.387954
+        yd_2 |   2.465493    .523132     4.71   0.000     1.412483    3.518503
+        yd_3 |   2.330941    .390853     5.96   0.000     1.544195    3.117688
+        yd_5 |  -4.301045   .7176504    -5.99   0.000    -5.745601    -2.85649
+        yd_6 |   4.162894   1.024533     4.06   0.000     2.100616    6.225172
+        yd_7 |    2.32183   .6705095     3.46   0.001     .9721648    3.671496
+        yd_8 |   .8463327   .7386766     1.15   0.258    -.6405462    2.333212
+        yd_9 |   2.546439   .8052935     3.16   0.003     .9254675    4.167411
+       yd_10 |   2.614462   .8985695     2.91   0.006     .8057351    4.423188
+       yd_11 |   2.625402   1.118879     2.35   0.023     .3732147    4.877589
+       yd_12 |   1.965025   .7637997     2.57   0.013     .4275758    3.502474
+       yd_13 |   3.370783   .8027954     4.20   0.000     1.754839    4.986726
+       yd_14 |   2.343828   .7854016     2.98   0.005     .7628963    3.924759
+       yd_15 |   2.035483   .8237993     2.47   0.017     .3772609    3.693705
+       yd_16 |  -4.184932   1.223527    -3.42   0.001    -6.647764     -1.7221
+       yd_17 |   9.224032   1.579627     5.84   0.000     6.044409    12.40366
+       yd_18 |   2.718757   1.051798     2.58   0.013     .6015984    4.835916
+       _cons |   7.412798   2.553347     2.90   0.006     2.273178    12.55242
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.Growth collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.65  Pr > z =  0.099
+Arellano-Bond test for AR(2) in first differences: z =   0.82  Pr > z =  0.413
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =  53.84  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   4.07  Prob > chi2 =  0.772
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =   4.07  Prob > chi2 =  0.772
+  gmm(Growth, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =   3.80  Prob > chi2 =  0.704
+    Difference (null H = exogenous): chi2(1)    =   0.28  Prob > chi2 =  0.600
+  gmm(Growth, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.93  Prob > chi2 =  0.686
+    Difference (null H = exogenous): chi2(1)    =   0.14  Prob > chi2 =  0.705
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   2.87  Prob > chi2 =  0.412
+    Difference (null H = exogenous): chi2(4)    =   1.20  Prob > chi2 =  0.878
+
+PROFESSOR_OK outcome=Growth method=twostep N=799 instruments=31 Hansen=.771583451016372 AR1=.0987
+> 91352394934 AR2=.4128903021563256 DHlevel=.7052068199051424
+PROFESSOR_START outcome=Growth method=onestep
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, one-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =     44.56                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+------------------------------------------------------------------------------
+             |               Robust
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .1899914   .1427676     1.33   0.190    -.0973848    .4773677
+             |
+    Internet |  -.0580818   .0480186    -1.21   0.233    -.1547381    .0385745
+   Broadband |  -.1106137   .1073725    -1.03   0.308    -.3267434    .1055159
+ ICT_Exports |  -.0417101    .059187    -0.70   0.485    -.1608474    .0774272
+Unemployment |  -.7065401   .3284839    -2.15   0.037    -1.367744   -.0453363
+   Inflation |   .1041467   .1590831     0.65   0.516     -.216071    .4243644
+         RnD |   .7730355   .6905878     1.12   0.269    -.6170456    2.163117
+        yd_2 |   3.546568   .9849414     3.60   0.001     1.563983    5.529152
+        yd_3 |   3.105481   .7665531     4.05   0.000     1.562489    4.648472
+        yd_5 |  -3.155807   1.146724    -2.75   0.008    -5.464043   -.8475714
+        yd_6 |   5.131423   1.148716     4.47   0.000     2.819177    7.443669
+        yd_7 |    3.38719   1.129318     3.00   0.004     1.113992    5.660389
+        yd_8 |   2.025471   1.141526     1.77   0.083    -.2723016    4.323243
+        yd_9 |    3.96226   1.218858     3.25   0.002     1.508826    6.415695
+       yd_10 |   3.730694   1.210811     3.08   0.003     1.293458     6.16793
+       yd_11 |   3.266856   1.231501     2.65   0.011     .7879717    5.745739
+       yd_12 |   3.092705   1.119866     2.76   0.008     .8385318    5.346877
+       yd_13 |   4.484626   1.118244     4.01   0.000     2.233718    6.735534
+       yd_14 |    3.55205   1.171381     3.03   0.004     1.194184    5.909917
+       yd_15 |   3.087225   1.204514     2.56   0.014     .6626648    5.511785
+       yd_16 |  -3.679347   1.575166    -2.34   0.024    -6.849992   -.5087034
+       yd_17 |   10.35492   1.830436     5.66   0.000     6.670443    14.03939
+       yd_18 |   2.488251    1.99629     1.25   0.219    -1.530072    6.506574
+       _cons |   10.02461   2.739547     3.66   0.001     4.510185    15.53903
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.Growth collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -2.12  Pr > z =  0.034
+Arellano-Bond test for AR(2) in first differences: z =   1.20  Pr > z =  0.229
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =  53.84  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   4.07  Prob > chi2 =  0.772
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =   4.07  Prob > chi2 =  0.772
+  gmm(Growth, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =   3.80  Prob > chi2 =  0.704
+    Difference (null H = exogenous): chi2(1)    =   0.28  Prob > chi2 =  0.600
+  gmm(Growth, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.93  Prob > chi2 =  0.686
+    Difference (null H = exogenous): chi2(1)    =   0.14  Prob > chi2 =  0.705
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   2.87  Prob > chi2 =  0.412
+    Difference (null H = exogenous): chi2(4)    =   1.20  Prob > chi2 =  0.878
+
+PROFESSOR_OK outcome=Growth method=onestep N=799 instruments=31 Hansen=.771583451016372 AR1=.0340
+> 925702048262 AR2=.229058515296911 DHlevel=.7052068199051424
+PROFESSOR_START outcome=ln_Productivity method=twostep
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =  1.56e+06                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+---------------------------------------------------------------------------------
+                |              Corrected
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9990489   .0387233    25.80   0.000     .9211029    1.076995
+                |
+       Internet |  -.0005413   .0003783    -1.43   0.159    -.0013028    .0002202
+      Broadband |  -.0007215    .001059    -0.68   0.499    -.0028531      .00141
+    ICT_Exports |   .0000127   .0007082     0.02   0.986    -.0014128    .0014383
+   Unemployment |   -.002257   .0017828    -1.27   0.212    -.0058456    .0013317
+      Inflation |  -.0009206   .0010937    -0.84   0.404    -.0031222     .001281
+            RnD |   .0038409   .0059664     0.64   0.523    -.0081688    .0158506
+           yd_2 |   .0140183   .0054826     2.56   0.014     .0029824    .0250542
+           yd_3 |   .0146634   .0055383     2.65   0.011     .0035154    .0258115
+           yd_5 |  -.0266246   .0080792    -3.30   0.002    -.0428872    -.010362
+           yd_6 |   .0293072   .0127947     2.29   0.027     .0035529    .0550615
+           yd_7 |   .0241979   .0101327     2.39   0.021     .0038018     .044594
+           yd_8 |   .0070549   .0092697     0.76   0.450     -.011604    .0257138
+           yd_9 |   .0170168   .0129227     1.32   0.194    -.0089953    .0430288
+          yd_10 |   .0115667   .0121564     0.95   0.346    -.0129029    .0360362
+          yd_11 |   .0103335   .0148308     0.70   0.489    -.0195194    .0401863
+          yd_12 |   .0128311   .0142535     0.90   0.373    -.0158597    .0415219
+          yd_13 |   .0244183     .01548     1.58   0.122    -.0067414     .055578
+          yd_14 |   .0165319   .0141961     1.16   0.250    -.0120433    .0451071
+          yd_15 |   .0155515   .0151413     1.03   0.310    -.0149264    .0460294
+          yd_16 |  -.0282646   .0182572    -1.55   0.128    -.0650145    .0084852
+          yd_17 |   .0626867   .0212029     2.96   0.005     .0200075    .1053658
+          yd_18 |   .0200887   .0138801     1.45   0.155    -.0078505     .048028
+          _cons |   .0811022   .4269257     0.19   0.850    -.7782546    .9404591
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.ln_Productivity collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.47  Pr > z =  0.142
+Arellano-Bond test for AR(2) in first differences: z =   0.75  Pr > z =  0.452
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =   5.66  Prob > chi2 =  0.580
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =  15.04  Prob > chi2 =  0.035
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =  15.04  Prob > chi2 =  0.035
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =  15.04  Prob > chi2 =  0.020
+    Difference (null H = exogenous): chi2(1)    =   0.00  Prob > chi2 =  0.996
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.79  Prob > chi2 =  0.705
+    Difference (null H = exogenous): chi2(1)    =  11.26  Prob > chi2 =  0.001
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   1.98  Prob > chi2 =  0.578
+    Difference (null H = exogenous): chi2(4)    =  13.07  Prob > chi2 =  0.011
+
+PROFESSOR_OK outcome=ln_Productivity method=twostep N=799 instruments=31 Hansen=.035448706414941 
+> AR1=.1416230662931867 AR2=.4516200789044235 DHlevel=.0007936401122286
+PROFESSOR_START outcome=ln_Productivity method=onestep
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, one-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =  1.88e+06                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+---------------------------------------------------------------------------------
+                |               Robust
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9901998   .0235727    42.01   0.000     .9427505    1.037649
+                |
+       Internet |  -.0009022   .0004725    -1.91   0.062    -.0018532    .0000488
+      Broadband |   -.000123   .0006434    -0.19   0.849     -.001418    .0011721
+    ICT_Exports |  -.0000301    .000433    -0.07   0.945    -.0009016    .0008414
+   Unemployment |  -.0025121   .0016756    -1.50   0.141    -.0058849    .0008607
+      Inflation |  -.0001543   .0009398    -0.16   0.870    -.0020459    .0017374
+            RnD |   .0072295    .004091     1.77   0.084    -.0010052    .0154642
+           yd_2 |   .0175859   .0052054     3.38   0.001      .007108    .0280638
+           yd_3 |   .0193938   .0046581     4.16   0.000     .0100175    .0287702
+           yd_5 |  -.0247671   .0082952    -2.99   0.005    -.0414645   -.0080697
+           yd_6 |   .0323299   .0130077     2.49   0.017     .0061467    .0585132
+           yd_7 |     .02532   .0096015     2.64   0.011     .0059933    .0446468
+           yd_8 |   .0101087   .0097169     1.04   0.304    -.0094503    .0296678
+           yd_9 |   .0255777   .0111998     2.28   0.027     .0030336    .0481218
+          yd_10 |   .0180288   .0105528     1.71   0.094    -.0032129    .0392705
+          yd_11 |   .0159005   .0113033     1.41   0.166    -.0068518    .0386528
+          yd_12 |   .0192105   .0119353     1.61   0.114     -.004814     .043235
+          yd_13 |   .0324524    .013302     2.44   0.019     .0056769    .0592278
+          yd_14 |   .0262327   .0136452     1.92   0.061    -.0012336    .0536991
+          yd_15 |   .0235175   .0141382     1.66   0.103    -.0049413    .0519763
+          yd_16 |  -.0237733   .0195533    -1.22   0.230     -.063132    .0155854
+          yd_17 |   .0740027    .020822     3.55   0.001     .0320902    .1159152
+          yd_18 |   .0203964   .0189627     1.08   0.288    -.0177736    .0585664
+          _cons |   .1810131   .2585832     0.70   0.487    -.3394879     .701514
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.ln_Productivity collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.46  Pr > z =  0.144
+Arellano-Bond test for AR(2) in first differences: z =   0.72  Pr > z =  0.472
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =   5.66  Prob > chi2 =  0.580
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =  15.04  Prob > chi2 =  0.035
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =  15.04  Prob > chi2 =  0.035
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =  15.04  Prob > chi2 =  0.020
+    Difference (null H = exogenous): chi2(1)    =   0.00  Prob > chi2 =  0.996
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.79  Prob > chi2 =  0.705
+    Difference (null H = exogenous): chi2(1)    =  11.26  Prob > chi2 =  0.001
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   1.98  Prob > chi2 =  0.578
+    Difference (null H = exogenous): chi2(4)    =  13.07  Prob > chi2 =  0.011
+
+PROFESSOR_OK outcome=ln_Productivity method=onestep N=799 instruments=31 Hansen=.035448706414941 
+> AR1=.1437739271548824 AR2=.4720911380253094 DHlevel=.0007936401122286
+
+. postclose prof
+
+. preserve
+
+. use "outputs/professor/professor_system_gmm_stats.dta", clear
+
+. sort outcome method
+
+. export delimited using "outputs/professor/professor_system_gmm_stats.csv", replace
+(file outputs/professor/professor_system_gmm_stats.csv not found)
+file outputs/professor/professor_system_gmm_stats.csv saved
+
+. list, noobs abbreviate(18)
+
+  +--------------------------------------------------------------------------------------------+
+  |         outcome |  method | rc |   N | Ng | instruments |    b_lag |   se_lag | b_internet |
+  |          Growth | onestep |  0 | 799 | 47 |          31 | .1899914 | .1427676 |  -.0580818 |
+  |--------------------------------------------------------------------+-----------------------|
+  | se_internet | p_internet | b_broadband | se_broadband |     b_ict  |   se_ict  | sargan_p  |
+  |    .0480186 |   .2326237 |   -.1106137 |     .1073725 | -.0417101  |  .059187  | 2.54e-09  |
+  |--------------------------------------------------------------------------------------------|
+  |   hansen_p    |      ar1_p    |      ar2_p    |   diffh_dep_level_p    |   diffh_ctrl_p    |
+  |   .7715834    |   .0340926    |   .2290585    |            .7052068    |       .8778344    |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |         outcome |  method | rc |   N | Ng | instruments |    b_lag |   se_lag | b_internet |
+  |          Growth | twostep |  0 | 799 | 47 |          31 | .2562263 |  .131962 |  -.0186699 |
+  |--------------------------------------------------------------------+-----------------------|
+  | se_internet | p_internet | b_broadband | se_broadband |     b_ict  |   se_ict  | sargan_p  |
+  |    .0358186 |   .6047044 |   -.1291895 |     .0856984 | -.0388245  | .0406594  | 2.54e-09  |
+  |--------------------------------------------------------------------------------------------|
+  |   hansen_p    |      ar1_p    |      ar2_p    |   diffh_dep_level_p    |   diffh_ctrl_p    |
+  |   .7715834    |   .0987914    |   .4128903    |            .7052068    |       .8778344    |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |         outcome |  method | rc |   N | Ng | instruments |    b_lag |   se_lag | b_internet |
+  | ln_Productivity | onestep |  0 | 799 | 47 |          31 | .9901998 | .0235727 |  -.0009022 |
+  |--------------------------------------------------------------------+-----------------------|
+  | se_internet | p_internet | b_broadband | se_broadband |     b_ict  |   se_ict  | sargan_p  |
+  |    .0004725 |    .062443 |    -.000123 |     .0006434 | -.0000301  |  .000433  | .5796446  |
+  |--------------------------------------------------------------------------------------------|
+  |   hansen_p    |      ar1_p    |      ar2_p    |   diffh_dep_level_p    |   diffh_ctrl_p    |
+  |   .0354487    |   .1437739    |   .4720911    |            .0007936    |       .0109472    |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |         outcome |  method | rc |   N | Ng | instruments |    b_lag |   se_lag | b_internet |
+  | ln_Productivity | twostep |  0 | 799 | 47 |          31 | .9990489 | .0387233 |  -.0005413 |
+  |--------------------------------------------------------------------+-----------------------|
+  | se_internet | p_internet | b_broadband | se_broadband |     b_ict  |   se_ict  | sargan_p  |
+  |    .0003783 |   .1592111 |   -.0007215 |      .001059 |  .0000127  | .0007082  | .5796446  |
+  |--------------------------------------------------------------------------------------------|
+  |   hansen_p    |      ar1_p    |      ar2_p    |   diffh_dep_level_p    |   diffh_ctrl_p    |
+  |   .0354487    |   .1416231    |   .4516201    |            .0007936    |       .0109472    |
+  +--------------------------------------------------------------------------------------------+
+
+. count if rc!=0
+  0
+
+. display as result "PROFESSOR_FAILED_COUNT=" r(N)
+PROFESSOR_FAILED_COUNT=0
+
+. count
+  4
+
+. display as result "PROFESSOR_TOTAL_MODELS=" r(N)
+PROFESSOR_TOTAL_MODELS=4
+
+. restore
+
+. display as result "PROFESSOR_GMM_RUN_COMPLETED: two-step primary, one-step sensitivity, no caus
+> al acceptance"
+PROFESSOR_GMM_RUN_COMPLETED: two-step primary, one-step sensitivity, no causal acceptance
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log
+  log type:  text
+ closed on:  16 Oct 2026, 01:43:23
+-------------------------------------------------------------------------------------------------

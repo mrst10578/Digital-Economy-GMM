@@ -1,0 +1,1639 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/stata/RUN_ALL_REAL_STATA.log
+  log type:  text
+ opened on:  16 Oct 2026, 01:03:47
+
+. display as text "PROJECT Digital-Economy-GMM; REAL STATA VERSION " c(stata_version)
+PROJECT Digital-Economy-GMM; REAL STATA VERSION 17
+
+. capture noisily do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was f
+> itted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. local preflight_rc = _rc
+
+. if `preflight_rc' != 0 {
+.     display as error "PREFLIGHT_FAILED rc=`preflight_rc' : no regression attempted."
+.     log close
+.     exit `preflight_rc'
+. }
+
+. do "stata/00_model_helpers.do"
+
+. * Registers real outcomes only. Models are NEVER marked scientifically accepted here.
+. capture program drop digital_success
+
+. program define digital_success
+  1.     version 16.0
+  2.     syntax , NAME(string)
+  3.     local inst = e(j)
+  4.     local groups = e(N_g)
+  5.     local verdict "DIAGNOSTIC_HOLD"
+  6.     if missing(`inst') | missing(`groups') {
+  7.         local verdict "MISSING_INSTRUMENT_DIAGNOSTIC"
+  8.     }
+  9.     if !missing(`inst') & !missing(`groups') {
+ 10.         if `inst' >= `groups' local verdict "INSTRUMENTS_GE_GROUPS"
+ 11.     }
+ 12.     post digital_post ("`name'") ("`verdict'") (0) (e(N)) (e(N_g)) (e(j)) (e(sarganp)) (e(ha
+> nsenp)) (e(ar1p)) (e(ar2p))
+ 13.     display as result "STATA_MODEL_ESTIMATED=`name' status=`verdict' instruments=" e(j) " gr
+> oups=" e(N_g)
+ 14.     display as text "Sargan p=" e(sarganp) " Hansen p=" e(hansenp) " AR1 p=" e(ar1p) " AR2 p
+> =" e(ar2p)
+ 15.     capture noisily estimates store `name'
+ 16.     capture noisily estimates save "outputs/stata/`name'.ster", replace
+ 17.     capture noisily matrix list e(diffsargan)
+ 18. end
+
+. capture program drop digital_failure
+
+. program define digital_failure
+  1.     version 16.0
+  2.     syntax , NAME(string) RC(integer)
+  3.     post digital_post ("`name'") ("FAILED_EXECUTION") (`rc') (.) (.) (.) (.) (.) (.) (.)
+  4.     display as error "STATA_MODEL_FAILED=`name' return_code=`rc'"
+  5. end
+
+. 
+end of do-file
+
+. postfile digital_post str32 model str32 status double rc N Ng instruments sargan_p hansen_p ar1
+> _p ar2_p using "outputs/stata/model_status.dta", replace
+(file outputs/stata/model_status.dta not found)
+
+. capture noisily do "stata/02_pre_estimation.do"
+
+. * Pre-estimation Stata-native tests. Errors logged but no test fabricated.
+. version 16.0
+
+. xtdescribe
+
+panel_id:  1, 2, ..., 47                                     n =         47
+    Year:  2005, 2006, ..., 2022                             T =         18
+           Delta(Year) = 1 unit
+           Span(Year)  = 18 periods
+           (panel_id*Year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                        18      18      18        18        18      18      18
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+--------------------
+       47    100.00  100.00 |  111111111111111111
+ ---------------------------+--------------------
+       47    100.00         |  XXXXXXXXXXXXXXXXXX
+
+. summarize Growth Productivity ln_Productivity Internet Broadband ICT_Exports Unemployment Infla
+> tion RnD, detail
+
+                           Growth
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    -8.868221      -54.40209
+ 5%     -4.68845      -21.75401
+10%    -2.081376      -18.95694       Obs                 846
+25%     1.044286      -17.82112       Sum of wgt.         846
+
+50%     2.802124                      Mean           2.892183
+                        Largest       Std. dev.      5.103744
+75%     5.036402       25.10311
+90%     7.688659       25.46322       Variance        26.0482
+95%     9.627293       27.96154       Skewness       -1.25988
+99%       16.467       34.46621       Kurtosis       26.05795
+
+                        Productivity
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     12186.86       9728.819
+ 5%     22841.97       9914.236
+10%     40077.69       10787.38       Obs                 846
+25%     58985.29       11398.76       Sum of wgt.         846
+
+50%     84296.49                      Mean            92350.4
+                        Largest       Std. dev.      51355.11
+75%     119687.8       292715.2
+90%     136668.2         303821       Variance       2.64e+09
+95%     187829.2       316066.8       Skewness       1.547292
+99%     286887.5       320335.6       Kurtosis       6.811859
+
+                       ln_Productivity
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     9.408114       9.182848
+ 5%     10.03635       9.201727
+10%     10.59858       9.286132       Obs                 846
+25%     10.98504        9.34126       Sum of wgt.         846
+
+50%      11.3421                      Mean           11.27805
+                        Largest       Std. dev.       .592106
+75%     11.69264       12.58696
+90%     11.82531       12.62419       Variance       .3505895
+95%     12.14329       12.66371       Skewness      -.7537634
+99%     12.56685       12.67712       Kurtosis        4.29849
+
+                          Internet
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     8.523257         2.9617
+ 5%      18.0233         3.2684
+10%      28.9767           4.02       Obs                 846
+25%        51.65       7.488543       Sum of wgt.         846
+
+50%     72.12317                      Mean           66.14056
+                        Largest       Std. dev.      23.18045
+75%     84.32374       98.24204
+90%     91.54062       98.45963       Variance       537.3334
+95%      93.9371       98.66086       Skewness      -.8230383
+99%     97.36296       98.86585       Kurtosis       2.766217
+
+                          Broadband
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      .165377       .0187624
+ 5%     1.663077       .0254035
+10%     3.858188       .0436877       Obs                 846
+25%     12.90083       .0454004       Sum of wgt.         846
+
+50%     24.13936                      Mean           22.60923
+                        Largest       Std. dev.       12.2238
+75%     31.56112       45.45421
+90%     38.52464       46.47124       Variance       149.4212
+95%     41.37362       47.64423       Skewness      -.1920906
+99%     44.41857       48.25023       Kurtosis       2.061052
+
+                         ICT_Exports
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     .1409774       .0572161
+ 5%     1.271487       .0682497
+10%      1.77034       .0689449       Obs                 846
+25%      3.11536       .0906583       Sum of wgt.         846
+
+50%     6.420795                      Mean           8.767369
+                        Largest       Std. dev.      9.372338
+75%     9.790466       55.21273
+90%     18.45434       56.57098       Variance       87.84071
+95%     30.27191       57.85148       Skewness       2.629514
+99%     48.21508       62.47616       Kurtosis       10.90301
+
+                        Unemployment
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%         1.67           .794
+ 5%        2.816           .909
+10%        3.411          1.206       Obs                 846
+25%        4.446          1.239       Sum of wgt.         846
+
+50%       6.1515                      Mean           7.527843
+                        Largest       Std. dev.      5.336139
+75%         8.46         34.007
+90%       12.426         35.231       Variance       28.47438
+95%       17.414         36.392       Skewness        2.70052
+99%       31.502          37.32       Kurtosis       11.83418
+
+                          Inflation
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%       -1.125      -4.447547
+ 5%    -.2079288      -1.735888
+10%     .2994668      -1.550275       Obs                 846
+25%     1.223825      -1.544797       Sum of wgt.         846
+
+50%     2.556131                      Mean            3.89762
+                        Largest       Std. dev.      4.655058
+75%     5.333561       27.95567
+90%     8.758683        28.7373       Variance       21.66957
+95%     12.03034       29.50661       Skewness       5.055387
+99%     18.31683       72.30884       Kurtosis       60.61449
+
+                             RnD
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%       .05117         .03072
+ 5%       .11683         .04024
+10%       .18416         .04155       Obs                 846
+25%       .48796         .04427       Sum of wgt.         846
+
+50%      1.14937                      Mean           1.431816
+                        Largest       Std. dev.      1.138409
+75%      2.15983        5.35528
+90%      3.14297        5.75725       Variance       1.295976
+95%      3.41266        5.83209       Skewness       .8995565
+99%      4.59051        6.17831       Kurtosis       3.326432
+
+. pwcorr Growth ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD, sig
+
+             |   Growth ln_Pro~y Internet Broadb~d ICT_Ex~s Unempl~t Inflat~n
+-------------+---------------------------------------------------------------
+      Growth |   1.0000 
+             |
+             |
+ln_Product~y |  -0.1476   1.0000 
+             |   0.0000
+             |
+    Internet |  -0.2682   0.6360   1.0000 
+             |   0.0000   0.0000
+             |
+   Broadband |  -0.2238   0.6665   0.8645   1.0000 
+             |   0.0000   0.0000   0.0000
+             |
+ ICT_Exports |  -0.0090   0.1784   0.2712   0.2429   1.0000 
+             |   0.7949   0.0000   0.0000   0.0000
+             |
+Unemployment |  -0.0922  -0.0884  -0.1932  -0.2448  -0.0147   1.0000 
+             |   0.0073   0.0101   0.0000   0.0000   0.6686
+             |
+   Inflation |   0.1961  -0.3441  -0.3102  -0.3823  -0.1359  -0.0352   1.0000 
+             |   0.0000   0.0000   0.0000   0.0000   0.0001   0.3067
+             |
+         RnD |  -0.1244   0.4477   0.5378   0.6035   0.4159  -0.1716  -0.3288 
+             |   0.0003   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
+             |
+
+             |      RnD
+-------------+---------
+         RnD |   1.0000 
+             |
+             |
+
+. regress Growth Internet Broadband ICT_Exports Unemployment Inflation RnD
+
+      Source |       SS           df       MS      Number of obs   =       846
+-------------+----------------------------------   F(6, 839)       =     17.43
+       Model |  2439.29548         6  406.549247   Prob > F        =    0.0000
+    Residual |  19571.4359       839  23.3270988   R-squared       =    0.1108
+-------------+----------------------------------   Adj R-squared   =    0.1045
+       Total |  22010.7314       845  26.0482028   Root MSE        =    4.8298
+
+------------------------------------------------------------------------------
+      Growth | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |   -.069353   .0144045    -4.81   0.000    -.0976261   -.0410799
+   Broadband |   .0162898   .0296632     0.55   0.583     -.041933    .0745125
+ ICT_Exports |    .043298   .0196675     2.20   0.028     .0046947    .0819013
+Unemployment |  -.1313923   .0325829    -4.03   0.000     -.195346   -.0674387
+   Inflation |   .1323347   .0394762     3.35   0.001      .054851    .2098184
+         RnD |    .019968   .1972661     0.10   0.919     -.367225    .4071609
+       _cons |   7.176039   .6966885    10.30   0.000     5.808582    8.543496
+------------------------------------------------------------------------------
+
+. estat vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+   Broadband |      4.76    0.209970
+    Internet |      4.04    0.247607
+         RnD |      1.83    0.547397
+ ICT_Exports |      1.23    0.812475
+   Inflation |      1.22    0.817492
+Unemployment |      1.10    0.913207
+-------------+----------------------
+    Mean VIF |      2.36
+
+. regress ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD
+
+      Source |       SS           df       MS      Number of obs   =       846
+-------------+----------------------------------   F(6, 839)       =    126.24
+       Model |  140.554884         6   23.425814   Prob > F        =    0.0000
+    Residual |   155.69327       839  .185570048   R-squared       =    0.4744
+-------------+----------------------------------   Adj R-squared   =    0.4707
+       Total |  296.248154       845  .350589532   Root MSE        =    .43078
+
+------------------------------------------------------------------------------
+ln_Product~y | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |    .006167   .0012848     4.80   0.000     .0036453    .0086887
+   Broadband |   .0196206   .0026457     7.42   0.000     .0144276    .0248135
+ ICT_Exports |  -.0014975   .0017542    -0.85   0.394    -.0049406    .0019456
+Unemployment |   .0071699   .0029061     2.47   0.014     .0014658     .012874
+   Inflation |  -.0120237   .0035209    -3.41   0.001    -.0189346   -.0051129
+         RnD |   .0328974   .0175945     1.87   0.062     -.001637    .0674317
+       _cons |   10.38547   .0621387   167.13   0.000      10.2635    10.50743
+------------------------------------------------------------------------------
+
+. estat vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+   Broadband |      4.76    0.209970
+    Internet |      4.04    0.247607
+         RnD |      1.83    0.547397
+ ICT_Exports |      1.23    0.812475
+   Inflation |      1.22    0.817492
+Unemployment |      1.10    0.913207
+-------------+----------------------
+    Mean VIF |      2.36
+
+. * VIF conditioning on country and year indicators is not the same as pooled VIF.
+. regress Growth Internet Broadband ICT_Exports Unemployment Inflation RnD i.panel_id i.Year
+
+      Source |       SS           df       MS      Number of obs   =       846
+-------------+----------------------------------   F(69, 776)      =     10.66
+       Model |  10712.3544        69  155.251512   Prob > F        =    0.0000
+    Residual |   11298.377       776  14.5597642   R-squared       =    0.4867
+-------------+----------------------------------   Adj R-squared   =    0.4410
+       Total |  22010.7314       845  26.0482028   Root MSE        =    3.8157
+
+------------------------------------------------------------------------------
+      Growth | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |  -.1111657   .0177288    -6.27   0.000    -.1459678   -.0763637
+   Broadband |   .0278255   .0471155     0.59   0.555    -.0646635    .1203145
+ ICT_Exports |   .0100255   .0525968     0.19   0.849    -.0932235    .1132744
+Unemployment |  -.1806976   .0601688    -3.00   0.003    -.2988105   -.0625847
+   Inflation |   .0537402   .0446159     1.20   0.229    -.0338419    .1413223
+         RnD |  -.3310056   .6139403    -0.54   0.590    -1.536186    .8741749
+             |
+    panel_id |
+        AZE  |   2.549197   2.143748     1.19   0.235    -1.659035    6.757429
+        BEL  |   .1099352   1.385459     0.08   0.937    -2.609756    2.829626
+        BGR  |  -1.786599   1.997389    -0.89   0.371    -5.707525    2.134327
+        BRA  |  -1.835181   1.805211    -1.02   0.310    -5.378857    1.708495
+        CAN  |   .6944692   1.531292     0.45   0.650    -2.311496    3.700434
+        CHN  |   2.510586   1.577705     1.59   0.112    -.5864887    5.607661
+        CZE  |  -.7326771   1.541006    -0.48   0.635    -3.757711    2.292357
+        DEU  |   .0380393   1.344211     0.03   0.977    -2.600681     2.67676
+        DNK  |   1.005041   1.450712     0.69   0.489    -1.842743    3.852825
+        EGY  |  -1.457579   2.216866    -0.66   0.511    -5.809344    2.894186
+        FIN  |   .4913169   1.687147     0.29   0.771    -2.820597    3.803231
+        FRA  |    -.65335   1.513508    -0.43   0.666    -3.624405    2.317705
+        GBR  |   .3432465   1.430621     0.24   0.810    -2.465099    3.151592
+        GRC  |   -2.86561    1.95942    -1.46   0.144    -6.712002    .9807813
+        HKG  |  -.1833211   1.855162    -0.10   0.921    -3.825052    3.458409
+        HRV  |  -1.045938   1.822899    -0.57   0.566    -4.624336     2.53246
+        HUN  |  -.7366819    1.65009    -0.45   0.655     -3.97585    2.502486
+        IRL  |   3.552253   2.537725     1.40   0.162    -1.429367    8.533873
+        ISR  |   2.012748   2.200093     0.91   0.361    -2.306091    6.331587
+        ITA  |  -3.378145    1.70036    -1.99   0.047    -6.715996   -.0402934
+        JPN  |   -.616563   1.362978    -0.45   0.651    -3.292124    2.058998
+        KAZ  |  -.4215024   2.205775    -0.19   0.849    -4.751496    3.908491
+        KGZ  |  -3.065879   2.376809    -1.29   0.197    -7.731616    1.599859
+        KOR  |   2.362598   1.493803     1.58   0.114    -.5697746    5.294971
+        LTU  |   .6241176    1.78688     0.35   0.727    -2.883574    4.131809
+        LUX  |   1.488396   1.630941     0.91   0.362    -1.713184    4.689976
+        MAC  |  -1.677547   2.123921    -0.79   0.430    -5.846858    2.491764
+        MDA  |  -2.982699   2.257837    -1.32   0.187     -7.41489    1.449493
+        MEX  |  -4.416543   2.129807    -2.07   0.038    -8.597409   -.2356774
+        MKD  |   2.599735   2.488697     1.04   0.297    -2.285641    7.485111
+        MLT  |   1.448857   1.979068     0.73   0.464    -2.436104    5.333818
+        MNG  |  -1.370771   2.379363    -0.58   0.565    -6.041521     3.29998
+        NLD  |   .6494334   1.550605     0.42   0.675    -2.394445    3.693312
+        PAN  |   .7773048    2.23763     0.35   0.728    -3.615221    5.169831
+        POL  |   .9451982    1.78589     0.53   0.597     -2.56055    4.450946
+        PRT  |  -2.383123   1.673154    -1.42   0.155    -5.667567    .9013208
+        ROU  |  -1.873188   2.157897    -0.87   0.386    -6.109197     2.36282
+        RUS  |   -1.79476   1.776344    -1.01   0.313    -5.281768    1.692249
+        SGP  |    2.77039   1.373486     2.02   0.044     .0742017    5.466578
+        SVN  |  -.2957029   1.393163    -0.21   0.832    -3.030518    2.439112
+        SWE  |   1.908069   1.452834     1.31   0.189    -.9438813     4.76002
+        TTO  |  -3.864331   2.185815    -1.77   0.077    -8.155141    .4264797
+        TUR  |   .8610839   1.949348     0.44   0.659    -2.965536    4.687703
+        URY  |  -.8092812   2.092585    -0.39   0.699     -4.91708    3.298517
+        USA  |   .4367288   1.304397     0.33   0.738    -2.123835    2.997293
+        ZAF  |  -.1518192    2.43729    -0.06   0.950    -4.936283    4.632644
+             |
+        Year |
+       2006  |   1.489199   .7987762     1.86   0.063    -.0788192    3.057217
+       2007  |   1.609627   .8333914     1.93   0.054    -.0263416    3.245596
+       2008  |   -1.24889   .8907935    -1.40   0.161    -2.997541    .4997601
+       2009  |  -5.977124    .908437    -6.58   0.000    -7.760409   -4.193839
+       2010  |   1.092566   .9508884     1.15   0.251    -.7740529    2.959184
+       2011  |    .784147   .9948447     0.79   0.431    -1.168759    2.737053
+       2012  |  -.8103547    1.02824    -0.79   0.431    -2.828816    1.208107
+       2013  |   .6943857   1.071113     0.65   0.517    -1.408237    2.797009
+       2014  |   .8610396   1.111812     0.77   0.439    -1.321476    3.043555
+       2015  |   .5151162   1.149394     0.45   0.654    -1.741174    2.771406
+       2016  |   .4071637   1.189019     0.34   0.732    -1.926912    2.741239
+       2017  |   2.061435   1.226877     1.68   0.093    -.3469557    4.469826
+       2018  |   1.817766   1.275107     1.43   0.154    -.6853019    4.320834
+       2019  |   1.366166   1.318541     1.04   0.300    -1.222163    3.954495
+       2020  |  -6.085204   1.391186    -4.37   0.000    -8.816137    -3.35427
+       2021  |   6.636373   1.437133     4.62   0.000     3.815244    9.457503
+       2022  |   2.052131   1.513182     1.36   0.175    -.9182839    5.022546
+             |
+       _cons |   10.96629   2.248596     4.88   0.000     6.552236    15.38034
+------------------------------------------------------------------------------
+
+. estat vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+    Internet |      9.80    0.102023
+   Broadband |     19.25    0.051947
+ ICT_Exports |     14.10    0.070906
+Unemployment |      5.98    0.167148
+   Inflation |      2.50    0.399456
+         RnD |     28.35    0.035273
+    panel_id |
+          2  |      5.56    0.179835
+          3  |      2.32    0.430561
+          4  |      4.83    0.207156
+          5  |      3.94    0.253610
+          6  |      2.84    0.352457
+          7  |      3.01    0.332025
+          8  |      2.87    0.348027
+          9  |      2.19    0.457390
+         10  |      2.55    0.392699
+         11  |      5.95    0.168168
+         12  |      3.44    0.290346
+         13  |      2.77    0.360788
+         14  |      2.48    0.403806
+         15  |      4.65    0.215262
+         16  |      4.16    0.240137
+         17  |      4.02    0.248712
+         18  |      3.29    0.303534
+         19  |      7.79    0.128331
+         20  |      5.86    0.170742
+         21  |      3.50    0.285851
+         22  |      2.25    0.444881
+         23  |      5.89    0.169863
+         24  |      6.84    0.146296
+         25  |      2.70    0.370370
+         26  |      3.86    0.258840
+         27  |      3.22    0.310703
+         28  |      5.46    0.183208
+         29  |      6.17    0.162120
+         30  |      5.49    0.182197
+         31  |      7.49    0.133437
+         32  |      4.74    0.211009
+         33  |      6.85    0.145982
+         34  |      2.91    0.343732
+         35  |      6.06    0.165061
+         36  |      3.86    0.259127
+         37  |      3.39    0.295223
+         38  |      5.63    0.177484
+         39  |      3.82    0.261920
+         40  |      2.28    0.438100
+         41  |      2.35    0.425812
+         42  |      2.55    0.391552
+         43  |      5.78    0.172980
+         44  |      4.60    0.217492
+         45  |      5.30    0.188736
+         46  |      2.06    0.485739
+         47  |      7.19    0.139126
+        Year |
+       2006  |      1.95    0.514079
+       2007  |      2.12    0.472261
+       2008  |      2.42    0.413358
+       2009  |      2.52    0.397457
+       2010  |      2.76    0.362761
+       2011  |      3.02    0.331413
+       2012  |      3.22    0.310235
+       2013  |      3.50    0.285897
+       2014  |      3.77    0.265349
+       2015  |      4.03    0.248280
+       2016  |      4.31    0.232008
+       2017  |      4.59    0.217910
+       2018  |      4.96    0.201738
+       2019  |      5.30    0.188666
+       2020  |      5.90    0.169477
+       2021  |      6.30    0.158813
+       2022  |      6.98    0.143251
+-------------+----------------------
+    Mean VIF |      4.99
+
+. * Keep full variable-by-test status. IPS and Fisher assume cross-sectional independence.
+. foreach v in Growth ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD {
+  2.     capture noisily xtunitroot ips `v', lags(1)
+  3.     local ipserr = _rc
+  4.     display as result "STATA_TEST_STATUS IPS `v' rc=`ipserr'"
+  5.     capture noisily xtunitroot fisher `v', dfuller lags(1)
+  6.     local fisherr = _rc
+  7.     display as result "STATA_TEST_STATUS FISHER `v' rc=`fisherr'"
+  8. }
+
+Im–Pesaran–Shin unit-root test for Growth
+-----------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar            -11.8562        0.0000
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS Growth rc=0
+
+Fisher-type unit-root test for Growth
+Based on augmented Dickey–Fuller tests
+--------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       404.8520       0.0000
+ Inverse normal            Z       -13.8889       0.0000
+ Inverse logit t(239)      L*      -15.9415       0.0000
+ Modified inv. chi-squared Pm       22.6712       0.0000
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER Growth rc=0
+
+Im–Pesaran–Shin unit-root test for ln_Productivity
+--------------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar              2.7410        0.9969
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS ln_Productivity rc=0
+
+Fisher-type unit-root test for ln_Productivity
+Based on augmented Dickey–Fuller tests
+----------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P        93.8997       0.4835
+ Inverse normal            Z         2.9250       0.9983
+ Inverse logit t(239)      L*        2.7759       0.9970
+ Modified inv. chi-squared Pm       -0.0073       0.5029
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER ln_Productivity rc=0
+
+Im–Pesaran–Shin unit-root test for Internet
+-------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar             -2.2028        0.0138
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS Internet rc=0
+
+Fisher-type unit-root test for Internet
+Based on augmented Dickey–Fuller tests
+---------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       231.2998       0.0000
+ Inverse normal            Z        -2.5356       0.0056
+ Inverse logit t(239)      L*       -4.7791       0.0000
+ Modified inv. chi-squared Pm       10.0136       0.0000
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER Internet rc=0
+
+Im–Pesaran–Shin unit-root test for Broadband
+--------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar             -1.3226        0.0930
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS Broadband rc=0
+
+Fisher-type unit-root test for Broadband
+Based on augmented Dickey–Fuller tests
+----------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       199.5322       0.0000
+ Inverse normal            Z        -2.3795       0.0087
+ Inverse logit t(234)      L*       -3.8805       0.0001
+ Modified inv. chi-squared Pm        7.6967       0.0000
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER Broadband rc=0
+
+Im–Pesaran–Shin unit-root test for ICT_Exports
+----------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar              2.0760        0.9811
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS ICT_Exports rc=0
+
+Fisher-type unit-root test for ICT_Exports
+Based on augmented Dickey–Fuller tests
+------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       115.1007       0.0688
+ Inverse normal            Z         2.0492       0.9798
+ Inverse logit t(239)      L*        1.8581       0.9678
+ Modified inv. chi-squared Pm        1.5389       0.0619
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER ICT_Exports rc=0
+
+Im–Pesaran–Shin unit-root test for Unemployment
+-----------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar             -3.1739        0.0008
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS Unemployment rc=0
+
+Fisher-type unit-root test for Unemployment
+Based on augmented Dickey–Fuller tests
+-------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       162.9724       0.0000
+ Inverse normal            Z        -3.8033       0.0001
+ Inverse logit t(239)      L*       -3.8442       0.0001
+ Modified inv. chi-squared Pm        5.0303       0.0000
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER Unemployment rc=0
+
+Im–Pesaran–Shin unit-root test for Inflation
+--------------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar             -2.3352        0.0098
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS Inflation rc=0
+
+Fisher-type unit-root test for Inflation
+Based on augmented Dickey–Fuller tests
+----------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P       143.3144       0.0008
+ Inverse normal            Z        -2.7221       0.0032
+ Inverse logit t(239)      L*       -2.8133       0.0027
+ Modified inv. chi-squared Pm        3.5966       0.0002
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER Inflation rc=0
+
+Im–Pesaran–Shin unit-root test for RnD
+--------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: Some panels are stationary              Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T,N -> Infinity
+Panel means:  Included                                        sequentially
+Time trend:   Not included
+
+ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                    Statistic      p-value
+------------------------------------------------------------------------------
+ W-t-bar              1.3273        0.9078
+------------------------------------------------------------------------------
+STATA_TEST_STATUS IPS RnD rc=0
+
+Fisher-type unit-root test for RnD
+Based on augmented Dickey–Fuller tests
+--------------------------------------
+H0: All panels contain unit roots           Number of panels  =     47
+Ha: At least one panel is stationary        Number of periods =     18
+
+AR parameter: Panel-specific                Asymptotics: T -> Infinity
+Panel means:  Included
+Time trend:   Not included
+Drift term:   Not included                  ADF regressions: 1 lag
+------------------------------------------------------------------------------
+                                  Statistic      p-value
+------------------------------------------------------------------------------
+ Inverse chi-squared(94)   P        99.8585       0.3202
+ Inverse normal            Z         1.2033       0.8856
+ Inverse logit t(239)      L*        1.4609       0.9273
+ Modified inv. chi-squared Pm        0.4273       0.3346
+------------------------------------------------------------------------------
+ P statistic requires number of panels to be finite.
+ Other statistics are suitable for finite or infinite number of panels.
+------------------------------------------------------------------------------
+STATA_TEST_STATUS FISHER RnD rc=0
+
+. display as text "Cross-sectional dependence/CIPS estimates already run in R. Do NOT mislabel IP
+> S/Fisher as cross-sectionally robust."
+Cross-sectional dependence/CIPS estimates already run in R. Do NOT mislabel IPS/Fisher as cross-s
+> ectionally robust.
+
+. 
+end of do-file
+
+. local pretests_rc = _rc
+
+. display as result "STATA_PRETEST_SCRIPT_RETURN_CODE=" `pretests_rc'
+STATA_PRETEST_SCRIPT_RETURN_CODE=0
+
+. capture noisily do "stata/03_growth_models.do"
+
+. * Full-rank year bases: remove only previously auto-dropped collinear dummies.
+. * All model terms and instrument lag rules remain unchanged.
+. * Growth: one-step difference 2-3; two-step system lags 2 only primary sensitivity.
+. * Third specification 2-3 is an AUDIT comparison, not a p-value optimization.
+. version 16.0
+
+. capture noisily xtabond2 Growth L.Growth Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD $digital_year_dummies_diff, gmmstyle(Growth Internet Broadband ICT_Exports Unemployment Inf
+> lation RnD, lag(2 3) collapse) ivstyle($digital_year_dummies_diff, equation(diff)) noleveleq ro
+> bust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, one-step difference GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       752
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 30                      Obs per group: min =        16
+F(22, 47)     =     43.54                                      avg =     16.00
+Prob > F      =     0.000                                      max =        16
+------------------------------------------------------------------------------
+             |               Robust
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .1826853   .1386616     1.32   0.194    -.0962658    .4616364
+             |
+    Internet |  -.0097009   .0660891    -0.15   0.884    -.1426551    .1232533
+   Broadband |  -.2064296   .4294272    -0.48   0.633    -1.070326    .6574666
+ ICT_Exports |   .1273045   .3342882     0.38   0.705    -.5451965    .7998055
+Unemployment |  -.5973864   .3602741    -1.66   0.104    -1.322164    .1273916
+   Inflation |   .0841656   .2577694     0.33   0.745    -.4343995    .6027308
+         RnD |    4.07102    7.44746     0.55   0.587    -10.91134    19.05338
+        yd_2 |  -4.160141   10.52904    -0.40   0.695    -25.34184    17.02156
+        yd_3 |  -4.550283   9.272498    -0.49   0.626    -23.20414    14.10358
+        yd_4 |  -7.873106   7.887344    -1.00   0.323     -23.7404    7.994184
+        yd_5 |  -11.53045   7.353885    -1.57   0.124    -26.32456    3.263658
+        yd_6 |  -3.268708   6.695138    -0.49   0.628    -16.73759    10.20017
+        yd_7 |  -5.046402   6.263835    -0.81   0.425    -17.64761    7.554808
+        yd_8 |  -6.567227   5.757414    -1.14   0.260    -18.14965    5.015195
+        yd_9 |  -4.750387   5.103737    -0.93   0.357    -15.01778    5.517008
+       yd_10 |  -5.191196   4.547363    -1.14   0.259    -14.33931    3.956919
+       yd_11 |  -5.683769    4.01267    -1.42   0.163    -13.75622    2.388683
+       yd_12 |  -5.883086   3.840367    -1.53   0.132    -13.60891    1.842735
+       yd_13 |  -4.447392   3.399094    -1.31   0.197    -11.28549    2.390704
+       yd_14 |  -5.615339   2.815587    -1.99   0.052    -11.27957    .0488909
+       yd_15 |  -6.383757   2.045571    -3.12   0.003    -10.49892     -2.2686
+       yd_16 |   -14.0994   1.198624   -11.76   0.000    -16.51072   -11.68808
+       yd_18 |  -7.436673     1.8415    -4.04   0.000    -11.14129   -3.732053
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_4 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14
+    yd_15 yd_16 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/3).(Growth Internet Broadband ICT_Exports Unemployment Inflation RnD)
+    collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -2.11  Pr > z =  0.035
+Arellano-Bond test for AR(2) in first differences: z =   1.08  Pr > z =  0.280
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =   7.81  Prob > chi2 =  0.350
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   6.66  Prob > chi2 =  0.466
+  (Robust, but weakened by many instruments.)
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(GROWTH_DIFF_L23)
+STATA_MODEL_ESTIMATED=GROWTH_DIFF_L23 status=DIAGNOSTIC_HOLD instruments=30 groups=47
+Sargan p=.35006932 Hansen p=.46556111 AR1 p=.03478409 AR2 p=.28036369
+(note: file outputs/stata/GROWTH_DIFF_L23.ster not found)
+file outputs/stata/GROWTH_DIFF_L23.ster saved
+matrix e(diffsargan) not found
+. }
+
+. else {
+.     digital_failure, name(GROWTH_DIFF_L23) rc(`modelrc')
+. }
+
+. * Split dependent-variable moment group to request valid subset difference-in-Hansen
+. * when xtabond2's Mata estimator can actually calculate it.
+. capture noisily xtabond2 Growth L.Growth Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD $digital_year_dummies_sys, gmmstyle(Growth, lag(2 2) collapse split) gmmstyle(Internet Broa
+> dband ICT_Exports RnD, lag(2 2) collapse) gmmstyle(Unemployment Inflation, lag(2 2) collapse) i
+> vstyle($digital_year_dummies_sys) twostep robust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =     55.44                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+------------------------------------------------------------------------------
+             |              Corrected
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .2562263    .131962     1.94   0.058    -.0093993     .521852
+             |
+    Internet |  -.0186699   .0358186    -0.52   0.605     -.090769    .0534293
+   Broadband |  -.1291895   .0856984    -1.51   0.139    -.3016914    .0433124
+ ICT_Exports |  -.0388245   .0406594    -0.95   0.345    -.1206677    .0430187
+Unemployment |  -.4354862   .1985663    -2.19   0.033    -.8351793    -.035793
+   Inflation |  -.0309721    .066373    -0.47   0.643     -.164574    .1026298
+         RnD |    .484051   .4490563     1.08   0.287    -.4198525    1.387954
+        yd_2 |   2.465493    .523132     4.71   0.000     1.412483    3.518503
+        yd_3 |   2.330941    .390853     5.96   0.000     1.544195    3.117688
+        yd_5 |  -4.301045   .7176504    -5.99   0.000    -5.745601    -2.85649
+        yd_6 |   4.162894   1.024533     4.06   0.000     2.100616    6.225172
+        yd_7 |    2.32183   .6705095     3.46   0.001     .9721648    3.671496
+        yd_8 |   .8463327   .7386766     1.15   0.258    -.6405462    2.333212
+        yd_9 |   2.546439   .8052935     3.16   0.003     .9254675    4.167411
+       yd_10 |   2.614462   .8985695     2.91   0.006     .8057351    4.423188
+       yd_11 |   2.625402   1.118879     2.35   0.023     .3732147    4.877589
+       yd_12 |   1.965025   .7637997     2.57   0.013     .4275758    3.502474
+       yd_13 |   3.370783   .8027954     4.20   0.000     1.754839    4.986726
+       yd_14 |   2.343828   .7854016     2.98   0.005     .7628963    3.924759
+       yd_15 |   2.035483   .8237993     2.47   0.017     .3772609    3.693705
+       yd_16 |  -4.184932   1.223527    -3.42   0.001    -6.647764     -1.7221
+       yd_17 |   9.224032   1.579627     5.84   0.000     6.044409    12.40366
+       yd_18 |   2.718757   1.051798     2.58   0.013     .6015984    4.835916
+       _cons |   7.412798   2.553347     2.90   0.006     2.273178    12.55242
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.Growth collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.65  Pr > z =  0.099
+Arellano-Bond test for AR(2) in first differences: z =   0.82  Pr > z =  0.413
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =  53.84  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   4.07  Prob > chi2 =  0.772
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =   4.07  Prob > chi2 =  0.772
+  gmm(Growth, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =   3.80  Prob > chi2 =  0.704
+    Difference (null H = exogenous): chi2(1)    =   0.28  Prob > chi2 =  0.600
+  gmm(Growth, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.93  Prob > chi2 =  0.686
+    Difference (null H = exogenous): chi2(1)    =   0.14  Prob > chi2 =  0.705
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   2.87  Prob > chi2 =  0.412
+    Difference (null H = exogenous): chi2(4)    =   1.20  Prob > chi2 =  0.878
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(GROWTH_SYS_L22)
+STATA_MODEL_ESTIMATED=GROWTH_SYS_L22 status=DIAGNOSTIC_HOLD instruments=31 groups=47
+Sargan p=2.535e-09 Hansen p=.77158345 AR1 p=.09879135 AR2 p=.4128903
+(note: file outputs/stata/GROWTH_SYS_L22.ster not found)
+file outputs/stata/GROWTH_SYS_L22.ster saved
+
+e(diffsargan)[5,4]
+              GMM instru~s  gmm(Growth~a  gmm(Growth~a  gmm(Unempl~l
+Unrestrict~n     5.252e-20     3.7955605     3.9277229     2.8692301
+Difference~n     4.0708347     .27527423     .14311183     1.2016046
+Instrument~d             7             1             1             4
+Unrestrict~p             .     .70431959     .68645699     .41222984
+Difference~p     .77158345     .59981552     .70520682     .87783436
+. }
+
+. else {
+.     digital_failure, name(GROWTH_SYS_L22) rc(`modelrc')
+. }
+
+. capture noisily xtabond2 Growth L.Growth Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD $digital_year_dummies_sys, gmmstyle(Growth, lag(2 3) collapse split) gmmstyle(Internet Broa
+> dband ICT_Exports RnD, lag(2 3) collapse) gmmstyle(Unemployment Inflation, lag(2 3) collapse) i
+> vstyle($digital_year_dummies_sys) twostep robust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 38                      Obs per group: min =        17
+F(23, 46)     =     55.30                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+------------------------------------------------------------------------------
+             |              Corrected
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .2522142   .1561764     1.61   0.113    -.0621526     .566581
+             |
+    Internet |  -.0233761   .0298783    -0.78   0.438    -.0835181    .0367659
+   Broadband |  -.1296261   .0773268    -1.68   0.100    -.2852768    .0260246
+ ICT_Exports |  -.0498038   .0445413    -1.12   0.269    -.1394608    .0398531
+Unemployment |  -.4016147   .2173803    -1.85   0.071    -.8391787    .0359492
+   Inflation |  -.0488257   .0549382    -0.89   0.379    -.1594104    .0617591
+         RnD |   .6919679   .4400777     1.57   0.123    -.1938626    1.577799
+        yd_2 |   2.387941    .531065     4.50   0.000     1.318963     3.45692
+        yd_3 |   2.252041   .4128995     5.45   0.000     1.420918    3.083165
+        yd_5 |   -4.44425   .7015983    -6.33   0.000    -5.856494   -3.032006
+        yd_6 |   3.982751   1.257787     3.17   0.003     1.450957    6.514546
+        yd_7 |   2.191904   .6245196     3.51   0.001     .9348116    3.448997
+        yd_8 |   .6463978   .5999005     1.08   0.287    -.5611393    1.853935
+        yd_9 |   2.484375   .7287277     3.41   0.001     1.017522    3.951228
+       yd_10 |   2.578308   .7396053     3.49   0.001      1.08956    4.067057
+       yd_11 |   2.682291    .961556     2.79   0.008     .7467796    4.617803
+       yd_12 |     2.0408   .6591169     3.10   0.003     .7140668    3.367534
+       yd_13 |   3.472902   .7450377     4.66   0.000     1.973219    4.972585
+       yd_14 |   2.375266    .722711     3.29   0.002     .9205244    3.830008
+       yd_15 |   2.039565   .8011567     2.55   0.014     .4269201     3.65221
+       yd_16 |   -4.08984   1.132872    -3.61   0.001    -6.370192   -1.809488
+       yd_17 |   9.459124   1.811061     5.22   0.000     5.813647     13.1046
+       yd_18 |   2.792566   .9969811     2.80   0.007     .7857476    4.799385
+       _cons |   7.260459   2.576612     2.82   0.007     2.074009    12.44691
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/3).(Unemployment Inflation) collapsed
+    L(2/3).(Internet Broadband ICT_Exports RnD) collapsed
+    L(2/3).Growth collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.59  Pr > z =  0.113
+Arellano-Bond test for AR(2) in first differences: z =   0.73  Pr > z =  0.467
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(14)   =  58.67  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(14)   =   9.32  Prob > chi2 =  0.810
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(7)    =   6.87  Prob > chi2 =  0.443
+    Difference (null H = exogenous): chi2(7)    =   2.45  Prob > chi2 =  0.931
+  gmm(Growth, collapse eq(diff) lag(2 3))
+    Hansen test excluding group:     chi2(12)   =   8.31  Prob > chi2 =  0.761
+    Difference (null H = exogenous): chi2(2)    =   1.01  Prob > chi2 =  0.602
+  gmm(Growth, collapse eq(diff) lag(2 3)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(13)   =   9.24  Prob > chi2 =  0.755
+    Difference (null H = exogenous): chi2(1)    =   0.08  Prob > chi2 =  0.771
+  gmm(Internet Broadband ICT_Exports RnD, collapse lag(2 3))
+    Hansen test excluding group:     chi2(2)    =   1.73  Prob > chi2 =  0.421
+    Difference (null H = exogenous): chi2(12)   =   7.59  Prob > chi2 =  0.816
+  gmm(Unemployment Inflation, collapse lag(2 3))
+    Hansen test excluding group:     chi2(8)    =   4.35  Prob > chi2 =  0.825
+    Difference (null H = exogenous): chi2(6)    =   4.98  Prob > chi2 =  0.547
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(GROWTH_SYS_L23_AUDIT)
+STATA_MODEL_ESTIMATED=GROWTH_SYS_L23_AUDIT status=DIAGNOSTIC_HOLD instruments=38 groups=47
+Sargan p=2.004e-07 Hansen p=.8098603 AR1 p=.11272342 AR2 p=.46692632
+(note: file outputs/stata/GROWTH_SYS_L23_AUDIT.ster not found)
+file outputs/stata/GROWTH_SYS_L23_AUDIT.ster saved
+
+e(diffsargan)[5,5]
+              GMM instru~s  gmm(Growth~a  gmm(Growth~a  gmm(Intern~r  gmm(Unempl~l
+Unrestrict~n     6.8690629     8.3077564     9.2379641     1.7305278     4.3459217
+Difference~n     2.4533288     1.0146353     .08442762     7.5918638       4.97647
+Instrument~d             7             2             1            12             6
+Unrestrict~p     .44263927     .76064157     .75474304     .42094044     .82464291
+Difference~p     .93057026     .60210847     .77138456     .81615678     .54683455
+. }
+
+. else {
+.     digital_failure, name(GROWTH_SYS_L23_AUDIT) rc(`modelrc')
+. }
+
+. 
+end of do-file
+
+. local growth_rc = _rc
+
+. if `growth_rc' != 0 {
+.     display as error "GROWTH_SCRIPT_INTERNAL_FAILURE rc=`growth_rc'"
+. }
+
+. capture noisily do "stata/04_productivity_models.do"
+
+. * Full-rank year bases: remove only previously auto-dropped collinear dummies.
+. * All model terms and instrument lag rules remain unchanged.
+. * Productivity: logged outcome, level regressors; X coefficients are semi-elasticities.
+. * High lag persistence makes System initial-conditions assumptions especially important.
+. version 16.0
+
+. capture noisily xtabond2 ln_Productivity L.ln_Productivity Internet Broadband ICT_Exports Unemp
+> loyment Inflation RnD $digital_year_dummies_diff, gmmstyle(ln_Productivity Internet Broadband I
+> CT_Exports Unemployment Inflation RnD, lag(2 3) collapse) ivstyle($digital_year_dummies_diff, e
+> quation(diff)) noleveleq robust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, one-step difference GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       752
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 30                      Obs per group: min =        16
+F(22, 47)     =    473.07                                      avg =     16.00
+Prob > F      =     0.000                                      max =        16
+---------------------------------------------------------------------------------
+                |               Robust
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9995127   .0818511    12.21   0.000     .8348496    1.164176
+                |
+       Internet |  -.0005165   .0006674    -0.77   0.443    -.0018591     .000826
+      Broadband |  -.0017732    .003283    -0.54   0.592    -.0083778    .0048314
+    ICT_Exports |   .0013527   .0030609     0.44   0.661     -.004805    .0075105
+   Unemployment |  -.0026561   .0017409    -1.53   0.134    -.0061584    .0008461
+      Inflation |  -.0014964   .0021751    -0.69   0.495    -.0058721    .0028793
+            RnD |   .0078791   .0586773     0.13   0.894    -.1101644    .1259226
+           yd_2 |  -.0584484   .0861447    -0.68   0.501    -.2317491    .1148523
+           yd_3 |  -.0535926   .0750017    -0.71   0.478    -.2044765    .0972913
+           yd_4 |  -.0688123   .0645801    -1.07   0.292    -.1987307    .0611061
+           yd_5 |  -.0996818   .0595338    -1.67   0.101    -.2194483    .0200847
+           yd_6 |   -.040187   .0563247    -0.71   0.479    -.1534976    .0731236
+           yd_7 |  -.0450318   .0492323    -0.91   0.365    -.1440744    .0540108
+           yd_8 |  -.0611028   .0461027    -1.33   0.191    -.1538495     .031644
+           yd_9 |  -.0457572   .0395795    -1.16   0.253    -.1253809    .0338666
+          yd_10 |  -.0544525   .0354512    -1.54   0.131    -.1257711    .0168661
+          yd_11 |  -.0566621   .0317621    -1.78   0.081    -.1205593    .0072351
+          yd_12 |  -.0534269   .0287254    -1.86   0.069    -.1112149    .0043611
+          yd_13 |   -.038154    .026238    -1.45   0.153     -.090938      .01463
+          yd_14 |  -.0459635   .0225982    -2.03   0.048    -.0914252   -.0005018
+          yd_15 |  -.0498258   .0177927    -2.80   0.007    -.0856202   -.0140314
+          yd_16 |  -.1014666   .0220769    -4.60   0.000    -.1458795   -.0570536
+          yd_18 |   -.043019   .0167947    -2.56   0.014    -.0768055   -.0092325
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_4 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14
+    yd_15 yd_16 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/3).(ln_Productivity Internet Broadband ICT_Exports Unemployment
+    Inflation RnD) collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.50  Pr > z =  0.133
+Arellano-Bond test for AR(2) in first differences: z =   0.80  Pr > z =  0.423
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =   3.85  Prob > chi2 =  0.797
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =   8.09  Prob > chi2 =  0.324
+  (Robust, but weakened by many instruments.)
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(PROD_DIFF_L23)
+STATA_MODEL_ESTIMATED=PROD_DIFF_L23 status=DIAGNOSTIC_HOLD instruments=30 groups=47
+Sargan p=.7972459 Hansen p=.32439509 AR1 p=.13338913 AR2 p=.42250558
+(note: file outputs/stata/PROD_DIFF_L23.ster not found)
+file outputs/stata/PROD_DIFF_L23.ster saved
+matrix e(diffsargan) not found
+. }
+
+. else {
+.     digital_failure, name(PROD_DIFF_L23) rc(`modelrc')
+. }
+
+. capture noisily xtabond2 ln_Productivity L.ln_Productivity Internet Broadband ICT_Exports Unemp
+> loyment Inflation RnD $digital_year_dummies_sys, gmmstyle(ln_Productivity, lag(2 2) collapse sp
+> lit) gmmstyle(Internet Broadband ICT_Exports RnD, lag(2 2) collapse) gmmstyle(Unemployment Infl
+> ation, lag(2 2) collapse) ivstyle($digital_year_dummies_sys) twostep robust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 31                      Obs per group: min =        17
+F(23, 46)     =  1.56e+06                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+---------------------------------------------------------------------------------
+                |              Corrected
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9990489   .0387233    25.80   0.000     .9211029    1.076995
+                |
+       Internet |  -.0005413   .0003783    -1.43   0.159    -.0013028    .0002202
+      Broadband |  -.0007215    .001059    -0.68   0.499    -.0028531      .00141
+    ICT_Exports |   .0000127   .0007082     0.02   0.986    -.0014128    .0014383
+   Unemployment |   -.002257   .0017828    -1.27   0.212    -.0058456    .0013317
+      Inflation |  -.0009206   .0010937    -0.84   0.404    -.0031222     .001281
+            RnD |   .0038409   .0059664     0.64   0.523    -.0081688    .0158506
+           yd_2 |   .0140183   .0054826     2.56   0.014     .0029824    .0250542
+           yd_3 |   .0146634   .0055383     2.65   0.011     .0035154    .0258115
+           yd_5 |  -.0266246   .0080792    -3.30   0.002    -.0428872    -.010362
+           yd_6 |   .0293072   .0127947     2.29   0.027     .0035529    .0550615
+           yd_7 |   .0241979   .0101327     2.39   0.021     .0038018     .044594
+           yd_8 |   .0070549   .0092697     0.76   0.450     -.011604    .0257138
+           yd_9 |   .0170168   .0129227     1.32   0.194    -.0089953    .0430288
+          yd_10 |   .0115667   .0121564     0.95   0.346    -.0129029    .0360362
+          yd_11 |   .0103335   .0148308     0.70   0.489    -.0195194    .0401863
+          yd_12 |   .0128311   .0142535     0.90   0.373    -.0158597    .0415219
+          yd_13 |   .0244183     .01548     1.58   0.122    -.0067414     .055578
+          yd_14 |   .0165319   .0141961     1.16   0.250    -.0120433    .0451071
+          yd_15 |   .0155515   .0151413     1.03   0.310    -.0149264    .0460294
+          yd_16 |  -.0282646   .0182572    -1.55   0.128    -.0650145    .0084852
+          yd_17 |   .0626867   .0212029     2.96   0.005     .0200075    .1053658
+          yd_18 |   .0200887   .0138801     1.45   0.155    -.0078505     .048028
+          _cons |   .0811022   .4269257     0.19   0.850    -.7782546    .9404591
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.ln_Productivity collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.47  Pr > z =  0.142
+Arellano-Bond test for AR(2) in first differences: z =   0.75  Pr > z =  0.452
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(7)    =   5.66  Prob > chi2 =  0.580
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(7)    =  15.04  Prob > chi2 =  0.035
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(0)    =   0.00  Prob > chi2 =      .
+    Difference (null H = exogenous): chi2(7)    =  15.04  Prob > chi2 =  0.035
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2))
+    Hansen test excluding group:     chi2(6)    =  15.04  Prob > chi2 =  0.020
+    Difference (null H = exogenous): chi2(1)    =   0.00  Prob > chi2 =  0.996
+  gmm(ln_Productivity, collapse eq(diff) lag(2 2)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(6)    =   3.79  Prob > chi2 =  0.705
+    Difference (null H = exogenous): chi2(1)    =  11.26  Prob > chi2 =  0.001
+  gmm(Unemployment Inflation, collapse lag(2 2))
+    Hansen test excluding group:     chi2(3)    =   1.98  Prob > chi2 =  0.578
+    Difference (null H = exogenous): chi2(4)    =  13.07  Prob > chi2 =  0.011
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(PROD_SYS_L22)
+STATA_MODEL_ESTIMATED=PROD_SYS_L22 status=DIAGNOSTIC_HOLD instruments=31 groups=47
+Sargan p=.57964461 Hansen p=.03544871 AR1 p=.14162307 AR2 p=.45162008
+(note: file outputs/stata/PROD_SYS_L22.ster not found)
+file outputs/stata/PROD_SYS_L22.ster saved
+
+e(diffsargan)[5,4]
+              GMM instru~s  gmm(ln_Pro~q  gmm(ln_Pro~q  gmm(Unempl~l
+Unrestrict~n     3.551e-12     15.043247     3.7872241     1.9750567
+Difference~n     15.043272     .00002506     11.256048     13.068215
+Instrument~d             7             1             1             4
+Unrestrict~p             .     .01992301     .70544462     .57759989
+Difference~p     .03544871     .99600555     .00079364     .01094725
+. }
+
+. else {
+.     digital_failure, name(PROD_SYS_L22) rc(`modelrc')
+. }
+
+. capture noisily xtabond2 ln_Productivity L.ln_Productivity Internet Broadband ICT_Exports Unemp
+> loyment Inflation RnD $digital_year_dummies_sys, gmmstyle(ln_Productivity, lag(2 3) collapse sp
+> lit) gmmstyle(Internet Broadband ICT_Exports RnD, lag(2 3) collapse) gmmstyle(Unemployment Infl
+> ation, lag(2 3) collapse) ivstyle($digital_year_dummies_sys) twostep robust small artests(2)
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       799
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 38                      Obs per group: min =        17
+F(23, 46)     =  2.01e+06                                      avg =     17.00
+Prob > F      =     0.000                                      max =        17
+---------------------------------------------------------------------------------
+                |              Corrected
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   .9955447   .0420324    23.69   0.000     .9109379    1.080152
+                |
+       Internet |  -.0005131   .0003737    -1.37   0.176    -.0012652    .0002391
+      Broadband |  -.0007326   .0010923    -0.67   0.506    -.0029312     .001466
+    ICT_Exports |  -.0000871   .0007705    -0.11   0.910     -.001638    .0014637
+   Unemployment |  -.0024683   .0013043    -1.89   0.065    -.0050936    .0001571
+      Inflation |  -.0005553   .0010515    -0.53   0.600    -.0026717    .0015612
+            RnD |   .0044022   .0051154     0.86   0.394    -.0058946     .014699
+           yd_2 |   .0138315   .0053844     2.57   0.014     .0029933    .0246697
+           yd_3 |   .0143319   .0046224     3.10   0.003     .0050274    .0236364
+           yd_5 |  -.0254629   .0082944    -3.07   0.004    -.0421587   -.0087671
+           yd_6 |   .0315322   .0103999     3.03   0.004     .0105983    .0524661
+           yd_7 |   .0211676   .0084953     2.49   0.016     .0040674    .0382678
+           yd_8 |   .0058609   .0079256     0.74   0.463    -.0100926    .0218144
+           yd_9 |   .0189118   .0111244     1.70   0.096    -.0034805    .0413041
+          yd_10 |   .0126188   .0095095     1.33   0.191    -.0065227    .0317604
+          yd_11 |   .0106002   .0125791     0.84   0.404    -.0147201    .0359206
+          yd_12 |   .0148265   .0112813     1.31   0.195    -.0078816    .0375347
+          yd_13 |   .0264133   .0127104     2.08   0.043     .0008286    .0519979
+          yd_14 |   .0188805   .0105175     1.80   0.079    -.0022901    .0400512
+          yd_15 |   .0177173   .0104658     1.69   0.097    -.0033493     .038784
+          yd_16 |  -.0245703   .0148311    -1.66   0.104    -.0544236    .0052831
+          yd_17 |   .0629269   .0161094     3.91   0.000     .0305003    .0953535
+          yd_18 |   .0170827   .0117704     1.45   0.153      -.00661    .0407753
+          _cons |   .1181844   .4637336     0.25   0.800    -.8152629    1.051632
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/3).(Unemployment Inflation) collapsed
+    L(2/3).(Internet Broadband ICT_Exports RnD) collapsed
+    L(2/3).ln_Productivity collapsed
+Instruments for levels equation
+  Standard
+    yd_2 yd_3 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14 yd_15
+    yd_16 yd_17 yd_18
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.(Unemployment Inflation) collapsed
+    DL.(Internet Broadband ICT_Exports RnD) collapsed
+    DL.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.46  Pr > z =  0.143
+Arellano-Bond test for AR(2) in first differences: z =   0.72  Pr > z =  0.472
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(14)   =   7.26  Prob > chi2 =  0.924
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(14)   =  20.17  Prob > chi2 =  0.125
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(7)    =   8.46  Prob > chi2 =  0.293
+    Difference (null H = exogenous): chi2(7)    =  11.71  Prob > chi2 =  0.111
+  gmm(ln_Productivity, collapse eq(diff) lag(2 3))
+    Hansen test excluding group:     chi2(12)   =  19.94  Prob > chi2 =  0.068
+    Difference (null H = exogenous): chi2(2)    =   0.23  Prob > chi2 =  0.889
+  gmm(ln_Productivity, collapse eq(diff) lag(2 3)) eq(level) lag(1 1))
+    Hansen test excluding group:     chi2(13)   =  12.35  Prob > chi2 =  0.499
+    Difference (null H = exogenous): chi2(1)    =   7.82  Prob > chi2 =  0.005
+  gmm(Internet Broadband ICT_Exports RnD, collapse lag(2 3))
+    Hansen test excluding group:     chi2(2)    =   2.56  Prob > chi2 =  0.279
+    Difference (null H = exogenous): chi2(12)   =  17.62  Prob > chi2 =  0.128
+  gmm(Unemployment Inflation, collapse lag(2 3))
+    Hansen test excluding group:     chi2(8)    =  10.05  Prob > chi2 =  0.261
+    Difference (null H = exogenous): chi2(6)    =  10.12  Prob > chi2 =  0.120
+
+
+. local modelrc = _rc
+
+. if `modelrc' == 0 {
+.     digital_success, name(PROD_SYS_L23_AUDIT)
+STATA_MODEL_ESTIMATED=PROD_SYS_L23_AUDIT status=DIAGNOSTIC_HOLD instruments=38 groups=47
+Sargan p=.92421179 Hansen p=.12474503 AR1 p=.14302003 AR2 p=.47218635
+(note: file outputs/stata/PROD_SYS_L23_AUDIT.ster not found)
+file outputs/stata/PROD_SYS_L23_AUDIT.ster saved
+
+e(diffsargan)[5,5]
+              GMM instru~s  gmm(ln_Pro~q  gmm(ln_Pro~q  gmm(Intern~r  gmm(Unempl~l
+Unrestrict~n     8.4648823      19.93991     12.352533     2.5557334     10.053819
+Difference~n     11.709293      .2342648     7.8216422     17.618441     10.120356
+Instrument~d             7             2             1            12             6
+Unrestrict~p     .29338923     .06823123     .49896962     .27863107     .26126885
+Difference~p     .11053342     .88946742     .00516243     .12777663     .11967421
+. }
+
+. else {
+.     digital_failure, name(PROD_SYS_L23_AUDIT) rc(`modelrc')
+. }
+
+. 
+end of do-file
+
+. local productivity_rc = _rc
+
+. if `productivity_rc' != 0 {
+.     display as error "PRODUCTIVITY_SCRIPT_INTERNAL_FAILURE rc=`productivity_rc'"
+. }
+
+. do "stata/05_post_estimation_and_export.do"
+
+. * These are execution statuses only. None of the numeric diagnostics proves validity.
+. version 16.0
+
+. postclose digital_post
+
+. preserve
+
+. use "outputs/stata/model_status.dta", clear
+
+. sort model
+
+. export delimited using "outputs/stata/model_status.csv", replace
+(file outputs/stata/model_status.csv not found)
+file outputs/stata/model_status.csv saved
+
+. list, noobs abbreviate(20)
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  |      GROWTH_DIFF_L23 | DIAGNOSTIC_HOLD |  0 | 752 | 47 |          30 | .3500693 | .4655611 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                  .0347841                   |                   .2803637                   |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  |       GROWTH_SYS_L22 | DIAGNOSTIC_HOLD |  0 | 799 | 47 |          31 | 2.54e-09 | .7715834 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                  .0987914                   |                   .4128903                   |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  | GROWTH_SYS_L23_AUDIT | DIAGNOSTIC_HOLD |  0 | 799 | 47 |          38 | 2.00e-07 | .8098603 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                  .1127234                   |                   .4669263                   |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  |        PROD_DIFF_L23 | DIAGNOSTIC_HOLD |  0 | 752 | 47 |          30 | .7972459 | .3243951 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                  .1333891                   |                   .4225056                   |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  |         PROD_SYS_L22 | DIAGNOSTIC_HOLD |  0 | 799 | 47 |          31 | .5796446 | .0354487 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                  .1416231                   |                   .4516201                   |
+  +--------------------------------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------------------------------+
+  |                model |          status | rc |   N | Ng | instruments | sargan_p | hansen_p |
+  |   PROD_SYS_L23_AUDIT | DIAGNOSTIC_HOLD |  0 | 799 | 47 |          38 | .9242118 |  .124745 |
+  |---------------------------------------------+----------------------------------------------|
+  |                     ar1_p                   |                      ar2_p                   |
+  |                    .14302                   |                   .4721864                   |
+  +--------------------------------------------------------------------------------------------+
+
+. restore
+
+. display as result "STATA_STATUS_EXPORT_OK: outputs/stata/model_status.csv"
+STATA_STATUS_EXPORT_OK: outputs/stata/model_status.csv
+
+. display as text "Always inspect full RUN_ALL_REAL_STATA.log for warnings, instrument categories
+> , and the real Difference-in-Hansen table."
+Always inspect full RUN_ALL_REAL_STATA.log for warnings, instrument categories, and the real Diff
+> erence-in-Hansen table.
+
+. 
+end of do-file
+
+. display as result "RUN_ALL_SCRIPT_COMPLETED. This does not mean GMM is scientifically valid."
+RUN_ALL_SCRIPT_COMPLETED. This does not mean GMM is scientifically valid.
+
+. display as result "CHECK model_status.csv and the full Stata log before reporting any model."
+CHECK model_status.csv and the full Stata log before reporting any model.
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/stata/RUN_ALL_REAL_STATA.log
+  log type:  text
+ closed on:  16 Oct 2026, 01:11:08
+-------------------------------------------------------------------------------------------------

@@ -1,0 +1,38 @@
+name: Verify professor pre-pandemic System GMM sensitivity evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_temporal_sensitivity.py'
+      - 'stata/tablet_diagnostics/12_professor_prepandemic_system_gmm.do'
+      - 'evidence/tablet-stata-2026-10-16/prepandemic_system_gmm_*'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/31-professor-temporal-validity.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_temporal_sensitivity.py'
+      - 'stata/tablet_diagnostics/12_professor_prepandemic_system_gmm.do'
+      - 'evidence/tablet-stata-2026-10-16/prepandemic_system_gmm_*'
+      - '.github/workflows/31-professor-temporal-validity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-archived-native-estimation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify stored native Stata pre-pandemic estimation and diagnostics
+        run: python -m src.python.audit_professor_temporal_sensitivity
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: archived-professor-temporal-sensitivity-not-new-stata-execution
+          path: outputs/professor_temporal_audit/latest.json
+          if-no-files-found: warn

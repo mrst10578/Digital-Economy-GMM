@@ -1,0 +1,38 @@
+name: Professor's two System GMM models (archived Stata audit)
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_system_gmm.py'
+      - 'stata/tablet_diagnostics/11_professor_system_gmm_two_equations.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_*'
+      - 'evidence/tablet-stata-2026-10-16/model_status.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/30-professor-system-gmm.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_system_gmm.py'
+      - 'stata/tablet_diagnostics/11_professor_system_gmm_two_equations.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_*'
+      - '.github/workflows/30-professor-system-gmm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-native-stata-outputs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify real Stata log and original requirements without rerunning Stata
+        run: python -m src.python.audit_professor_system_gmm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: professor-system-gmm-archived-audit-not-causal-approval
+          path: outputs/professor_system_gmm_audit/latest.json
+          if-no-files-found: warn

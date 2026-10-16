@@ -1,0 +1,5 @@
+model,rc,N,Ng,instruments,sargan_p,hansen_p,ar1_p,ar2_p,b_internet
+Growth_DIFF_L2,0,752,47,23,,,.049130339,.33510849,-.078420572
+Growth_DIFF_L3,0,752,47,23,,,.57991856,.90567201,-.015687436
+ln_Productivity_DIFF_L2,0,752,47,23,,,.15724209,.44151402,-.002081468
+ln_Productivity_DIFF_L3,0,752,47,23,,,.98412234,.98387074,.021791233

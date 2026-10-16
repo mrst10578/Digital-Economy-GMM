@@ -1,0 +1,48 @@
+name: Verify 47-country joint lag instrument predictive geometry and scientific hold
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_difference_gmm_joint_predictive_relevance.py'
+      - 'src/python/verify_difference_gmm_joint_predictive_relevance.py'
+      - 'evidence/scientific-gates-2026-10-16/diff_gmm_joint_lag2_3_47_country_oos_predictive.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'docs/PROFESSOR_FINAL_IDENTIFICATION_FEASIBILITY_DECISION_2026-10-16_FA.md'
+      - '.github/workflows/40-professor-joint-lag-weak-instrument-geometry.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_difference_gmm_joint_predictive_relevance.py'
+      - 'src/python/verify_difference_gmm_joint_predictive_relevance.py'
+      - 'evidence/scientific-gates-2026-10-16/diff_gmm_joint_lag2_3_47_country_oos_predictive.csv'
+      - '.github/workflows/40-professor-joint-lag-weak-instrument-geometry.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce-held-out-prediction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install only workbook reader, not Stata
+        run: python -m pip install 'openpyxl>=3.1,<4'
+      - name: Recompute all 47 country holdouts for seven regressors in two outcomes and compare archived results
+        run: python -m src.python.verify_difference_gmm_joint_predictive_relevance
+      - name: Ensure science verdict retains strict causal limitation
+        shell: bash
+        run: |
+          test -s docs/PROFESSOR_FINAL_IDENTIFICATION_FEASIBILITY_DECISION_2026-10-16_FA.md
+          grep -q '۱۴ ستون ابزار' docs/PROFESSOR_FINAL_IDENTIFICATION_FEASIBILITY_DECISION_2026-10-16_FA.md
+          grep -q 'تأیید علمی اثر علّی' docs/PROFESSOR_FINAL_IDENTIFICATION_FEASIBILITY_DECISION_2026-10-16_FA.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: professor-out-of-country-predictive-instrument-relevance-not-weakiv-test
+          path: |
+            outputs/difference_gmm_instrument_geometry/complete_instrument_predictive_relevance.csv
+            outputs/difference_gmm_instrument_geometry/latest.json
+          if-no-files-found: warn

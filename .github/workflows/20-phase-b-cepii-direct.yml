@@ -1,0 +1,29 @@
+name: Phase B - official CEPII BACI 202601 direct full source
+on:
+  push:
+    paths:
+      - "src/python/phase_b_baci_zip_runner.py"
+      - ".github/workflows/20-phase-b-cepii-direct.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  official-full-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install audited scientific packages
+        run: python -m pip install "pandas>=2,<3" "numpy>=1.26,<3" "openpyxl>=3,<4" "pycountry>=22" "statsmodels>=0.14,<1"
+      - name: Download CEPII 202601 ZIP DIRECTLY and construct REAL HS85 bilateral panel
+        run: |
+          python src/python/phase_b_baci_zip_runner.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: digital-phase-b-CEPII-official-original-source-panel
+          path: outputs/phase_b_cepii_direct/
+          if-no-files-found: warn
