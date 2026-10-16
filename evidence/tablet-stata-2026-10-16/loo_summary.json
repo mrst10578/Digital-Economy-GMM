@@ -1,0 +1,96 @@
+{
+  "status": "PASS: archived real Stata 47-by-2 country deletion audit",
+  "rows": 94,
+  "unique_countries": 47,
+  "models_per_outcome": 47,
+  "warning_count": 0,
+  "execution_failure_count": 0,
+  "source_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "model": "one-step Difference GMM robust, fixed full-rank year basis, lag(2 3) collapse",
+  "outcomes": {
+    "Growth": {
+      "baseline_internet_coefficient": -0.0097008841,
+      "loo_internet_min": -0.051153503,
+      "loo_internet_max": 0.034307878,
+      "loo_internet_median": -0.0096229408,
+      "jackknife_se_exploratory_NOT_regression_se": 0.09210090670633661,
+      "excluded_country_sign_flips": 5,
+      "exclusions_with_negative_coefficient": 42,
+      "exclusions_with_positive_coefficient": 5,
+      "reject_Hansen_at_5pct": 0,
+      "reject_Sargan_at_5pct": 0,
+      "AR1_not_rejected_at_5pct": 0,
+      "AR2_rejected_at_5pct": 0,
+      "largest_5_shifts": [
+        {
+          "country": "AZE",
+          "coefficient": 0.034307878,
+          "difference_from_full_sample": 0.0440087621
+        },
+        {
+          "country": "TUR",
+          "coefficient": -0.051153503,
+          "difference_from_full_sample": -0.0414526189
+        },
+        {
+          "country": "MAC",
+          "coefficient": -0.04730878,
+          "difference_from_full_sample": -0.0376078959
+        },
+        {
+          "country": "CHN",
+          "coefficient": 0.027544377,
+          "difference_from_full_sample": 0.037245261099999996
+        },
+        {
+          "country": "ISR",
+          "coefficient": 0.014922143,
+          "difference_from_full_sample": 0.0246230271
+        }
+      ]
+    },
+    "ln_Productivity": {
+      "baseline_internet_coefficient": -0.0005165193,
+      "loo_internet_min": -0.0011715039,
+      "loo_internet_max": 0.00018264358,
+      "loo_internet_median": -0.00051109801,
+      "jackknife_se_exploratory_NOT_regression_se": 0.0012023424659494744,
+      "excluded_country_sign_flips": 1,
+      "exclusions_with_negative_coefficient": 46,
+      "exclusions_with_positive_coefficient": 1,
+      "reject_Hansen_at_5pct": 0,
+      "reject_Sargan_at_5pct": 0,
+      "AR1_not_rejected_at_5pct": 46,
+      "AR2_rejected_at_5pct": 0,
+      "largest_5_shifts": [
+        {
+          "country": "ISR",
+          "coefficient": 0.00018264358,
+          "difference_from_full_sample": 0.00069916288
+        },
+        {
+          "country": "TUR",
+          "coefficient": -0.0011715039,
+          "difference_from_full_sample": -0.0006549846
+        },
+        {
+          "country": "KGZ",
+          "coefficient": -0.00012196639,
+          "difference_from_full_sample": 0.00039455291
+        },
+        {
+          "country": "MAC",
+          "coefficient": -0.00088516908,
+          "difference_from_full_sample": -0.00036864978
+        },
+        {
+          "country": "MDA",
+          "coefficient": -0.00032489575,
+          "difference_from_full_sample": 0.00019162355
+        }
+      ]
+    }
+  },
+  "scientifically_valid_causal_model_count": 0,
+  "method_caution": "Post-estimation sample sensitivity does not test conditional moment exogeneity, causal spillovers, or nonstationary levels."
+}
