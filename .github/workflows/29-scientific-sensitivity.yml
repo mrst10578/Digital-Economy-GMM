@@ -1,0 +1,45 @@
+name: Validate 47-country GMM sensitivity and residual CD evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_country_loo.py'
+      - 'src/python/audit_gmm_cd.py'
+      - 'evidence/tablet-stata-2026-10-16/loo_*'
+      - 'evidence/tablet-stata-2026-10-16/gmm_residual_cd.*'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/29-scientific-sensitivity.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_country_loo.py'
+      - 'src/python/audit_gmm_cd.py'
+      - 'evidence/tablet-stata-2026-10-16/loo_*'
+      - 'evidence/tablet-stata-2026-10-16/gmm_residual_cd.*'
+      - '.github/workflows/29-scientific-sensitivity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-preserved-real-stata-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install openpyxl for source integrity and 47-country check
+        run: python -m pip install "openpyxl>=3.1,<4"
+      - name: Verify all 94 country deletion Stata outputs
+        run: python -m src.python.audit_country_loo
+      - name: Verify real Difference GMM residual CD evidence
+        run: python -m src.python.audit_gmm_cd
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scientific-sensitivity-archive-audit-not-new-stata-run
+          path: |
+            outputs/loo_science/loo_summary.json
+            outputs/gmm_cd_audit/latest.json
+          if-no-files-found: warn
