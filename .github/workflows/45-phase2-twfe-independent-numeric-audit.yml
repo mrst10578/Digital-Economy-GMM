@@ -1,0 +1,23 @@
+name: Phase 2 audit archived 840-row descriptive FE evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/qa_archived_twfe_evidence.py'
+      - 'evidence/extended/phase2_wdi_twfe_840_*'
+      - '.github/workflows/45-phase2-twfe-independent-numeric-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pure-numeric-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify archived coefficient counts and paired samples against original workbook hash
+        run: python src/python/extended/qa_archived_twfe_evidence.py
