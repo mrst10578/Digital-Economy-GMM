@@ -1,0 +1,37 @@
+name: Verify theory-led alternative productivity growth GMM evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_theory_led_productivity_growth.py'
+      - 'stata/tablet_diagnostics/20_productivity_growth_theory_led_candidate.do'
+      - 'evidence/scientific-gates-2026-10-16/theory_led_productivity_growth_system_gmm_*'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/37-theory-productivity-growth-sensitivity.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_theory_led_productivity_growth.py'
+      - 'stata/tablet_diagnostics/20_productivity_growth_theory_led_candidate.do'
+      - 'evidence/scientific-gates-2026-10-16/theory_led_productivity_growth_system_gmm_*'
+      - '.github/workflows/37-theory-productivity-growth-sensitivity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-true-stata-output:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify original data, real model results and causal-interpretation hold
+        run: python -m src.python.audit_theory_led_productivity_growth
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: theory-led-productivity-growth-sensitivity-not-final-causal-approval
+          path: outputs/professor_theory_alternative_audit/latest.json
+          if-no-files-found: warn
