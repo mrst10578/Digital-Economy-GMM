@@ -1,0 +1,32 @@
+name: Phase 2 OECD ICIO 2025 official country node check
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/audit_oecd_icio_2025_country_nodes.py'
+      - 'config/extended/phase2_original_47_country_sample_lock.json'
+      - '.github/workflows/43-phase2-oecd-icio-country-screen.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  geographic-screen-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compare official OECD annex ISO3 nodes with the untouched original 47-country sample
+        run: python src/python/extended/audit_oecd_icio_2025_country_nodes.py
+      - name: Show gaps requiring UN Comtrade source check
+        run: cat outputs/extended/oecd_icio_2025_geographic_screen/latest.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-oecd-icio-official-2025-country-screen
+          path: outputs/extended/oecd_icio_2025_geographic_screen/
+          if-no-files-found: warn
+          retention-days: 30
