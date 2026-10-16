@@ -68,7 +68,7 @@ def model(df,y,predictors,tag):
     # Driscoll-Kraay cross-sectional/time robust approximation; T=18 is limited.
     fit=model.fit(cov_type="kernel",kernel="bartlett",bandwidth=2)
     allparams=fit.params
-    assert set(allparams)==set(predictors), ("Actual param names", list(allparams.index), "Expected", list(predictors))
+    assert set(allparams.index)==set(predictors), ("Actual param names", list(allparams.index), "Expected", list(predictors))
     assert fit.nobs==840
     assert fit.resids.notna().all()
     return fit
