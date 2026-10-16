@@ -1,0 +1,7 @@
+dependent,term,baseline_beta,baseline_p,expanded_beta,expanded_p,beta_change,same_matched_country_year_keys,same_840_observations,model_type,causal
+Growth,Internet,-0.10828056169125502,3.1459365098770926e-07,-0.10288513582396752,3.3965816100201955e-08,0.005395425867287501,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
+Growth,Broadband,0.028884421616584232,0.15149991913943173,-0.006422550480729809,0.7824644313708782,-0.03530697209731404,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
+Growth,ICT_Exports,0.01016685712688593,0.8579771717206398,0.012315286306983779,0.8163972979623595,0.0021484291800978484,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
+ln_Productivity,Internet,0.0035791546997362127,2.793090400538304e-06,0.003597207888947265,2.7752137933259096e-06,1.8053189211052287e-05,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
+ln_Productivity,Broadband,-0.0003276044601618087,0.8680343021531699,-0.00047007626390314553,0.8089715744378839,-0.0001424718037413368,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
+ln_Productivity,ICT_Exports,0.007940762462841752,0.00022502479176691187,0.007923777002074613,0.0002862644691347778,-1.6985460767138597e-05,True,True,"static two-way fixed effects, NOT professor dynamic GMM",False
