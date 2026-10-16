@@ -29,6 +29,8 @@ jobs:
       - name: Confirm sample and show digital coefficient changes, not significance selection
         run: |
           cat outputs/extended/wdi_pilot_2026_10_16/twfe_comparison/twfe_digital_coefficient_comparison.csv
+          echo "----- Complete 28-coefficient audit, including FDI and ICT import controls -----"
+          cat outputs/extended/wdi_pilot_2026_10_16/twfe_comparison/twfe_all_coefficients.csv
           echo "Do not read this TWFE experiment as professor's System GMM or causal evidence."
       - uses: actions/upload-artifact@v4
         if: always()
