@@ -47,7 +47,21 @@ def main() -> None:
     assert 'gmmstyle(Internet Broadband ICT_Exports RnD, lag(2 2) collapse)' in saved_script
     assert 'gmmstyle(Unemployment Inflation, lag(2 2) collapse)' in saved_script
     assert 'ivstyle($digital_year_dummies_sys)' in saved_script
-    assert 'source' not in saved_script.lower().split("PROFESSOR_GMM_SOURCE=")[0] or True
+    # The two two-step commands must exactly match the project's original
+    # growth and productivity System-GMM specifications (model L2 only).
+    for filename, dependent in (
+        ("stata/03_growth_models.do", "Growth"),
+        ("stata/04_productivity_models.do", "ln_Productivity"),
+    ):
+        source = (ROOT / filename).read_text(encoding="utf-8")
+        candidates = [
+            line.strip() for line in source.splitlines()
+            if line.lstrip().startswith("capture noisily xtabond2 ")
+            and "twostep robust small artests(2)" in line
+        ]
+        assert len(candidates) == 2, f"System specification count changed: {filename}"
+        normalized = candidates[0].replace(dependent, "`y'")
+        assert normalized in saved_script, f"Original model changed: {filename}"
 
     log = LOG.read_text(errors="replace")
     markers = re.findall(r"^PROFESSOR_OK outcome=(\w+) method=(\w+) N=(\d+) instruments=(\d+)", log, re.M)
