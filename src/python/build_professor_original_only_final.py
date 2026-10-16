@@ -140,7 +140,24 @@ def word_styles(path:Path) -> None:
             p.paragraph_format.space_after=Pt(5)
     for table in doc.tables:
         table.alignment=WD_TABLE_ALIGNMENT.CENTER
-        table.autofit=True
+        # Use the available A4 text width: keep 95% confidence intervals on
+        # ONE line, rather than splitting each CI into stacked fragments.
+        # Verified against actual 5-column regression tables in rendered PDF.
+        ncols=len(table.columns)
+        if ncols == 5:
+            widths_cm=(3.2,2.6,2.65,2.45,6.8)
+        elif ncols == 4:
+            widths_cm=(5.2,3.7,3.7,5.1)
+        elif ncols == 2:
+            widths_cm=(8.8,8.9)
+        else:
+            widths_cm=tuple(17.7/ncols for _ in table.columns)
+        table.autofit=False
+        for column,w in zip(table.columns,widths_cm):
+            column.width=Cm(w)
+        for row in table.rows:
+            for cell,w in zip(row.cells,widths_cm):
+                cell.width=Cm(w)
         tblPr=table._tbl.tblPr
         qt(tblPr,"w:bidiVisual")
         for row_i,row in enumerate(table.rows):
