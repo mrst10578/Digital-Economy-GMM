@@ -54,7 +54,7 @@ list, noobs abbreviate(24)
 restore
 display as result "RELEVANCE_DIAGNOSTICS_END: descriptive, univariate conditional on years; not a first-stage identification test"
 generate double D_ln_Productivity=D.ln_Productivity
-postfile ur str24 variable str8 form str6 test str8 deterministic double lag rc p1 p2 using "outputs/professor/productivity_unitroot_grid.dta", replace
+postfile ur str24 variable str12 form str6 test str8 deterministic double lag rc p1 p2 using "outputs/professor/productivity_unitroot_grid.dta", replace
 foreach variable in ln_Productivity D_ln_Productivity {
     local transform "level"
     if "`variable'"=="D_ln_Productivity" local transform "difference"
