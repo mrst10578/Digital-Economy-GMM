@@ -1,0 +1,503 @@
+--------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/DIFF_L23_LAG_RELEVANCE_REAL_STATA.lo
+> g
+  log type:  text
+ opened on:  16 Oct 2026, 11:49:18
+
+. do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation R
+> nD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was fi
+> tted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. postfile q str22 variable str24 target double rc N countries coefficient_l2 coefficient_l3 joint
+> _F joint_p r2 using "outputs/professor/diff_l23_lag_relevance.dta", replace
+(file outputs/professor/diff_l23_lag_relevance.dta not found)
+
+. foreach v in Growth ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD {
+  2.   local target "D.`v'"
+  3.   if inlist("`v'","Growth","ln_Productivity") local target "D.L.`v'"
+  4.   display as result "DIFF_RELEVANCE_START v=`v' target=`target'"
+  5.   capture noisily regress `target' L2.`v' L3.`v' i.Year, vce(cluster panel_id)
+  6.   local rc = _rc
+  7.   if `rc' == 0 {
+  8.     local n=e(N)
+  9.     local ncountry=e(N_clust)
+ 10.     local b2=_b[L2.`v']
+ 11.     local b3=_b[L3.`v']
+ 12.     local r2=e(r2)
+ 13.     capture noisily test L2.`v' L3.`v'
+ 14.     local testrc=_rc
+ 15.     local f=.
+ 16.     local p=.
+ 17.     if `testrc'==0 {
+ 18.        local f=r(F)
+ 19.        local p=r(p)
+ 20.     }
+ 21.     post q ("`v'") ("`target'") (0) (`n') (`ncountry') (`b2') (`b3') (`f') (`p') (`r2')
+ 22.     display as result "DIFF_RELEVANCE_OK v=`v' N=`n' groups=`ncountry' F=`f' p=`p'"
+ 23.   }
+ 24.   else {
+ 25.     post q ("`v'") ("`target'") (`rc') (.) (.) (.) (.) (.) (.) (.)
+ 26.     display as error "DIFF_RELEVANCE_FAILED v=`v' rc=`rc'"
+ 27.   }
+ 28. }
+DIFF_RELEVANCE_START v=Growth target=D.L.Growth
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      56.11
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6627
+                                                Root MSE          =     3.8362
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+   LD.Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L2. |  -.6986248    .076416    -9.14   0.000    -.8524423   -.5448073
+         L3. |   .1479756   .0521595     2.84   0.007     .0429839    .2529672
+             |
+        Year |
+       2009  |  -3.169245   .4928108    -6.43   0.000    -4.161222   -2.177268
+       2010  |  -7.863983   .6221136   -12.64   0.000    -9.116233   -6.611733
+       2011  |   1.001942   .7203086     1.39   0.171    -.4479635    2.451848
+       2012  |  -.7109841   .6425685    -1.11   0.274    -2.004407    .5824392
+       2013  |  -3.486973    .543139    -6.42   0.000    -4.580256   -2.393691
+       2014  |   -1.67174   .5951758    -2.81   0.007    -2.869767   -.4737133
+       2015  |  -1.795758   .8088368    -2.22   0.031    -3.423862   -.1676535
+       2016  |  -2.451105   1.164976    -2.10   0.041     -4.79608    -.106131
+       2017  |   -2.58344   .5772856    -4.48   0.000    -3.745456   -1.421424
+       2018  |  -.7927761    .523334    -1.51   0.137    -1.846193    .2606407
+       2019  |  -1.722467   .5360676    -3.21   0.002    -2.801515   -.6434184
+       2020  |  -2.485022   .6493554    -3.83   0.000    -3.792107   -1.177937
+       2021  |  -10.11928   1.650888    -6.13   0.000    -13.44234    -6.79621
+       2022  |   5.002775   .7241992     6.91   0.000     3.545037    6.460512
+             |
+       _cons |   3.501064   .8453412     4.14   0.000      1.79948    5.202648
+------------------------------------------------------------------------------
+
+ ( 1)  L2.Growth = 0
+ ( 2)  L3.Growth = 0
+
+       F(  2,    46) =   83.99
+            Prob > F =    0.0000
+DIFF_RELEVANCE_OK v=Growth N=705 groups=47 F=83.9931596320437 p=4.41115106609e-16
+DIFF_RELEVANCE_START v=ln_Productivity target=D.L.ln_Productivity
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      15.97
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2501
+                                                Root MSE          =     .04295
+
+                                 (Std. err. adjusted for 47 clusters in panel_id)
+---------------------------------------------------------------------------------
+LD.             |               Robust
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L2. |   .1014547   .0947441     1.07   0.290    -.0892554    .2921647
+            L3. |  -.1174088   .0920472    -1.28   0.209    -.3026902    .0678726
+                |
+           Year |
+          2009  |  -.0220594   .0050996    -4.33   0.000    -.0323244   -.0117943
+          2010  |  -.0500763    .005831    -8.59   0.000    -.0618136   -.0383391
+          2011  |   .0060886   .0062692     0.97   0.337    -.0065306    .0187078
+          2012  |  -.0092198   .0068555    -1.34   0.185    -.0230193    .0045796
+          2013  |  -.0256988    .004975    -5.17   0.000    -.0357129   -.0156847
+          2014  |  -.0107028   .0044549    -2.40   0.020    -.0196701   -.0017356
+          2015  |   -.020939   .0057741    -3.63   0.001    -.0325616   -.0093164
+          2016  |  -.0229759   .0097511    -2.36   0.023    -.0426039    -.003348
+          2017  |  -.0208669   .0058522    -3.57   0.001    -.0326469    -.009087
+          2018  |  -.0081373   .0052477    -1.55   0.128    -.0187004    .0024258
+          2019  |   -.016707   .0057603    -2.90   0.006    -.0283018   -.0051122
+          2020  |  -.0197824   .0052204    -3.79   0.000    -.0302905   -.0092744
+          2021  |  -.0704455    .019048    -3.70   0.001    -.1087871   -.0321039
+          2022  |   .0309255   .0063909     4.84   0.000     .0180613    .0437898
+                |
+          _cons |   .2106917    .059524     3.54   0.001     .0908761    .3305074
+---------------------------------------------------------------------------------
+
+ ( 1)  L2.ln_Productivity = 0
+ ( 2)  L3.ln_Productivity = 0
+
+       F(  2,    46) =   10.41
+            Prob > F =    0.0002
+DIFF_RELEVANCE_OK v=ln_Productivity N=705 groups=47 F=10.41115879947876 p=.0001863094320929
+DIFF_RELEVANCE_START v=Internet target=D.Internet
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      26.43
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2086
+                                                Root MSE          =     2.9537
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+  D.Internet | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |
+         L2. |   .0042322    .045812     0.09   0.927    -.0879826    .0964469
+         L3. |  -.0732318   .0420481    -1.74   0.088    -.1578703    .0114067
+             |
+        Year |
+       2009  |   .1238449   .5504637     0.22   0.823    -.9841811    1.231871
+       2010  |   .3122417   .7129209     0.44   0.663    -1.122794    1.747277
+       2011  |    -.06583   .6167008    -0.11   0.915    -1.307184    1.175524
+       2012  |  -.2455709   .5641119    -0.44   0.665    -1.381069    .8899275
+       2013  |   .3690669   .7028935     0.53   0.602    -1.045784    1.783918
+       2014  |    .353543   .8089582     0.44   0.664    -1.274805    1.981891
+       2015  |  -.0456186   .6250984    -0.07   0.942    -1.303876    1.212639
+       2016  |   .6231301   .6115567     1.02   0.314    -.6078698     1.85413
+       2017  |   .0540808   .5569934     0.10   0.923    -1.067089     1.17525
+       2018  |   1.516434   .8063271     1.88   0.066    -.1066178    3.139487
+       2019  |   .8304852   .6570622     1.26   0.213    -.4921125    2.153083
+       2020  |   1.230749   .6492698     1.90   0.064    -.0761629    2.537662
+       2021  |   1.356949   .7204262     1.88   0.066    -.0931936    2.807092
+       2022  |   .5149185   .6162138     0.84   0.408    -.7254555    1.755292
+             |
+       _cons |   6.494822   .5979611    10.86   0.000     5.291189    7.698455
+------------------------------------------------------------------------------
+
+ ( 1)  L2.Internet = 0
+ ( 2)  L3.Internet = 0
+
+       F(  2,    46) =   66.62
+            Prob > F =    0.0000
+DIFF_RELEVANCE_OK v=Internet N=705 groups=47 F=66.62102836333017 p=2.59604371037e-14
+DIFF_RELEVANCE_START v=Broadband target=D.Broadband
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      17.61
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2238
+                                                Root MSE          =     .86689
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+ D.Broadband | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   Broadband |
+         L2. |   .2909012   .0496522     5.86   0.000     .1909565    .3908459
+         L3. |  -.3012516   .0481983    -6.25   0.000    -.3982696   -.2042335
+             |
+        Year |
+       2009  |  -.2550898   .1557378    -1.64   0.108    -.5685738    .0583942
+       2010  |  -.1753241   .1994332    -0.88   0.384    -.5767622    .2261141
+       2011  |  -.2352693   .2507575    -0.94   0.353     -.740018    .2694794
+       2012  |   -.472652   .1892185    -2.50   0.016    -.8535291   -.0917749
+       2013  |  -.2126017   .2056104    -1.03   0.307     -.626474    .2012705
+       2014  |  -.3497649   .1975748    -1.77   0.083    -.7474624    .0479325
+       2015  |   -.351542   .2278994    -1.54   0.130    -.8102797    .1071956
+       2016  |  -.3677331   .2596205    -1.42   0.163     -.890322    .1548559
+       2017  |  -.3130864   .2011004    -1.56   0.126    -.7178804    .0917076
+       2018  |  -.4442947   .1843062    -2.41   0.020    -.8152839   -.0733055
+       2019  |  -.4588833     .24187    -1.90   0.064    -.9457423    .0279757
+       2020  |  -.1624563   .2373644    -0.68   0.497    -.6402461    .3153334
+       2021  |  -.1481222   .2304476    -0.64   0.524    -.6119891    .3157447
+       2022  |  -.4433256   .2189301    -2.02   0.049    -.8840091   -.0026421
+             |
+       _cons |   1.222406   .2387717     5.12   0.000     .7417832    1.703028
+------------------------------------------------------------------------------
+
+ ( 1)  L2.Broadband = 0
+ ( 2)  L3.Broadband = 0
+
+       F(  2,    46) =   26.06
+            Prob > F =    0.0000
+DIFF_RELEVANCE_OK v=Broadband N=705 groups=47 F=26.06172394468922 p=2.70804405272e-08
+DIFF_RELEVANCE_START v=ICT_Exports target=D.ICT_Exports
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =       9.61
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2145
+                                                Root MSE          =     1.6302
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+D.           |               Robust
+ ICT_Exports | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ ICT_Exports |
+         L2. |  -.1342307   .0687914    -1.95   0.057    -.2727006    .0042392
+         L3. |   .1645577   .0704909     2.33   0.024     .0226668    .3064485
+             |
+        Year |
+       2009  |  -.3552137   .5207164    -0.68   0.499    -1.403361     .692934
+       2010  |  -.5866204   .4774104    -1.23   0.225    -1.547598    .3743569
+       2011  |  -.8011464   .5609691    -1.43   0.160    -1.930319    .3280258
+       2012  |  -.7756607   .5701791    -1.36   0.180    -1.923372    .3720502
+       2013  |  -.9617673   .4973582    -1.93   0.059    -1.962897    .0393628
+       2014  |  -.2160047   .4285827    -0.50   0.617    -1.078697    .6466875
+       2015  |  -.6347373   .5109402    -1.24   0.220    -1.663207    .3937319
+       2016  |  -.3920201     .53656    -0.73   0.469    -1.472059    .6880192
+       2017  |  -.8734296   .6026635    -1.45   0.154    -2.086528    .3396691
+       2018  |  -.2216938   .5490902    -0.40   0.688    -1.326955    .8835674
+       2019  |  -.1195623   .4014497    -0.30   0.767    -.9276385     .688514
+       2020  |   2.120677   .4237287     5.00   0.000     1.267755    2.973599
+       2021  |  -.7400449   .4984393    -1.48   0.144    -1.743351    .2632614
+       2022  |  -1.395195   .4904334    -2.84   0.007    -2.382387    -.408004
+             |
+       _cons |   .6044303   .4823156     1.25   0.216    -.3664206    1.575281
+------------------------------------------------------------------------------
+
+ ( 1)  L2.ICT_Exports = 0
+ ( 2)  L3.ICT_Exports = 0
+
+       F(  2,    46) =   11.63
+            Prob > F =    0.0001
+DIFF_RELEVANCE_OK v=ICT_Exports N=705 groups=47 F=11.6337858976338 p=.0000815156446932
+DIFF_RELEVANCE_START v=Unemployment target=D.Unemployment
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      14.84
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2800
+                                                Root MSE          =     1.0503
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+D.           |               Robust
+Unemployment | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+Unemployment |
+         L2. |   .1518617   .0757739     2.00   0.051    -.0006632    .3043867
+         L3. |   -.193841   .0668195    -2.90   0.006    -.3283416   -.0593404
+             |
+        Year |
+       2009  |   1.714446   .1753307     9.78   0.000     1.361524    2.067369
+       2010  |   .5051671   .2119197     2.38   0.021     .0785948    .9317394
+       2011  |  -.2220551   .1824788    -1.22   0.230    -.5893659    .1452557
+       2012  |   .3732679   .1938976     1.93   0.060    -.0170276    .7635635
+       2013  |   .3325065   .1604196     2.07   0.044     .0095985    .6554145
+       2014  |  -.1696237   .1612739    -1.05   0.298    -.4942511    .1550038
+       2015  |  -.1284015    .152225    -0.84   0.403    -.4348145    .1780115
+       2016  |  -.0589997   .1713025    -0.34   0.732    -.4038137    .2858143
+       2017  |  -.2835206   .1228987    -2.31   0.026    -.5309028   -.0361384
+       2018  |  -.3732232   .1133815    -3.29   0.002    -.6014482   -.1449981
+       2019  |   .0930662    .188142     0.49   0.623     -.285644    .4717765
+       2020  |   1.152095   .2274535     5.07   0.000     .6942553    1.609936
+       2021  |  -.0861474   .2412029    -0.36   0.723    -.5716637     .399369
+       2022  |  -.9539591   .1751197    -5.45   0.000    -1.306457   -.6014615
+             |
+       _cons |   .1324365   .1836396     0.72   0.474    -.2372108    .5020838
+------------------------------------------------------------------------------
+
+ ( 1)  L2.Unemployment = 0
+ ( 2)  L3.Unemployment = 0
+
+       F(  2,    46) =    8.15
+            Prob > F =    0.0009
+DIFF_RELEVANCE_OK v=Unemployment N=705 groups=47 F=8.150734587452661 p=.0009331887626538
+DIFF_RELEVANCE_START v=Inflation target=D.Inflation
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =      46.21
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.3909
+                                                Root MSE          =     3.1427
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+ D.Inflation | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   Inflation |
+         L2. |  -.2046598   .0510171    -4.01   0.000     -.307352   -.1019677
+         L3. |   .1962629   .0790317     2.48   0.017     .0371803    .3553455
+             |
+        Year |
+       2009  |  -7.842618   1.056041    -7.43   0.000    -9.968318   -5.716919
+       2010  |  -1.384182   .5555653    -2.49   0.016    -2.502477   -.2658866
+       2011  |  -2.842703   .6447162    -4.41   0.000     -4.14045   -1.544957
+       2012  |  -3.699948    .737003    -5.02   0.000    -5.183458   -2.216438
+       2013  |   -3.52609   .5324974    -6.62   0.000    -4.597952   -2.454229
+       2014  |  -3.574415   .5098705    -7.01   0.000    -4.600731   -2.548099
+       2015  |  -3.464206    .642914    -5.39   0.000    -4.758325   -2.170088
+       2016  |  -3.023569   .6996094    -4.32   0.000    -4.431809   -1.615328
+       2017  |  -2.103439   .5975624    -3.52   0.001     -3.30627   -.9006081
+       2018  |  -3.371115   .8068264    -4.18   0.000    -4.995172   -1.747057
+       2019  |  -3.018992   .5562276    -5.43   0.000     -4.13862   -1.899364
+       2020  |  -3.784386   .5731563    -6.60   0.000     -4.93809   -2.630682
+       2021  |  -1.038568   .5399192    -1.92   0.061    -2.125369    .0482332
+       2022  |   3.810707   1.373798     2.77   0.008     1.045395    6.576019
+             |
+       _cons |    3.01018   .6521407     4.62   0.000     1.697489    4.322871
+------------------------------------------------------------------------------
+
+ ( 1)  L2.Inflation = 0
+ ( 2)  L3.Inflation = 0
+
+       F(  2,    46) =   10.54
+            Prob > F =    0.0002
+DIFF_RELEVANCE_OK v=Inflation N=705 groups=47 F=10.53660106112179 p=.0001709236665032
+DIFF_RELEVANCE_START v=RnD target=D.RnD
+
+Linear regression                               Number of obs     =        705
+                                                F(16, 46)         =       9.25
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1229
+                                                Root MSE          =     .09472
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+       D.RnD | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         RnD |
+         L2. |   .1155444   .0695326     1.66   0.103    -.0244174    .2555063
+         L3. |  -.1042377    .070343    -1.48   0.145    -.2458308    .0373553
+             |
+        Year |
+       2009  |  -.0167763   .0229445    -0.73   0.468    -.0629611    .0294085
+       2010  |  -.0828204   .0200934    -4.12   0.000    -.1232664   -.0423744
+       2011  |  -.0240638    .018849    -1.28   0.208    -.0620048    .0138772
+       2012  |  -.0261542   .0210245    -1.24   0.220    -.0684744     .016166
+       2013  |  -.0340781   .0182559    -1.87   0.068    -.0708252    .0026691
+       2014  |  -.0239984   .0243891    -0.98   0.330    -.0730911    .0250944
+       2015  |  -.0515366   .0207126    -2.49   0.017    -.0932289   -.0098444
+       2016  |  -.0695856   .0189599    -3.67   0.001    -.1077498   -.0314213
+       2017  |  -.0411453   .0201004    -2.05   0.046    -.0816054   -.0006852
+       2018  |  -.0130954   .0202884    -0.65   0.522    -.0539337     .027743
+       2019  |  -.0099093   .0173249    -0.57   0.570    -.0447825    .0249638
+       2020  |   .0361747   .0173138     2.09   0.042     .0013237    .0710256
+       2021  |  -.0859169   .0166341    -5.17   0.000    -.1193996   -.0524342
+       2022  |  -.0491306   .0213163    -2.30   0.026    -.0920382   -.0062231
+             |
+       _cons |   .0378949    .017233     2.20   0.033     .0032067    .0725831
+------------------------------------------------------------------------------
+
+ ( 1)  L2.RnD = 0
+ ( 2)  L3.RnD = 0
+
+       F(  2,    46) =    3.67
+            Prob > F =    0.0333
+DIFF_RELEVANCE_OK v=RnD N=705 groups=47 F=3.66719279847041 p=.0332860537519776
+
+. postclose q
+
+. preserve
+
+. use "outputs/professor/diff_l23_lag_relevance.dta", clear
+
+. export delimited using "outputs/professor/diff_l23_lag_relevance.csv", replace
+(file outputs/professor/diff_l23_lag_relevance.csv not found)
+file outputs/professor/diff_l23_lag_relevance.csv saved
+
+. count if rc!=0
+  0
+
+. display as result "DIFF_RELEVANCE_FAILURES=" r(N)
+DIFF_RELEVANCE_FAILURES=0
+
+. count
+  8
+
+. display as result "DIFF_RELEVANCE_COUNT=" r(N)
+DIFF_RELEVANCE_COUNT=8
+
+. restore
+
+. display as result "DIFF_RELEVANCE_COMPLETE: descriptive predictive checks only, not GMM instrume
+> nt validity"
+DIFF_RELEVANCE_COMPLETE: descriptive predictive checks only, not GMM instrument validity
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/DIFF_L23_LAG_RELEVANCE_REAL_STATA.lo
+> g
+  log type:  text
+ closed on:  16 Oct 2026, 11:49:58
+--------------------------------------------------------------------------------------------------
