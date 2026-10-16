@@ -1,0 +1,38 @@
+name: Verify professor joint digital and persistence tests
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_joint_digital.py'
+      - 'stata/tablet_diagnostics/13_professor_joint_digital_and_persistence.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_joint_restrictions*'
+      - 'evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/32-professor-joint-wald.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_joint_digital.py'
+      - 'stata/tablet_diagnostics/13_professor_joint_digital_and_persistence.do'
+      - 'evidence/tablet-stata-2026-10-16/professor_joint_restrictions*'
+      - '.github/workflows/32-professor-joint-wald.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-stata-archived-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify tablet Stata Wald results and professor model integrity
+        run: python -m src.python.audit_professor_joint_digital
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: professor-joint-wald-native-stata-evidence-audit
+          path: outputs/professor_joint_wald_audit/latest.json
+          if-no-files-found: warn
