@@ -1,0 +1,315 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_LEVEL_EQUATION_REMOVAL.lo
+> g
+  log type:  text
+ opened on:  16 Oct 2026, 04:47:19
+
+. capture noisily do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation 
+> RnD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was f
+> itted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. local first_rc = _rc
+
+. if `first_rc' {
+.     display as error "LEVEL_REMOVAL_PREFLIGHT_FAILED rc=`first_rc'"
+.     log close
+.     exit `first_rc'
+. }
+
+. postfile lev str20 outcome double rc N Ng instruments lag_b lag_se internet_b internet_se inter
+> net_p hansen_p sargan_p ar1_p ar2_p using "outputs/professor/level_equation_removal_stats.dta",
+>  replace
+(file outputs/professor/level_equation_removal_stats.dta not found)
+
+. foreach y in Growth ln_Productivity {
+  2.     display as result "LEVEL_REMOVAL_START outcome=`y' fixed collapsed lag2 two-step Differe
+> nce GMM"
+  3.     capture noisily xtabond2 `y' L.`y' Internet Broadband ICT_Exports Unemployment Inflation
+>  RnD $digital_year_dummies_diff, gmmstyle(`y', lag(2 2) collapse) gmmstyle(Internet Broadband I
+> CT_Exports RnD, lag(2 2) collapse) gmmstyle(Unemployment Inflation, lag(2 2) collapse) ivstyle(
+> $digital_year_dummies_diff, equation(diff)) noleveleq twostep robust small artests(2)
+  4.     local rc = _rc
+  5.     if `rc' == 0 {
+  6.         local n=e(N)
+  7.         local ng=e(N_g)
+  8.         local j=e(j)
+  9.         local bl=_b[L.`y']
+ 10.         local sl=_se[L.`y']
+ 11.         local bi=_b[Internet]
+ 12.         local si=_se[Internet]
+ 13.         local pi=2*ttail(`ng'-1,abs(`bi'/`si'))
+ 14.         local ha=e(hansenp)
+ 15.         local sa=e(sarganp)
+ 16.         local a1=e(ar1p)
+ 17.         local a2=e(ar2p)
+ 18.         post lev ("`y'") (0) (`n') (`ng') (`j') (`bl') (`sl') (`bi') (`si') (`pi') (`ha') (`
+> sa') (`a1') (`a2')
+ 19.         display as result "LEVEL_REMOVAL_OK outcome=`y' N=`n' groups=`ng' instruments=`j' la
+> gcoef=`bl' Internet=`bi' Hansen=`ha' AR1=`a1' AR2=`a2'"
+ 20.     }
+ 21.     else {
+ 22.         post lev ("`y'") (`rc') (.) (.) (.) (.) (.) (.) (.) (.) (.) (.) (.)
+ 23.         display as error "LEVEL_REMOVAL_FAILED outcome=`y' rc=`rc'"
+ 24.     }
+ 25. }
+LEVEL_REMOVAL_START outcome=Growth fixed collapsed lag2 two-step Difference GMM
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step difference GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       752
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 23                      Obs per group: min =        16
+F(22, 47)     =     27.63                                      avg =     16.00
+Prob > F      =     0.000                                      max =        16
+------------------------------------------------------------------------------
+             |              Corrected
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      Growth |
+         L1. |   .1554719   .2075263     0.75   0.457    -.2620171    .5729609
+             |
+    Internet |  -.0784206   .1523336    -0.51   0.609    -.3848763    .2280352
+   Broadband |  -1.755718   2.547596    -0.69   0.494     -6.88082    3.369385
+ ICT_Exports |   .4162146   .9413021     0.44   0.660    -1.477441     2.30987
+Unemployment |  -1.291627    1.14198    -1.13   0.264    -3.588994    1.005739
+   Inflation |  -.4861912   .8475018    -0.57   0.569    -2.191145    1.218763
+         RnD |  -13.12634   21.84113    -0.60   0.551    -57.06502    30.81233
+        yd_2 |  -38.90276   53.11309    -0.73   0.468    -145.7525    67.94699
+        yd_3 |    -34.646   46.28139    -0.75   0.458    -127.7521    58.46014
+        yd_4 |  -32.55459   39.69223    -0.82   0.416    -112.4051    47.29588
+        yd_5 |  -34.94168   35.68677    -0.98   0.333    -106.7342    36.85084
+        yd_6 |  -24.02379   31.76445    -0.76   0.453    -87.92563    39.87805
+        yd_7 |  -22.32426   27.42165    -0.81   0.420     -77.4895    32.84098
+        yd_8 |    -22.136   24.79849    -0.89   0.377    -72.02413    27.75214
+        yd_9 |  -18.31077   21.56566    -0.85   0.400    -61.69528    25.07374
+       yd_10 |   -17.1885   19.10982    -0.90   0.373     -55.6325    21.25551
+       yd_11 |  -16.41792   16.97978    -0.97   0.339    -50.57684      17.741
+       yd_12 |   -15.5994   15.05914    -1.04   0.306    -45.89448    14.69567
+       yd_13 |  -12.17095   12.33562    -0.99   0.329      -36.987    12.64511
+       yd_14 |  -12.01791   10.21584    -1.18   0.245    -32.56953    8.533719
+       yd_15 |  -11.13133   7.680253    -1.45   0.154    -26.58201    4.319345
+       yd_16 |    -16.126   3.136152    -5.14   0.000    -22.43513   -9.816878
+       yd_18 |  -1.935874   8.172619    -0.24   0.814    -18.37706    14.50531
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_4 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14
+    yd_15 yd_16 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.Growth collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.97  Pr > z =  0.049
+Arellano-Bond test for AR(2) in first differences: z =   0.96  Pr > z =  0.335
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(0)    =   0.00  Prob > chi2 =      .
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(0)    =   0.00  Prob > chi2 =      .
+  (Robust, but weakened by many instruments.)
+
+LEVEL_REMOVAL_OK outcome=Growth N=752 groups=47 instruments=23 lagcoef=.1554719152216837 Internet
+> =-.0784205698552114 Hansen=. AR1=.049130339649168 AR2=.3351084995780216
+LEVEL_REMOVAL_START outcome=ln_Productivity fixed collapsed lag2 two-step Difference GMM
+Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
+
+Dynamic panel-data estimation, two-step difference GMM
+------------------------------------------------------------------------------
+Group variable: panel_id                        Number of obs      =       752
+Time variable : Year                            Number of groups   =        47
+Number of instruments = 23                      Obs per group: min =        16
+F(22, 47)     =     60.91                                      avg =     16.00
+Prob > F      =     0.000                                      max =        16
+---------------------------------------------------------------------------------
+                |              Corrected
+ln_Productivity | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+ln_Productivity |
+            L1. |   1.130019   .2498286     4.52   0.000      .627429    1.632609
+                |
+       Internet |  -.0020815   .0025859    -0.80   0.425    -.0072837    .0031208
+      Broadband |  -.0076881   .0381545    -0.20   0.841    -.0844449    .0690688
+    ICT_Exports |    .002842   .0097125     0.29   0.771    -.0166971     .022381
+   Unemployment |  -.0070726   .0145626    -0.49   0.629    -.0363688    .0222235
+      Inflation |   -.009078   .0130347    -0.70   0.490    -.0353004    .0171445
+            RnD |   -.125182   .3471829    -0.36   0.720     -.823624    .5732599
+           yd_2 |  -.2417934   .8893947    -0.27   0.787    -2.031025    1.547438
+           yd_3 |  -.2140953   .7825046    -0.27   0.786    -1.788291    1.360101
+           yd_4 |  -.1896936   .6615849    -0.29   0.776    -1.520631    1.141244
+           yd_5 |  -.2347434   .6132139    -0.38   0.704    -1.468371    .9988838
+           yd_6 |  -.1535783   .5400394    -0.28   0.777    -1.239998    .9328409
+           yd_7 |  -.1386839    .471991    -0.29   0.770    -1.088207    .8108395
+           yd_8 |  -.1513411   .4331299    -0.35   0.728    -1.022686    .7200039
+           yd_9 |  -.1279888   .3850804    -0.33   0.741    -.9026707    .6466931
+          yd_10 |  -.1311229    .343478    -0.38   0.704    -.8221116    .5598658
+          yd_11 |  -.1295308   .3108459    -0.42   0.679    -.7548721    .4958105
+          yd_12 |  -.1215049   .2806555    -0.43   0.667    -.6861108    .4431011
+          yd_13 |  -.0925171   .2346996    -0.39   0.695    -.5646719    .3796377
+          yd_14 |  -.0951828   .1990204    -0.48   0.635    -.4955603    .3051946
+          yd_15 |  -.0905279   .1542145    -0.59   0.560    -.4007674    .2197116
+          yd_16 |  -.1269619   .0685472    -1.85   0.070    -.2648611    .0109373
+          yd_18 |   .0085723   .1018634     0.08   0.933    -.1963504     .213495
+---------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(yd_2 yd_3 yd_4 yd_5 yd_6 yd_7 yd_8 yd_9 yd_10 yd_11 yd_12 yd_13 yd_14
+    yd_15 yd_16 yd_18)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L2.(Unemployment Inflation) collapsed
+    L2.(Internet Broadband ICT_Exports RnD) collapsed
+    L2.ln_Productivity collapsed
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.41  Pr > z =  0.157
+Arellano-Bond test for AR(2) in first differences: z =   0.77  Pr > z =  0.442
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(0)    =   0.00  Prob > chi2 =      .
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(0)    =   0.00  Prob > chi2 =      .
+  (Robust, but weakened by many instruments.)
+
+LEVEL_REMOVAL_OK outcome=ln_Productivity N=752 groups=47 instruments=23 lagcoef=1.130019247813921
+>  Internet=-.0020814681071613 Hansen=. AR1=.157242085906163 AR2=.4415140092508436
+
+. postclose lev
+
+. preserve
+
+. use "outputs/professor/level_equation_removal_stats.dta", clear
+
+. export delimited using "outputs/professor/level_equation_removal_stats.csv", replace
+(file outputs/professor/level_equation_removal_stats.csv not found)
+file outputs/professor/level_equation_removal_stats.csv saved
+
+. count if rc != 0
+  0
+
+. display as result "LEVEL_REMOVAL_FAILURES=" r(N)
+LEVEL_REMOVAL_FAILURES=0
+
+. count
+  2
+
+. display as result "LEVEL_REMOVAL_COUNT=" r(N)
+LEVEL_REMOVAL_COUNT=2
+
+. list, noobs abbreviate(20)
+
+  +----------------------------------------------------------------------------------+
+  |         outcome | rc |   N | Ng | instruments |    lag_b |   lag_se | internet_b |
+  |          Growth |  0 | 752 | 47 |          23 | .1554719 | .2075263 |  -.0784206 |
+  |---------------------------------------------------------------------+------------|
+  |  internet_se  |  internet_p  |  hansen_p  |  sargan_p  |     ar1_p  |     ar2_p  |
+  |     .1523336  |    .6091613  |         .  |         .  |  .0491303  |  .3351085  |
+  +----------------------------------------------------------------------------------+
+
+  +----------------------------------------------------------------------------------+
+  |         outcome | rc |   N | Ng | instruments |    lag_b |   lag_se | internet_b |
+  | ln_Productivity |  0 | 752 | 47 |          23 | 1.130019 | .2498286 |  -.0020815 |
+  |---------------------------------------------------------------------+------------|
+  |  internet_se  |  internet_p  |  hansen_p  |  sargan_p  |     ar1_p  |     ar2_p  |
+  |     .0025859  |    .4250064  |         .  |         .  |  .1572421  |   .441514  |
+  +----------------------------------------------------------------------------------+
+
+. restore
+
+. display as result "LEVEL_REMOVAL_FINISHED: diagnostic-only, not approval of Difference/System G
+> MM"
+LEVEL_REMOVAL_FINISHED: diagnostic-only, not approval of Difference/System GMM
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_QA_20261016\outputs/professor/PROFESSOR_LEVEL_EQUATION_REMOVAL.lo
+> g
+  log type:  text
+ closed on:  16 Oct 2026, 04:47:57
+-------------------------------------------------------------------------------------------------
