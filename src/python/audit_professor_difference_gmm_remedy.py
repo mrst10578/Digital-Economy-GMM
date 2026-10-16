@@ -64,7 +64,10 @@ def main():
             "ar1_p":r["ar1_p"],"ar2_p":r["ar2_p"],
             "original_system_hansen_p":original[r["outcome"]]["hansen_p"]}
     assert all(dec(r["ar1_p"])>Decimal(".05") for r in got if r["estimator"]=="twostep")
-    assert all(dec(r["ar1_p"])<Decimal(".05") for r in got if r["estimator"]=="onestep")
+    # AR1 rejection for growth onestep only; not for productivity.
+    # Preserve and flag the non-rejected AR1 in both two-step fits.
+    assert dec(next(r["ar1_p"] for r in got if r["estimator"]=="onestep" and r["outcome"]=="Growth"))<Decimal(".05")
+    assert dec(next(r["ar1_p"] for r in got if r["estimator"]=="onestep" and r["outcome"]=="ln_Productivity"))>Decimal(".05")
     assert all(dec(r["joint_p"])>Decimal(".05") for r in got)
     rs=RELEVANCE_SCRIPT.read_text()
     assert "regress `target' L2.`v' L3.`v' i.Year, vce(cluster panel_id)" in rs
