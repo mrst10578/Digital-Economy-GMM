@@ -1,0 +1,38 @@
+name: Phase 2 WDI coverage pilot (separate data)
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_wdi_coverage.py'
+      - 'config/extended/phase2_original_47_country_sample_lock.json'
+      - '.github/workflows/41-phase2-wdi-coverage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  coverage-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Workbook reader dependency
+        run: python -m pip install 'openpyxl>=3.1,<4'
+      - name: Pull public WDI pilot, archive provenance, audit 47-country sample, NO GMM model
+        run: python src/python/extended/pilot_wdi_coverage.py
+      - name: Print meaningful coverage results
+        if: success()
+        run: |
+          cat outputs/extended/wdi_pilot_2026_10_16/coverage_summary.csv
+          echo "Raw professor workbook remains unchanged; this run creates no commits or merges"
+      - name: Preserve separate pilot data, metadata and missingness (Phase B artifact only)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PHASE2-EXPERIMENTAL-wdi-five-indicator-coverage
+          path: outputs/extended/wdi_pilot_2026_10_16/
+          if-no-files-found: warn
+          retention-days: 30
