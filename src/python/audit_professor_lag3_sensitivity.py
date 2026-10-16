@@ -40,7 +40,7 @@ def main():
     assert len(re.findall(r"^LAG3_START outcome=",body,re.M))==2
     assert len(re.findall(r"^LAG3_OK outcome=",body,re.M))==2
     assert not re.search(r"(?im)^\s*Warning:|covariance matrix of moments is singular|dropped due to collinearity|^LAG3_FAILED|^r\(\d+\);",body)
-    v=rows(CSV)
+    # Stata wraps long output lines with a leading "> "; join the continuations\n    # before comparing native machine-output text with the CSV.\n    unwrapped=re.sub(r"\\n> ?", "", body)\n    v=rows(CSV)
     assert len(v)==2 and {x["outcome"] for x in v}=={"Growth","ln_Productivity"}
     prior={x["outcome"]:x for x in rows(MAIN) if x["method"]=="twostep"}
     assert len(prior)==2
