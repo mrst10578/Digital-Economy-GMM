@@ -40,7 +40,9 @@ def main():
     assert len(re.findall(r"^LAG3_START outcome=",body,re.M))==2
     assert len(re.findall(r"^LAG3_OK outcome=",body,re.M))==2
     assert not re.search(r"(?im)^\s*Warning:|covariance matrix of moments is singular|dropped due to collinearity|^LAG3_FAILED|^r\(\d+\);",body)
-    # Stata wraps long output lines with a leading "> "; join the continuations\n    # before comparing native machine-output text with the CSV.\n    unwrapped=re.sub(r"\\n> ?", "", body)\n    v=rows(CSV)
+    # Stata wraps long output lines with "> " at start of continuation.
+    unwrapped=re.sub(r"\n> ?", "", body)
+    v=rows(CSV)
     assert len(v)==2 and {x["outcome"] for x in v}=={"Growth","ln_Productivity"}
     prior={x["outcome"]:x for x in rows(MAIN) if x["method"]=="twostep"}
     assert len(prior)==2
@@ -54,7 +56,7 @@ def main():
         for k in ("p_internet","sargan_p","hansen_p","ar1_p","ar2_p","diffh_level_dep_p","diffh_controls_p"):
             assert 0<=d(x[k])<=1,(y,k)
         assert d(x["se_internet"])>0
-        layout=re.search(r"^LAG3_DH_MATRIX_LAYOUT outcome="+y+r" columns=(\d+) dependent_level_p=([^\s]+) controls_p=([^\s]+)",body,re.M)
+        layout=re.search(r"^LAG3_DH_MATRIX_LAYOUT outcome="+y+r" columns=(\d+) dependent_level_p=([^\s]+) controls_p=([^\s]+)",unwrapped,re.M)
         assert layout,f"Missing actual Stata subset moment extraction for {y}"
         assert int(layout.group(1))==(4 if y=="Growth" else 3)
         assert abs(d(layout.group(2))-d(x["diffh_level_dep_p"]))<Decimal(".000001")
