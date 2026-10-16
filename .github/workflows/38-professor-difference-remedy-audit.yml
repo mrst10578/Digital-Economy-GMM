@@ -1,0 +1,39 @@
+name: Audit professor Difference GMM identification remedy
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_difference_gmm_remedy.py'
+      - 'stata/tablet_diagnostics/21_prespecified_two_outcome_difference_gmm_l23.do'
+      - 'stata/tablet_diagnostics/22_diff_l23_predictive_relevance.do'
+      - 'evidence/scientific-gates-2026-10-16/difference_gmm_l23_*'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/38-professor-difference-remedy-audit.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_difference_gmm_remedy.py'
+      - 'stata/tablet_diagnostics/21_prespecified_two_outcome_difference_gmm_l23.do'
+      - 'stata/tablet_diagnostics/22_diff_l23_predictive_relevance.do'
+      - 'evidence/scientific-gates-2026-10-16/difference_gmm_l23_*'
+      - '.github/workflows/38-professor-difference-remedy-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-original-outcome-and-overid-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Audit genuine Stata overidentified Difference GMM and fixed lag predictive checks
+        run: python -m src.python.audit_professor_difference_gmm_remedy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prespecified-difference-gmm-repair-not-causal-acceptance
+          path: outputs/professor_difference_remedy_audit/latest.json
+          if-no-files-found: warn
