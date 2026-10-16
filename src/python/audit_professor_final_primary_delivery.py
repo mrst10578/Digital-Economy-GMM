@@ -44,7 +44,7 @@ def main() -> None:
     assert "estimates use" in script and "twostep.ster" in script
     assert "invttail" in script and "FINAL_FULL_TABLE_ROWS" in script
     lg = LOG.read_text(errors="replace")
-    assert lg.count("FINAL_COEFFICIENT_OK outcome=") == 14
+    assert len(re.findall(r"^FINAL_COEFFICIENT_OK outcome=", lg, re.M)) == 14
     assert len(re.findall(r"^FINAL_STER_LOADED outcome=", lg, re.M)) == 2
     assert "FINAL_FULL_TABLE_ROWS=14" in lg
     assert "FINAL_FULL_COEFFICIENT_EXPORT_COMPLETED" in lg
