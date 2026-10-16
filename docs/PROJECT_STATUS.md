@@ -4,7 +4,7 @@
 
 **نتیجه قابل دفاع:** Growth System دو‌مرحله‌ای با Hansen p≈۰٫۷۷۲ و AR(1) p≈۰٫۰۹۹، Sargan بسیار پایین؛ بهره‌وری System با Hansen p≈۰٫۰۳۵ و Difference-in-Hansen ابزارهای سطحِ متغیر وابسته p≈۰٫۰۰۰۷۹ روبه‌روست. در هیچ‌کدام ضریب Internet در سطح ۵٪ معنادار نیست. **پذیرش علی: صفر از دو مدل اصلی**؛ نتایج فنی آماده‌اند ولی مفروضات علمی System GMM هنوز نیازمند بررسی و تصمیم روش‌شناسی‌اند.
 
-[گزارش کامل اختصاصی استاد](PROFESSOR_TWO_SYSTEM_GMM_PRIMARY_SCIENTIFIC_REPORT_FA.md) | [جدول ضرایب و آزمون‌های چهار اجرای واقعی](../evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv) | [لاگ اصلی Stata](../evidence/tablet-stata-2026-10-16/professor_system_gmm_native_stata.log) | [کد Stata](../stata/tablet_diagnostics/11_professor_system_gmm_two_equations.do) | [ممیزی CI](../src/python/audit_professor_system_gmm.py).
+[گزارش کامل اختصاصی استاد](PROFESSOR_TWO_SYSTEM_GMM_PRIMARY_SCIENTIFIC_REPORT_FA.md) | [ممیزی رسمی مفروضات ابزار و تصمیم روش‌شناسی](PROFESSOR_SYSTEM_GMM_INSTRUMENT_VALIDITY_GATE_FA.md) | [جدول ضرایب و آزمون‌های چهار اجرای واقعی](../evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv) | [لاگ اصلی Stata](../evidence/tablet-stata-2026-10-16/professor_system_gmm_native_stata.log) | [کد Stata](../stata/tablet_diagnostics/11_professor_system_gmm_two_equations.do) | [ممیزی CI](../src/python/audit_professor_system_gmm.py).
 
 **قید:** وضعیت PR #1 همچنان Draft و بدون Merge؛ هیچ داده خام یا مشخصات مدل اصلی برای بهترشدن p-value عوض نشده است.
 
