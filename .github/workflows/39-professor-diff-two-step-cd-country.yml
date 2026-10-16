@@ -1,0 +1,39 @@
+name: Verify two-step Difference GMM country and CD stress evidence
+on:
+  push:
+    branches:
+      - research/digital-economy-estimation-audit-20261008
+    paths:
+      - 'src/python/audit_professor_diff_twostep_cd_influence.py'
+      - 'stata/tablet_diagnostics/23_difference_l23_twostep_cd_influence.do'
+      - 'evidence/scientific-gates-2026-10-16/difference_l23_twostep_*'
+      - 'evidence/tablet-stata-2026-10-16/loo_47x2.csv'
+      - 'evidence/scientific-gates-2026-10-16/difference_gmm_l23_two_primary_outcomes.csv'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - '.github/workflows/39-professor-diff-two-step-cd-country.yml'
+  pull_request:
+    paths:
+      - 'src/python/audit_professor_diff_twostep_cd_influence.py'
+      - 'stata/tablet_diagnostics/23_difference_l23_twostep_cd_influence.do'
+      - 'evidence/scientific-gates-2026-10-16/difference_l23_twostep_*'
+      - '.github/workflows/39-professor-diff-two-step-cd-country.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  archived-native-stata-stress-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Audit native two-step GMM Pesaran CD and previously prespecified influencing country stress
+        run: python -m src.python.audit_professor_diff_twostep_cd_influence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: professor-diff-gmm-twostep-cd-influence-science-evidence-not-causal-approval
+          path: outputs/professor_diff_twostep_stress_audit/latest.json
+          if-no-files-found: warn
