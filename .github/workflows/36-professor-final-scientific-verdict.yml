@@ -12,6 +12,8 @@ on:
       - 'evidence/tablet-stata-2026-10-16/professor_joint_restrictions.csv'
       - 'data/raw/Balanced_Panel_Data.xlsx'
       - 'docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md'
+      - 'src/python/build_professor_original_only_final.py'
+      - 'docs/PROFESSOR_ORIGINAL_DATA_ONLY_HANDOFF_REPORT_2026-10-16_FA.md'
       - '.github/workflows/36-professor-final-scientific-verdict.yml'
   pull_request:
     paths:
@@ -20,6 +22,8 @@ on:
       - 'evidence/scientific-gates-2026-10-16/professor_two_primary_system_gmm_full_coefficients.csv'
       - 'evidence/scientific-gates-2026-10-16/professor_full_coefficient_export_real_stata.log'
       - 'docs/PROFESSOR_INTEGRATED_FINAL_SCIENTIFIC_VERDICT_2026-10-16_FA.md'
+      - 'src/python/build_professor_original_only_final.py'
+      - 'docs/PROFESSOR_ORIGINAL_DATA_ONLY_HANDOFF_REPORT_2026-10-16_FA.md'
       - '.github/workflows/36-professor-final-scientific-verdict.yml'
   workflow_dispatch:
 permissions:
@@ -53,3 +57,35 @@ jobs:
             outputs/professor_science_gates/latest.json
             outputs/professor_system_gmm_audit/latest.json
           if-no-files-found: warn
+
+  build-professor-original-package:
+    needs: verify-original-scientific-results
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Persian PDF/Word authoring tools
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc libreoffice-writer poppler-utils fonts-noto-core fonts-noto-extra
+          fc-match 'Noto Naskh Arabic'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install document and original workbook dependencies
+        run: python -m pip install 'pandas>=2,<3' 'openpyxl>=3,<4' 'python-docx>=1.1,<2'
+      - name: Build and verify original professor Word PDF original-DTA ZIP
+        run: python -m src.python.build_professor_original_only_final
+      - name: Upload complete actual original-data-only delivery
+        uses: actions/upload-artifact@v4
+        with:
+          name: professor-original-data-only-handoff-docx-pdf-zip-verified
+          path: |
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.docx
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip
+            outputs/professor_original_only_final/MANIFEST_ORIGINAL_DATA_ONLY.json
+            outputs/professor_original_only_final/BUILD_RESULT_ORIGINAL_DATA_ONLY.json
+          retention-days: 60
+          if-no-files-found: error
