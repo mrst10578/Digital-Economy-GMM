@@ -101,7 +101,7 @@ def main():
                 assert ids.count(0) == 1, "Missing/duplicate World"
                 for original, normalized in zip(records, part):
                     assert int(original["partnerCode"]) == int(normalized["partner_M49"])
-                    assert original["cmdCode"] == normalized["HS4"]
+                    assert str(original["cmdCode"]) == normalized["HS4"]
                     assert int(original.get("period", original.get("refYear"))) == year
                     assert original["flowCode"] == "M"
                     assert math.isclose(float(original["primaryValue"]),
