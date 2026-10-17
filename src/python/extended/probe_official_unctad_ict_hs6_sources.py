@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "outputs/extended/official_ict_hs6_probe"
 HOST = "https://unctadstat.unctad.org/EN/Classifications/"
 URLS = {
-    **{f"UNCTAD_HS{rev}_PDF": HOST + f"DimHS{rev}Products_Ict_Hierarchy.pdf"
+    **{f"UNCTAD_HS{rev}_PDF": HOST + "DimHS" + ("92" if rev == 1992 else "96" if rev == 1996 else str(rev)) + "Products_Ict_Hierarchy.pdf"
        for rev in (1992, 1996, 2002, 2007, 2012, 2017, 2022)},
     "EUROSTAT_HS2017_XLS": "https://ec.europa.eu/eurostat/cache/metadata/"
                           "Annexes/isoc_it_ict_esmsip2_an_ICT_goods_categories_and_compo.xls",
