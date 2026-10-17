@@ -1,0 +1,42 @@
+name: Phase 2 safe normalized nine-receiver Comtrade customs-area flags
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'src/python/extended/normalize_nine_receiver_trade_customs_areas.py'
+      - '.github/workflows/56-phase2-normalize-nine-receiver-customs-flags.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate-and-archive-crosswalk-labeled-rows:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Offline normalize archived data, without Comtrade API or original source mutation
+        run: python src/python/extended/normalize_nine_receiver_trade_customs_areas.py
+      - name: Commit safe 3893-row normalization and provenance in independent Phase 2
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/normalized/nine_receiver_HS4_partner_code_provenance.csv
+          git add data/extended/comtrade/normalized/nine_receiver_HS4_partner_code_provenance.json
+          git diff --cached --stat
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): retain 3893 verified trade rows with world and customs proxy status flags"
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-nine-receiver-crosswalk-normalized-3893-records
+          path: data/extended/comtrade/normalized/nine_receiver_HS4_partner_code_provenance.*
+          if-no-files-found: warn
+          retention-days: 30
