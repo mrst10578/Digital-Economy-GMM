@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "checked_utc": "2026-10-17T10:13:27.620898+00:00",
+  "only_original_source": true,
+  "raw_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "fresh_stata_run": true,
+  "no_new_data": true,
+  "comparisons": {
+    "professor_system_gmm_stats.csv": {
+      "models": 4,
+      "max_abs_numerical_delta": 0.0,
+      "all_rc_zero": true
+    },
+    "diff_l23_two_outcomes_stats.csv": {
+      "models": 4,
+      "max_abs_numerical_delta": 0.0,
+      "all_rc_zero": true
+    }
+  },
+  "raw_logs_sha256": {
+    "PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log": "c36b7d2aadab191e02e4201b4d78e6072e93c0573ace3f7edc934392e5b8399c",
+    "DIFFERENCE_GMM_OVERIDENTIFIED_L23_BOTH_MODELS.log": "c64606785a9b6785b401afd688efaa167bef09a25d6ec249cc3a9cccd9278f5f"
+  },
+  "causal_validity": "NOT_ESTABLISHED",
+  "remaining_blockers": [
+    "productivity system GMM Hansen rejects 5 percent",
+    "productivity Difference-in-Hansen level instruments reject",
+    "AR(1) two-step nonrejection",
+    "weak-lag predictive relevance concern",
+    "no bilateral knowledge-flow data"
+  ]
+}
