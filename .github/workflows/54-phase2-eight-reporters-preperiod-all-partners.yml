@@ -1,0 +1,48 @@
+name: Phase 2 eight OECD-absent reporters preperiod ICT-heading source audit
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_oecd_missing_8_all_partners_preperiod.py'
+      - 'src/python/extended/test_comtrade_oecd_missing_8_preperiod.py'
+      - '.github/workflows/54-phase2-eight-reporters-preperiod-all-partners.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test-audit-and-archive-source-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ISO alpha3 to M49 mapping
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Offline data integrity tests before network requests
+        run: python -m unittest discover -s src/python/extended -p 'test_comtrade_oecd_missing_8_preperiod.py' -v
+      - name: Annual public preview requests for eight reporters and two HS headings (2005 to 2007)
+        run: python src/python/extended/pilot_comtrade_oecd_missing_8_all_partners_preperiod.py --group all
+      - name: Archive only verified-source normalized records in independent Phase-2 branch
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/oecd_missing_hs4_preperiod/
+          git diff --cached --stat
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): archive audited eight-reporter preperiod HS4 partner source previews"
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - name: Preserve response provenance and failure details separately (temporary Actions artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PHASE2-eight-reporter-HS8471-HS8517-2005-2007-raw-and-coverage
+          path: outputs/extended/comtrade_eight_reporters_preperiod/
+          if-no-files-found: warn
+          retention-days: 30
