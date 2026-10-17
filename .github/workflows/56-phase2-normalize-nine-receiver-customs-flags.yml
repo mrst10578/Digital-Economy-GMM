@@ -4,6 +4,7 @@ on:
     branches: [research/digital-economy-extended-data]
     paths:
       - 'src/python/extended/normalize_nine_receiver_trade_customs_areas.py'
+      - 'data/extended/comtrade/oecd_missing_hs4_2008_2022/partner_records_2008_2022.csv'
       - '.github/workflows/56-phase2-normalize-nine-receiver-customs-flags.yml'
   workflow_dispatch:
 permissions:
