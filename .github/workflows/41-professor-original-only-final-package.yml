@@ -1,0 +1,92 @@
+name: Professor original-data-only final package - build and QA
+on:
+  push:
+    branches:
+      - delivery/phase1-original-data-only-20261016
+    paths:
+      - 'src/python/build_professor_original_only_final.py'
+      - 'docs/PROFESSOR_ORIGINAL_DATA_ONLY_HANDOFF_REPORT_2026-10-16_FA.md'
+      - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'src/python/to_stata.py'
+      - 'evidence/scientific-gates-2026-10-16/professor_two_primary_system_gmm_full_coefficients.csv'
+      - '.github/workflows/41-professor-original-only-final-package.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-verify-professor-original-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Arabic typography and reliable DOCX/PDF toolchain
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            pandoc libreoffice-writer poppler-utils \
+            fontconfig curl
+          # Fonts are installed only in ephemeral CI, never distributed in the final ZIP.
+          FONT_REF=9dea055eb3dfc752879442224460c6e5d6ebe232
+          FONT_DIR="$HOME/.local/share/fonts/Mikhak"
+          mkdir -p "$FONT_DIR"
+          for W in Regular Medium SemiBold Bold; do
+            curl --fail --location --silent --show-error --retry 3 \
+              "https://raw.githubusercontent.com/aminabedi68/Mikhak/$FONT_REF/fonts/ttf/Mikhak-$W.ttf" \
+              -o "$FONT_DIR/Mikhak-$W.ttf"
+            test "$(stat -c%s "$FONT_DIR/Mikhak-$W.ttf")" -gt 30000
+          done
+          fc-cache -f "$FONT_DIR"
+          fc-match -f '%{family}\n' 'Mikhak' | grep -i Mikhak
+          fc-match -f '%{family}\n' 'Mikhak:style=Bold' | grep -i Mikhak
+          pandoc --version | head -2
+          libreoffice --version
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install document, workbook and CSV conversion packages
+        run: python -m pip install 'pandas>=2,<3' 'openpyxl>=3,<4' 'python-docx>=1.1,<2'
+      - name: Generate Professor original-data-only Word, PDF, DTA, ZIP and manifest, with strict evidence checks
+        run: python -m src.python.build_professor_original_only_final
+      - name: Validate PDF extraction, ZIP source hash and forbidden-data exclusion once more
+        shell: bash
+        run: |
+          set -euo pipefail
+          O=outputs/professor_original_only_final
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.docx"
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf"
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip"
+          test -s "$O/MANIFEST_ORIGINAL_DATA_ONLY.json"
+          python - <<'PY'
+          import json,hashlib,zipfile
+          from pathlib import Path
+          folder=Path('outputs/professor_original_only_final')
+          m=json.loads((folder/'MANIFEST_ORIGINAL_DATA_ONLY.json').read_text())
+          a=folder/'PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip'
+          with zipfile.ZipFile(a) as z:
+              assert z.testzip() is None
+              assert len(z.namelist())==len(set(z.namelist()))
+              assert hashlib.sha256(z.read('data/raw/Balanced_Panel_Data.xlsx')).hexdigest()==m['raw_sha256']
+              assert set(x['path'] for x in m['entries']).issubset(z.namelist())
+          assert m['only_original_dataset'] is True
+          assert m['branch']=='delivery/phase1-original-data-only-20261016'
+          assert m['required_persian_font']=='Mikhak'
+          assert m['scientific_causal_identification_status']=='NOT_VERIFIED'
+          print('INDEPENDENT_PROFESSOR_ORIGINAL_PACKAGE_AUDIT_PASS',len(m['entries']))
+          PY
+          pdffonts "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" | grep Mikhak
+          pdfinfo "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" | grep Pages
+          pdftotext "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" - | grep -m 1 'System GMM'
+      - name: Upload the actual original-data-only professor deliverables
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_VERIFIED
+          path: |
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.docx
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip
+            outputs/professor_original_only_final/MANIFEST_ORIGINAL_DATA_ONLY.json
+            outputs/professor_original_only_final/BUILD_RESULT_ORIGINAL_DATA_ONLY.json
+          retention-days: 60
+          if-no-files-found: error
