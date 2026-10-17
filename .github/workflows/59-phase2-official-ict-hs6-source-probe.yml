@@ -1,0 +1,43 @@
+name: Phase 2 inspect official UNCTAD and Eurostat ICT goods HS6 source availability
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'src/python/extended/probe_official_unctad_ict_hs6_sources.py'
+      - '.github/workflows/59-phase2-official-ict-hs6-source-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify-official-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reach only approved UNCTAD and Eurostat publication endpoints and verify true PDF/XLS signatures
+        run: python src/python/extended/probe_official_unctad_ict_hs6_sources.py
+      - name: Permanently archive source accessibility and SHA only, do not synthesize HS6 codes
+        run: |
+          set -eu
+          mkdir -p evidence/extended
+          cp outputs/extended/official_ict_hs6_probe/SOURCE_ACCESS_PROBE.json evidence/extended/official_ict_hs6_source_access_2026-10-17.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/extended/official_ict_hs6_source_access_2026-10-17.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): record verified official ICT HS6 access, SHA and blockers"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-official-UNCTAD-Eurostat-original-HS6-assets
+          path: outputs/extended/official_ict_hs6_probe/
+          if-no-files-found: warn
+          retention-days: 30
