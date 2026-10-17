@@ -1,0 +1,37 @@
+name: Phase 2 three recipient 2005-07 multi-origin HS4 weight feasibility
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_three_original_receivers_fixed_base_weights.py'
+      - '.github/workflows/54-phase2-three-recipients-foreign-tech-base.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-multi-origin-base-period:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ISO M49 metadata mapping
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Run 18 bounded public Comtrade requests for three countries 2005-2007 two ICT-related HS headings
+        run: python src/python/extended/pilot_comtrade_three_original_receivers_fixed_base_weights.py
+      - name: Print country-level origin-weight feasibility
+        if: always()
+        run: |
+          if test -f outputs/extended/comtrade_three_reporters_2005_2007_all_partners/three_country_preperiod_weight_feasibility.csv; then
+            cat outputs/extended/comtrade_three_reporters_2005_2007_all_partners/three_country_preperiod_weight_feasibility.csv
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-KGZ-MDA-PAN-2005-2007-all-origins-ICT-HS4-weight-feasibility
+          path: outputs/extended/comtrade_three_reporters_2005_2007_all_partners/
+          if-no-files-found: warn
+          retention-days: 30
