@@ -1,0 +1,43 @@
+name: Phase 2 verify HS2017 ICT 92-code discrepancy against independent official sources
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'src/python/extended/verify_eurostat_unctad_ict2017_catalog.py'
+      - '.github/workflows/63-phase2-hs2017-cross-source-eurostat-unctad.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  independent-source-crosscheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'xlrd>=2.0,<3'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-official-UNCTAD-Eurostat-original-HS6-assets
+          run-id: 39020262375
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/official_ict_hs6_probe
+      - name: Assert 92 official 2017 codes and their ICT categories match exactly across UNCTAD and Eurostat sources
+        run: python src/python/extended/verify_eurostat_unctad_ict2017_catalog.py
+      - name: Record independent cross-source proof with scientific discrepancy warning
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/official_ict_hs6/HS2017_UNCTAD_EUROSTAT_INDEPENDENT_MATCH.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): cross-validate exact HS2017 ICT list across UNCTAD and Eurostat"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
