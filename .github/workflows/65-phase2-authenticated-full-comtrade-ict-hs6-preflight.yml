@@ -1,4 +1,4 @@
-name: Phase 2 manual secure Comtrade full ICT HS6 source preflight
+name: Phase 2 full official ICT HS6 source-revision-aware classic World preflight
 on:
   push:
     branches: [research/digital-economy-extended-data]
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: PHASE2-credential-safe-full-Comtrade-8-official-HS6-2017-sample
+          name: PHASE2-authenticated-8-HS6-goods-source-verified-classic-2017
           path: outputs/extended/official_comtrade_full_api_preflight/
           if-no-files-found: warn
           retention-days: 30
