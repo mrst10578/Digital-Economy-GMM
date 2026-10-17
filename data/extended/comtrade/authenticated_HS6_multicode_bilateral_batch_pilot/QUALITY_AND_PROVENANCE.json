@@ -1,0 +1,280 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "original_professor_data_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "source_reporter_year_classification_verified": true,
+  "eight_official_HS6_commodities_per_reporter_year": true,
+  "four_authenticated_full_source_api_requests": true,
+  "all_partner_record_keys_unique": true,
+  "matched_8_2017_AZE_World_values_against_previous_independent_source": true,
+  "matched_847130_World_values_against_previous_bilateral_source": true,
+  "full_source_partner_rows_including_world": 532,
+  "coverage_by_code": [
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "844331",
+      "world_value_nominal_usd": "2681868.83",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 20,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "844332",
+      "world_value_nominal_usd": "2511852.95",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 29,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847050",
+      "world_value_nominal_usd": "1028288.47",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 10,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847130",
+      "world_value_nominal_usd": "26884141.02",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 30,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847141",
+      "world_value_nominal_usd": "3595947.29",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 31,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847149",
+      "world_value_nominal_usd": "7317553.47",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 22,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847150",
+      "world_value_nominal_usd": "17735658.39",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 25,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "AZE",
+      "Year": 2017,
+      "source_reporter_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6": "847160",
+      "world_value_nominal_usd": "2373415.22",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 31,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "844331",
+      "world_value_nominal_usd": "3695331250.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 31,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "844332",
+      "world_value_nominal_usd": "2633879817.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 67,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847010",
+      "world_value_nominal_usd": "142419782.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 29,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847021",
+      "world_value_nominal_usd": "29725590.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 12,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847029",
+      "world_value_nominal_usd": "1292581.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 11,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847050",
+      "world_value_nominal_usd": "1359083025.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 43,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847090",
+      "world_value_nominal_usd": "140467776.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 36,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    },
+    {
+      "reporter_ISO3_candidate": "USA",
+      "Year": 2022,
+      "source_reporter_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6": "847130",
+      "world_value_nominal_usd": "54530351570.0",
+      "world_row_present": true,
+      "all_reported_partners_including_world": 105,
+      "status": "VALID_FULL_SOURCE_BILATERAL",
+      "not_complete_47_country_network": true
+    }
+  ],
+  "raw_sources": [
+    {
+      "reporter": "AZE",
+      "Year": 2017,
+      "source_reporter_area_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6_requested": [
+        "844331",
+        "844332",
+        "847050",
+        "847130"
+      ],
+      "HTTP_200": true,
+      "source_records": 89,
+      "raw_sha256": "6b06852e8b20ae1d3d495acd022d65b09a130ed18456de83b65d1591a8138606",
+      "raw_response_file": "AZE_2017_H4_batch_1_raw.json",
+      "request_classic": true
+    },
+    {
+      "reporter": "AZE",
+      "Year": 2017,
+      "source_reporter_area_M49": 31,
+      "source_HS_revision": "H4",
+      "HS6_requested": [
+        "847141",
+        "847149",
+        "847150",
+        "847160"
+      ],
+      "HTTP_200": true,
+      "source_records": 109,
+      "raw_sha256": "408ca72c429d25b9163b7af2dfb11dfeb59aff6819c25299d8bdd8d2ca67eb55",
+      "raw_response_file": "AZE_2017_H4_batch_2_raw.json",
+      "request_classic": true
+    },
+    {
+      "reporter": "USA",
+      "Year": 2022,
+      "source_reporter_area_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6_requested": [
+        "844331",
+        "844332",
+        "847010",
+        "847021"
+      ],
+      "HTTP_200": true,
+      "source_records": 139,
+      "raw_sha256": "4aea44902981c8b77324d51f35534a2a482def4efa20bd1ed2d3221828802c59",
+      "raw_response_file": "USA_2022_H6_batch_1_raw.json",
+      "request_classic": true
+    },
+    {
+      "reporter": "USA",
+      "Year": 2022,
+      "source_reporter_area_M49": 842,
+      "source_HS_revision": "H6",
+      "HS6_requested": [
+        "847029",
+        "847050",
+        "847090",
+        "847130"
+      ],
+      "HTTP_200": true,
+      "source_records": 195,
+      "raw_sha256": "23fe12b529108b9eef32b304280ea6b73eb8f18c224dd21706155da5b736e409",
+      "raw_response_file": "USA_2022_H6_batch_2_raw.json",
+      "request_classic": true
+    }
+  ],
+  "no_missing_imputed_zero": true,
+  "nonexact_USA_customs_area_provenance_preserved": true,
+  "not_full_47x18_FTECH_or_GMM": true,
+  "subscription_key_never_stored": true,
+  "completed_UTC": "2026-10-17T10:02:34.021910+00:00"
+}
