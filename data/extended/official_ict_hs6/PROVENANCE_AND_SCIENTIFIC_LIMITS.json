@@ -1,0 +1,102 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "source": "UNCTAD Data Hub official ICT categories and HS edition catalogs",
+  "source_files_verified_sha256": 5,
+  "total_official_HS6_entries": 491,
+  "editions": [
+    {
+      "edition": "HS2002",
+      "Comtrade_classificationCode": "H2",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2002Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "8d8a2d4748cf35bb4d007435795b39d8169b8c84ed974de72f1695f6c0b47dd7",
+      "pages": 6,
+      "distinct_six_digit_codes": 108,
+      "category_counts": {
+        "ICT01": 19,
+        "ICT02": 10,
+        "ICT03": 43,
+        "ICT04": 28,
+        "ICT05": 8
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
+    {
+      "edition": "HS2007",
+      "Comtrade_classificationCode": "H3",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2007Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "9f4be12e0eec16698d35843280851162a8f019354fd721e65eb3ece65bd92041",
+      "pages": 5,
+      "distinct_six_digit_codes": 93,
+      "category_counts": {
+        "ICT01": 17,
+        "ICT02": 10,
+        "ICT03": 33,
+        "ICT04": 27,
+        "ICT05": 6
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
+    {
+      "edition": "HS2012",
+      "Comtrade_classificationCode": "H4",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2012Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "5573221b3041722267aa5bd210d7cb2b3c64fd1ea7c5d4d4b78df3857e436e72",
+      "pages": 5,
+      "distinct_six_digit_codes": 91,
+      "category_counts": {
+        "ICT01": 17,
+        "ICT02": 10,
+        "ICT03": 33,
+        "ICT04": 25,
+        "ICT05": 6
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
+    {
+      "edition": "HS2017",
+      "Comtrade_classificationCode": "H5",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2017Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "91844dc759583aa0af41ceaa32a446f7df574b82f2ee280b9e4aacc7e6bdd5e3",
+      "pages": 5,
+      "distinct_six_digit_codes": 92,
+      "category_counts": {
+        "ICT01": 17,
+        "ICT02": 10,
+        "ICT03": 34,
+        "ICT04": 25,
+        "ICT05": 6
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
+    {
+      "edition": "HS2022",
+      "Comtrade_classificationCode": "H6",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2022Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "67a84e39051d3edff899a0e9a18f25bc600dbdd6f984106fb81dec3cd302ff82",
+      "pages": 6,
+      "distinct_six_digit_codes": 107,
+      "category_counts": {
+        "ICT01": 21,
+        "ICT02": 12,
+        "ICT03": 37,
+        "ICT04": 31,
+        "ICT05": 6
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    }
+  ],
+  "HS2017_current_pdf_rows": 92,
+  "HS2017_website_descriptive_count": 93,
+  "HS2017_discrepancy_with_website_UNRESOLVED": true,
+  "independent_eurostat_HS2017_crosscheck_required": true,
+  "raw_HS6_editions_never_assumed_interchangeable": true,
+  "HS6_partner_trade_data_yet_downloaded": false,
+  "trade_weight_data_quality_yet_validated": false,
+  "final_FTECH_or_GMM_approved": false,
+  "professor_original_dataset_changed": false
+}
