@@ -226,7 +226,8 @@ def make_documents() -> tuple[Path,Path]:
     assert 4<=pages<=26,pages
     # Fail closed if LibreOffice silently substituted a non-Mikhak font.
     embedded_fonts=sp.run(["pdffonts", str(pdf)], capture_output=True, check=True, text=True).stdout
-    assert "Mikhak" in embedded_fonts, "PDF missing embedded Mikhak: verify font installation"
+    for face in ("Mikhak-Regular", "Mikhak-Medium", "Mikhak-SemiBold", "Mikhak-Bold"):
+        assert face in embedded_fonts, f"PDF missing required embedded font {face}"
     print(f"RTL_DOCUMENT_QA_OK pages={pages} pdf_bytes={pdf.stat().st_size} docx_bytes={word.stat().st_size} font=Mikhak")
     return word,pdf
 
