@@ -1,0 +1,29 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "original_47_country_years": 846,
+  "raw_getDA_responses_SHA256_verified": 18,
+  "geographic_mapping_statuses": {
+    "EXACT_ISO_COUNTRY_SOURCE": 804,
+    "CUSTOMS_AREA_CANDIDATE_NOT_EXACT_COUNTRY": 36,
+    "MISSING_EXACT_SOURCE_NOT_ZERO": 6
+  },
+  "country_specific_customs_candidates": {
+    "FRA": {
+      "strict_m49": 250,
+      "candidate_m49": 251
+    },
+    "USA": {
+      "strict_m49": 840,
+      "candidate_m49": 842
+    }
+  },
+  "source_CANDIDATE_not_identical_to_ISO_country": true,
+  "FRA_source_strict_country": 250,
+  "FRA_reporting_customs_area_candidate": 251,
+  "USA_source_strict_country": 840,
+  "USA_reporting_customs_area_candidate": 842,
+  "no_automatic_geographic_substitution": true,
+  "no_FTECH_until_equivalent_economic_unit_design": true,
+  "no_missing_zero_fill": true,
+  "source_baseline_hash_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b"
+}
