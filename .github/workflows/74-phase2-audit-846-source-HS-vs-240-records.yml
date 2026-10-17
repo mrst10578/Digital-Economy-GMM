@@ -1,0 +1,33 @@
+name: Phase 2 independently audit 846 real HS editions against prior 240 source headings
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/74-phase2-audit-846-source-HS-vs-240-records.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inspect-all-original-reporters-and-prior-coverage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate 846 source HS revisions, exact 47 original countries and 240 prior heading classifications
+        run: python src/python/extended/validate_full_47_HS_revisions_vs_source.py
+      - name: Commit audit evidence including all disagreements, never impute missing edition
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/extended/ALL_47_SOURCE_HS_CROSSCHECK_VS_8_REPORTERS_2026-10-17.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): crosscheck 846 reported HS revisions against 240 earlier source heading observations"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
