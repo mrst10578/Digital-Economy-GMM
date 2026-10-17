@@ -1,0 +1,34 @@
+name: Phase 2 Comtrade Azerbaijan-China HS85 annual singleton coverage
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_aze_18_single_years.py'
+      - '.github/workflows/49-phase2-comtrade-aze-historical-singletons.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-single-year-requests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify 18 single-year records with public preview API; no Stata
+        run: python src/python/extended/pilot_comtrade_aze_18_single_years.py
+      - name: Print pilot coverage, not complete-network inference
+        if: success()
+        run: |
+          cat outputs/extended/comtrade_aze_18_singleton_years/summary.json
+          cat outputs/extended/comtrade_aze_18_singleton_years/aze_2005_2022_partner_china_HS85.csv
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-comtrade-AZE-CHN-HS85-18-years-singleton-noncausal
+          path: outputs/extended/comtrade_aze_18_singleton_years/
+          if-no-files-found: warn
+          retention-days: 30
