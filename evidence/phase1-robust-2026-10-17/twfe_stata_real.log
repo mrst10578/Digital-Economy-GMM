@@ -1,0 +1,376 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Digital_Economy_Phase1_Method_20261017\outputs/STATA_TWFE_INDEPENDENT.log
+  log type:  text
+ opened on:  17 Oct 2026, 10:48:15
+
+. capture noisily do "stata/01_environment_and_data.do"
+
+. * Source DTA comes from this repository's audited workbook.
+. version 16.0
+
+. capture confirm file "data/processed/stata_ready.dta"
+
+. if _rc {
+.     display as error "Missing data/processed/stata_ready.dta. Extract full handoff ZIP first."
+.     exit 601
+. }
+
+. capture which xtabond2
+
+. if _rc {
+.     display as error "xtabond2 is missing. In licensed Stata: ssc install xtabond2, replace"
+.     exit 499
+. }
+
+. which xtabond2
+D:/Digital_Economy_Stata_Ready/plus\x\xtabond2.ado
+*! xtabond2 3.7.2 9 February 2025
+*! Copyright (C) 2003-25 David Roodman. May be distributed free.
+
+. use "data/processed/stata_ready.dta", clear
+
+. isid ISO3 Year
+
+. assert inrange(Year, 2005, 2022)
+
+. foreach v of varlist Growth Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD {
+  2.     assert !missing(`v')
+  3. }
+
+. assert Productivity > 0
+
+. capture confirm variable ln_Productivity
+
+. if _rc {
+.     generate double ln_Productivity = ln(Productivity)
+. }
+
+. else {
+.     assert !missing(ln_Productivity)
+.     assert abs(ln_Productivity - ln(Productivity)) < 1e-7
+. }
+
+. capture confirm variable panel_id
+
+. if _rc {
+.     encode ISO3, generate(panel_id)
+. }
+
+. capture confirm numeric variable panel_id
+
+. if _rc {
+.     display as error "panel_id should be numeric."
+.     exit 109
+. }
+
+. bysort ISO3: assert _N == 18
+
+. xtset panel_id Year
+
+Panel variable: panel_id (strongly balanced)
+ Time variable: Year, 2005 to 2022
+         Delta: 1 unit
+
+. capture drop yd_*
+
+. quietly tabulate Year, generate(yd_)
+
+. * Non-redundant full-rank 2005-2022 time-indicator bases, empirically
+. * verified against all six archived Stata estimates before changing code.
+. * Difference GMM: yd_17 was auto-omitted for perfect collinearity.
+. * System GMM: yd_4 was auto-omitted for perfect collinearity.
+. * Explicitly omit the aliases rather than passing singular moment matrices.
+. global digital_year_dummies_diff "yd_2-yd_16 yd_18"
+
+. global digital_year_dummies_sys "yd_2-yd_3 yd_5-yd_18"
+
+. display as result "STATA_DATA_PREFLIGHT_OK n=" _N
+STATA_DATA_PREFLIGHT_OK n=846
+
+. display as text "The raw data and two-way time indicators passed structure checks; no GMM was fitted yet."
+The raw data and two-way time indicators passed structure checks; no GMM was fitted yet.
+
+. 
+end of do-file
+
+. local rc_pre=_rc
+
+. if `rc_pre' != 0 {
+.  display as error "TWFE_PREFLIGHT_FAILED"
+.  log close
+.  exit `rc_pre'
+. }
+
+. foreach v in ln_Productivity Internet Broadband ICT_Exports Unemployment Inflation RnD {
+  2.  generate double D_`v'=D.`v'
+  3. }
+(47 missing values generated)
+(47 missing values generated)
+(47 missing values generated)
+(47 missing values generated)
+(47 missing values generated)
+(47 missing values generated)
+(47 missing values generated)
+
+. postfile results str22 model str24 term double rc N Ng b se p joint_p using "outputs/STATA_TWFE_COUNTRY_CLUSTER.dta", 
+> replace
+(file outputs/STATA_TWFE_COUNTRY_CLUSTER.dta not found)
+
+. foreach y in Growth ln_Productivity D_ln_Productivity {
+  2.  if "`y'"=="D_ln_Productivity" {
+  3.   local regressors "D_Internet D_Broadband D_ICT_Exports D_Unemployment D_Inflation D_RnD"
+  4.   local digital "D_Internet D_Broadband D_ICT_Exports"
+  5.  }
+  6.  else {
+  7.   local regressors "Internet Broadband ICT_Exports Unemployment Inflation RnD"
+  8.   local digital "Internet Broadband ICT_Exports"
+  9.  }
+ 10.  display as result "TWFE_START model=`y'"
+ 11.  capture noisily xtreg `y' `regressors' i.Year, fe vce(cluster panel_id)
+ 12.  local result_rc=_rc
+ 13.  if `result_rc' !=0 {
+ 14.   post results ("`y'") ("FAIL") (`result_rc') (.) (.) (.) (.) (.) (.)
+ 15.   display as error "TWFE_FAIL model=`y' rc=`result_rc'"
+ 16.  }
+ 17.  else {
+ 18.   local n=e(N)
+ 19.   local ng=e(N_g)
+ 20.   local joint=.
+ 21.   capture noisily test `digital'
+ 22.   if _rc==0 local joint=r(p)
+ 23.   foreach v of local regressors {
+ 24.    local b=_b[`v']
+ 25.    local se=_se[`v']
+ 26.    local p=2*ttail(e(df_r),abs(`b'/`se'))
+ 27.    post results ("`y'") ("`v'") (0) (`n') (`ng') (`b') (`se') (`p') (`joint')
+ 28.    display as result "TWFE_TERM model=`y' var=`v' b=" %18.12g `b' " se=" %18.12g `se' " p=" %18.12g `p'
+ 29.   }
+ 30.   display as result "TWFE_OK model=`y' N=`n' groups=`ng' joint_cluster_p=`joint'"
+ 31.  }
+ 32. }
+TWFE_START model=Growth
+
+Fixed-effects (within) regression               Number of obs     =        846
+Group variable: panel_id                        Number of groups  =         47
+
+R-squared:                                      Obs per group:
+     Within  = 0.4085                                         min =         18
+     Between = 0.2670                                         avg =       18.0
+     Overall = 0.3642                                         max =         18
+
+                                                F(23,46)          =      43.65
+corr(u_i, Xb) = -0.2785                         Prob > F          =     0.0000
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+      Growth | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |  -.1111657   .0379042    -2.93   0.005    -.1874629   -.0348686
+   Broadband |   .0278255   .0765114     0.36   0.718     -.126184     .181835
+ ICT_Exports |   .0100255   .0825339     0.12   0.904    -.1561066    .1761575
+Unemployment |  -.1806976   .0665037    -2.72   0.009    -.3145626   -.0468326
+   Inflation |   .0537402   .0458175     1.17   0.247    -.0384856     .145966
+         RnD |  -.3310056   .7886698    -0.42   0.677    -1.918516    1.256504
+             |
+        Year |
+       2006  |   1.489199   .4137539     3.60   0.001     .6563556    2.322042
+       2007  |   1.609627   .5335816     3.02   0.004     .5355831    2.683671
+       2008  |   -1.24889   .7107501    -1.76   0.086    -2.679556    .1817753
+       2009  |  -5.977124   .9222328    -6.48   0.000    -7.833482   -4.120766
+       2010  |   1.092566   .7898533     1.38   0.173    -.4973267    2.682458
+       2011  |    .784147   .9136894     0.86   0.395    -1.055014    2.623308
+       2012  |  -.8103547    .999543    -0.81   0.422    -2.822331    1.201621
+       2013  |   .6943857   1.113729     0.62   0.536    -1.547434    2.936205
+       2014  |   .8610396   1.188224     0.72   0.472    -1.530732    3.252811
+       2015  |   .5151162   1.560878     0.33   0.743    -2.626769    3.657001
+       2016  |   .4071637   1.263613     0.32   0.749    -2.136357    2.950685
+       2017  |   2.061435   1.310413     1.57   0.123    -.5762902     4.69916
+       2018  |   1.817766   1.499491     1.21   0.232    -1.200553    4.836085
+       2019  |   1.366166   1.674662     0.82   0.419    -2.004754    4.737087
+       2020  |  -6.085204   2.404333    -2.53   0.015    -10.92487   -1.245533
+       2021  |   6.636373   1.727431     3.84   0.000     3.159236    10.11351
+       2022  |   2.052131   2.204521     0.93   0.357    -2.385339    6.489601
+             |
+       _cons |   10.74884   1.896437     5.67   0.000     6.931509    14.56617
+-------------+----------------------------------------------------------------
+     sigma_u |  1.8791095
+     sigma_e |  3.8157259
+         rho |   .1951848   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+ ( 1)  Internet = 0
+ ( 2)  Broadband = 0
+ ( 3)  ICT_Exports = 0
+
+       F(  3,    46) =    3.71
+            Prob > F =    0.0179
+TWFE_TERM model=Growth var=Internet b=    -.111165749034 se=    .0379041588666 p=   .00522114144502
+TWFE_TERM model=Growth var=Broadband b=    .0278255003502 se=    .0765114430736 p=     .717764931232
+TWFE_TERM model=Growth var=ICT_Exports b=     .010025459416 se=    .0825338638528 p=     .903847180059
+TWFE_TERM model=Growth var=Unemployment b=    -.180697598455 se=    .0665037065823 p=   .00925076134648
+TWFE_TERM model=Growth var=Inflation b=    .0537402077401 se=    .0458174930294 p=     .246866421271
+TWFE_TERM model=Growth var=RnD b=    -.331005632498 se=     .788669802145 p=     .676657573503
+TWFE_OK model=Growth N=846 groups=47 joint_cluster_p=.0178942570216812
+TWFE_START model=ln_Productivity
+
+Fixed-effects (within) regression               Number of obs     =        846
+Group variable: panel_id                        Number of groups  =         47
+
+R-squared:                                      Obs per group:
+     Within  = 0.4783                                         min =         18
+     Between = 0.2611                                         avg =       18.0
+     Overall = 0.2113                                         max =         18
+
+                                                F(23,46)          =      25.48
+corr(u_i, Xb) = 0.2772                          Prob > F          =     0.0000
+
+                              (Std. err. adjusted for 47 clusters in panel_id)
+------------------------------------------------------------------------------
+             |               Robust
+ln_Product~y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    Internet |   .0036847   .0008456     4.36   0.000     .0019826    .0053867
+   Broadband |   -.000431   .0045653    -0.09   0.925    -.0096205    .0087585
+ ICT_Exports |   .0078479    .004486     1.75   0.087     -.001182    .0168778
+Unemployment |  -.0035492   .0032456    -1.09   0.280    -.0100823    .0029839
+   Inflation |   .0024693   .0020456     1.21   0.234    -.0016482    .0065868
+         RnD |  -.0138169   .0403117    -0.34   0.733    -.0949602    .0673264
+             |
+        Year |
+       2006  |   .0207311   .0155265     1.34   0.188    -.0105222    .0519844
+       2007  |   .0383256   .0291586     1.31   0.195    -.0203676    .0970189
+       2008  |   .0257047    .043101     0.60   0.554    -.0610531    .1124625
+       2009  |   .0107656   .0492782     0.22   0.828    -.0884262    .1099573
+       2010  |   .0319175    .055498     0.58   0.568    -.0797943    .1436292
+       2011  |   .0456442   .0622907     0.73   0.467    -.0797405    .1710289
+       2012  |   .0483834    .067845     0.71   0.479    -.0881814    .1849482
+       2013  |   .0630921    .074209     0.85   0.400     -.086283    .2124671
+       2014  |   .0613494    .079825     0.77   0.446      -.09933    .2220288
+       2015  |   .0609772    .084625     0.72   0.475    -.1093641    .2313184
+       2016  |   .0581476   .0880079     0.66   0.512    -.1190032    .2352984
+       2017  |   .0714638   .0915999     0.78   0.439    -.1129172    .2558448
+       2018  |   .0707795   .0960716     0.74   0.465    -.1226027    .2641616
+       2019  |   .0690219   .1018246     0.68   0.501    -.1359404    .2739843
+       2020  |   .0037997   .1169513     0.03   0.974     -.231611    .2392104
+       2021  |   .0449466   .1220034     0.37   0.714    -.2006334    .2905266
+       2022  |   .0286844     .12977     0.22   0.826    -.2325291     .289898
+             |
+       _cons |   10.97028     .12737    86.13   0.000      10.7139    11.22666
+-------------+----------------------------------------------------------------
+     sigma_u |  .54492856
+     sigma_e |   .0927495
+         rho |  .97184592   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+ ( 1)  Internet = 0
+ ( 2)  Broadband = 0
+ ( 3)  ICT_Exports = 0
+
+       F(  3,    46) =    6.86
+            Prob > F =    0.0006
+TWFE_TERM model=ln_Productivity var=Internet b=   .00368466982088 se=  .000845576736041 p= .0000730826495576
+TWFE_TERM model=ln_Productivity var=Broadband b= -.000430965687131 se=   .00456531079521 p=     .925201362796
+TWFE_TERM model=ln_Productivity var=ICT_Exports b=   .00784790648076 se=   .00448603100025 p=    .0868897273957
+TWFE_TERM model=ln_Productivity var=Unemployment b=  -.00354920828927 se=   .00324561698509 p=      .27985089303
+TWFE_TERM model=ln_Productivity var=Inflation b=   .00246928513909 se=   .00204557585289 p=     .233551128085
+TWFE_TERM model=ln_Productivity var=RnD b=   -.0138169331163 se=    .0403117269722 p=     .733346257335
+TWFE_OK model=ln_Productivity N=846 groups=47 joint_cluster_p=.000647360290681
+TWFE_START model=D_ln_Productivity
+
+Fixed-effects (within) regression               Number of obs     =        799
+Group variable: panel_id                        Number of groups  =         47
+
+R-squared:                                      Obs per group:
+     Within  = 0.2301                                         min =         17
+     Between = 0.0112                                         avg =       17.0
+     Overall = 0.1993                                         max =         17
+
+                                                F(22,46)          =      14.62
+corr(u_i, Xb) = -0.0260                         Prob > F          =     0.0000
+
+                                (Std. err. adjusted for 47 clusters in panel_id)
+--------------------------------------------------------------------------------
+               |               Robust
+D_ln_Product~y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+    D_Internet |  -.0002144   .0003252    -0.66   0.513     -.000869    .0004401
+   D_Broadband |  -.0020591     .00232    -0.89   0.379    -.0067291    .0026109
+ D_ICT_Exports |   .0001258   .0012518     0.10   0.920    -.0023938    .0026455
+D_Unemployment |  -.0012521   .0015351    -0.82   0.419    -.0043422     .001838
+   D_Inflation |   .0001993   .0004364     0.46   0.650    -.0006791    .0010776
+         D_RnD |  -.0577409   .0259891    -2.22   0.031    -.1100543   -.0054276
+               |
+          Year |
+         2007  |  -.0011843   .0034555    -0.34   0.733    -.0081399    .0057713
+         2008  |  -.0236774   .0076639    -3.09   0.003     -.039104   -.0082508
+         2009  |   -.052452   .0085089    -6.16   0.000    -.0695796   -.0353244
+         2010  |   -.006106   .0100168    -0.61   0.545    -.0262688    .0140569
+         2011  |  -.0135528   .0107221    -1.26   0.213    -.0351352    .0080297
+         2012  |  -.0319448   .0097298    -3.28   0.002    -.0515298   -.0123597
+         2013  |  -.0189742   .0098936    -1.92   0.061     -.038889    .0009405
+         2014  |  -.0287559   .0102411    -2.81   0.007    -.0493701   -.0081416
+         2015  |  -.0336191   .0130476    -2.58   0.013    -.0598826   -.0073556
+         2016  |  -.0331953   .0122877    -2.70   0.010    -.0579292   -.0084615
+         2017  |  -.0193982   .0115109    -1.69   0.099    -.0425684     .003772
+         2018  |  -.0253037   .0111225    -2.28   0.028    -.0476921   -.0029153
+         2019  |  -.0288492   .0102153    -2.82   0.007    -.0494116   -.0082868
+         2020  |  -.0756273   .0204199    -3.70   0.001    -.1167305   -.0345242
+         2021  |   .0117432   .0102434     1.15   0.258    -.0088756     .032362
+         2022  |  -.0423056   .0125727    -3.36   0.002    -.0676132    -.016998
+               |
+         _cons |   .0448725    .011182     4.01   0.000     .0223644    .0673807
+---------------+----------------------------------------------------------------
+       sigma_u |   .0166423
+       sigma_e |  .04208128
+           rho |  .13525058   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------
+
+ ( 1)  D_Internet = 0
+ ( 2)  D_Broadband = 0
+ ( 3)  D_ICT_Exports = 0
+
+       F(  3,    46) =    0.59
+            Prob > F =    0.6220
+TWFE_TERM model=D_ln_Productivity var=D_Internet b= -.000214419210026 se=  .000325174408928 p=      .51292832589
+TWFE_TERM model=D_ln_Productivity var=D_Broadband b=  -.00205913210119 se=   .00232004615025 p=     .379405840798
+TWFE_TERM model=D_ln_Productivity var=D_ICT_Exports b=  .000125829378844 se=    .0012517572678 p=     .920366621338
+TWFE_TERM model=D_ln_Productivity var=D_Unemployment b=  -.00125209752007 se=   .00153514453526 p=     .418919757315
+TWFE_TERM model=D_ln_Productivity var=D_Inflation b=  .000199294499976 se=  .000436360884008 p=     .650022132396
+TWFE_TERM model=D_ln_Productivity var=D_RnD b=   -.0577409476038 se=     .025989091345 p=    .0312610799214
+TWFE_OK model=D_ln_Productivity N=799 groups=47 joint_cluster_p=.6220187972336914
+
+. postclose results
+
+. preserve
+
+. use "outputs/STATA_TWFE_COUNTRY_CLUSTER.dta",clear
+
+. export delimited using "outputs/STATA_TWFE_COUNTRY_CLUSTER.csv",replace
+(file outputs/STATA_TWFE_COUNTRY_CLUSTER.csv not found)
+file outputs/STATA_TWFE_COUNTRY_CLUSTER.csv saved
+
+. count if rc!=0
+  0
+
+. display as result "TWFE_FAIL_COUNT=" r(N)
+TWFE_FAIL_COUNT=0
+
+. count
+  18
+
+. display as result "TWFE_TOTAL_TERM_ROWS=" r(N)
+TWFE_TOTAL_TERM_ROWS=18
+
+. restore
+
+. display as result "TWFE_REESTIMATION_COMPLETED_NO_CAUSAL_CLAIM"
+TWFE_REESTIMATION_COMPLETED_NO_CAUSAL_CLAIM
+
+. log close
+      name:  <unnamed>
+       log:  D:\Digital_Economy_Phase1_Method_20261017\outputs/STATA_TWFE_INDEPENDENT.log
+  log type:  text
+ closed on:  17 Oct 2026, 10:48:46
+------------------------------------------------------------------------------------------------------------------------
