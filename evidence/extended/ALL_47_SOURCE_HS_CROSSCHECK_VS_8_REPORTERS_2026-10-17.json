@@ -1,0 +1,1211 @@
+{
+  "original_data_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "original_47_countries": 47,
+  "year_range": [
+    2005,
+    2022
+  ],
+  "expected_country_years": 846,
+  "country_year_statuses": {
+    "VERIFIED_SINGLE_SOURCE_REVISION": 804,
+    "MISSING_SOURCE_NOT_ZERO": 42
+  },
+  "country_statuses": {
+    "AUT": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "AZE": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "BEL": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "BGR": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "BRA": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "CAN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "CHN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "CZE": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "DEU": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "DNK": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "EGY": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "FIN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "FRA": {
+      "MISSING_SOURCE_NOT_ZERO": 18
+    },
+    "GBR": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "GRC": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "HKG": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "HRV": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "HUN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "IRL": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "ISR": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "ITA": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "JPN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "KAZ": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "KGZ": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "KOR": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "LTU": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "LUX": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MAC": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MDA": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MEX": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MKD": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MLT": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "MNG": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 13,
+      "MISSING_SOURCE_NOT_ZERO": 5
+    },
+    "NLD": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "PAN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "POL": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "PRT": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "ROU": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "RUS": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 17,
+      "MISSING_SOURCE_NOT_ZERO": 1
+    },
+    "SGP": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "SVN": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "SWE": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "TTO": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "TUR": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "URY": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    },
+    "USA": {
+      "MISSING_SOURCE_NOT_ZERO": 18
+    },
+    "ZAF": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 18
+    }
+  },
+  "year_statuses": {
+    "2005": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2006": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2007": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2008": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    },
+    "2009": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    },
+    "2010": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    },
+    "2011": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    },
+    "2012": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    },
+    "2013": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2014": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2015": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2016": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2017": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2018": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2019": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2020": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2021": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 45,
+      "MISSING_SOURCE_NOT_ZERO": 2
+    },
+    "2022": {
+      "VERIFIED_SINGLE_SOURCE_REVISION": 44,
+      "MISSING_SOURCE_NOT_ZERO": 3
+    }
+  },
+  "observed_source_edition_transitions_not_imputed": {
+    "AUT": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "AZE": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2018,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "BEL": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "BGR": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "BRA": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "CAN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "CHN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "CZE": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "DEU": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "DNK": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "EGY": [
+      {
+        "year": 2008,
+        "from": "H0",
+        "to": "H3"
+      },
+      {
+        "year": 2014,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2022,
+        "from": "H4",
+        "to": "H6"
+      }
+    ],
+    "FIN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "FRA": [],
+    "GBR": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "GRC": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "HKG": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "HRV": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "HUN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "IRL": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "ISR": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "ITA": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "JPN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "KAZ": [
+      {
+        "year": 2009,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "KGZ": [
+      {
+        "year": 2008,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2015,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "KOR": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "LTU": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "LUX": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "MAC": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "MDA": [
+      {
+        "year": 2009,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2015,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2020,
+        "from": "H4",
+        "to": "H5"
+      }
+    ],
+    "MEX": [
+      {
+        "year": 2008,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2021,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "MKD": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "MLT": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "MNG": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2013,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "NLD": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "PAN": [
+      {
+        "year": 2008,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "POL": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "PRT": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "ROU": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "RUS": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      }
+    ],
+    "SGP": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2018,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "SVN": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "SWE": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "TTO": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2016,
+        "from": "H3",
+        "to": "H4"
+      }
+    ],
+    "TUR": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "URY": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ],
+    "USA": [],
+    "ZAF": [
+      {
+        "year": 2007,
+        "from": "H2",
+        "to": "H3"
+      },
+      {
+        "year": 2012,
+        "from": "H3",
+        "to": "H4"
+      },
+      {
+        "year": 2017,
+        "from": "H4",
+        "to": "H5"
+      },
+      {
+        "year": 2022,
+        "from": "H5",
+        "to": "H6"
+      }
+    ]
+  },
+  "comparison_with_240_prior_8_receiver_year_hs4_slices": {
+    "MATCH": 230,
+    "BOTH_LACK_REVISION_SOURCE": 10
+  },
+  "discrepancies_requiring_review": [],
+  "prior_slice_examples_missing_trade_heading_but_year_metadata_known": [],
+  "source_editions_never_inferred_from_calendar_year": true,
+  "source_metadata_not_equivalent_to_available_trade_value": true,
+  "missing_never_imputed_as_zero": true,
+  "final_FTECH_GMM_approved": false
+}
