@@ -28,13 +28,22 @@ from docx.oxml.ns import qn
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "outputs/professor_original_only_final"
 REPORT = ROOT / "docs/PROFESSOR_ORIGINAL_DATA_ONLY_HANDOFF_REPORT_2026-10-16_FA.md"
-FILENAME = "PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16"
+FILENAME = "PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17"
 RAW = ROOT / "data/raw/Balanced_Panel_Data.xlsx"
 RAW_SHA = "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b"
 
 REQUIRED = (
     "data/raw/Balanced_Panel_Data.xlsx",
     "data/processed/stata_ready.dta",
+    "docs/PHASE1_STATA_ADB_RETEST_2026-10-17_FA.md",
+    "evidence/stata-adb-2026-10-17/retest_check_result.json",
+    "evidence/stata-adb-2026-10-17/professor_system_gmm_stats.csv",
+    "evidence/stata-adb-2026-10-17/diff_l23_two_outcomes_stats.csv",
+    "evidence/stata-adb-2026-10-17/PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log",
+    "evidence/stata-adb-2026-10-17/DIFFERENCE_GMM_OVERIDENTIFIED_L23_BOTH_MODELS.log",
+    "evidence/stata-adb-2026-10-17/SYSTEM_GMM_RETEST.do",
+    "evidence/stata-adb-2026-10-17/DIFF_GMM_RETEST.do",
+    "evidence/stata-adb-2026-10-17/PHASE1_RETEST_NOW.do",
     "config/project.json",
     "stata/RUN_ALL.do",
     "stata/00_model_helpers.do",
@@ -88,6 +97,30 @@ def require_sources() -> None:
                   "Unemployment","Inflation","RnD")
     }
     assert all((r["N"],r["countries"],r["instruments"])==("799","47","31") for r in rows)
+    # Verify the new independent licensed-Stata rerun, not merely its claims.
+    fresh_dir = ROOT / "evidence/stata-adb-2026-10-17"
+    fresh_qc = json.loads((fresh_dir / "retest_check_result.json").read_text(encoding="utf-8"))
+    assert fresh_qc["status"] == "PASS" and fresh_qc["fresh_stata_run"] is True
+    assert fresh_qc["only_original_source"] is True and fresh_qc["no_new_data"] is True
+    assert fresh_qc["raw_sha256"] == RAW_SHA
+    assert fresh_qc["causal_validity"] == "NOT_ESTABLISHED"
+    for old_rel, new_name in (
+        ("evidence/tablet-stata-2026-10-16/professor_system_gmm_stats.csv",
+         "professor_system_gmm_stats.csv"),
+        ("evidence/scientific-gates-2026-10-16/difference_gmm_l23_two_primary_outcomes.csv",
+         "diff_l23_two_outcomes_stats.csv"),
+    ):
+        with (ROOT / old_rel).open(encoding="utf-8-sig",newline="") as h:
+            old_rows = list(csv.DictReader(h))
+        with (fresh_dir / new_name).open(encoding="utf-8-sig",newline="") as h:
+            new_rows = list(csv.DictReader(h))
+        assert old_rows == new_rows and len(new_rows) == 4, new_name
+        assert all(r["rc"] == "0" for r in new_rows), new_name
+    for log, digest in fresh_qc["raw_logs_sha256"].items():
+        logfile = fresh_dir / log
+        assert logfile.is_file() and sha256(logfile) == digest, log
+    assert "PROFESSOR_FAILED_COUNT=0" in (fresh_dir / "PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log").read_text(errors="replace")
+    assert "DIFF_REPAIR_FAILURES=0" in (fresh_dir / "DIFFERENCE_GMM_OVERIDENTIFIED_L23_BOTH_MODELS.log").read_text(errors="replace")
     subprocess.run([sys.executable, "-m", "src.python.audit_professor_final_primary_delivery"],
                    cwd=ROOT,check=True)
 
