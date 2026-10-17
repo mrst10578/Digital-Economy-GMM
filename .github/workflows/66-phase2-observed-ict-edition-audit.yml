@@ -1,0 +1,34 @@
+name: Phase 2 observed partner year HS revision alignment to seven UNCTAD lists
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'src/python/extended/audit_ict_editions_in_eight_receiver_trade.py'
+      - '.github/workflows/66-phase2-observed-ict-edition-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  immutable-data-HS-edition-compatibility-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify historical HS edition evidence against true UNCTAD 691-row HS6 catalog
+        run: python src/python/extended/audit_ict_editions_in_eight_receiver_trade.py
+      - name: Commit independent research-methodology alignment QA
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/extended/COMTRADE_8_RECEIVER_HS_REVISION_VS_UNCTAD_CATALOG_2026-10-17.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): audit real country-year HS revisions against seven UNCTAD edition catalogs"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
