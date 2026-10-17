@@ -1,0 +1,44 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "status": {
+    "VERIFIED_SINGLE_SOURCE_REVISION": 134,
+    "MISSING_SOURCE_NOT_ZERO": 7
+  },
+  "sample_country_year_slots": 141,
+  "source_metadata_requests": 3,
+  "source": [
+    {
+      "Year": 2005,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2005",
+      "http_status": 200,
+      "declared_count": 175,
+      "raw_rows": 175,
+      "sha256": "78a9a09c99a10628d8b9083ec200a5d9229bcf935e8273c87ecdda3121086444",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2017,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2017",
+      "http_status": 200,
+      "declared_count": 183,
+      "raw_rows": 183,
+      "sha256": "07ba6099c06bf4d06fd9c9e883fb0093d5437019fa3c8ed8924455dc22d37ab7",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2022,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2022",
+      "http_status": 200,
+      "declared_count": 170,
+      "raw_rows": 170,
+      "sha256": "6ef6e75e9b32b56924b0efb2fac7f635009ab30750b1a92cae2b5a797b2638d4",
+      "matching_47_country_rows": 44
+    }
+  ],
+  "raw_source_files_retained_as_actions_artifact": true,
+  "country_year_trade_values_downloaded": false,
+  "HS6_comparability_not_established": true,
+  "metadata_absent_never_imputed": true,
+  "original_professor_data_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "utc": "2026-10-17T09:51:49.304164+00:00"
+}
