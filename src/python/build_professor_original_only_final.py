@@ -36,6 +36,14 @@ REQUIRED = (
     "data/raw/Balanced_Panel_Data.xlsx",
     "data/processed/stata_ready.dta",
     "docs/PHASE1_STATA_ADB_RETEST_2026-10-17_FA.md",
+    "docs/PROFESSOR_PHASE1_ROBUSTNESS_AND_LIMITATIONS_2026-10-17_FA.md",
+    "src/r/phase1_robust_twfe_same_data.R",
+    "src/python/audit_phase1_twfe_r_stata.py",
+    "stata/tablet_diagnostics/24_phase1_twfe_noncausal.do",
+    "evidence/phase1-robust-2026-10-17/twfe_stata_country_cluster.csv",
+    "evidence/phase1-robust-2026-10-17/twfe_stata_real.log",
+    "evidence/phase1-robust-2026-10-17/twfe_r_dk_coefficients.csv",
+    "evidence/phase1-robust-2026-10-17/twfe_r_diagnostics.csv",
     "evidence/stata-adb-2026-10-17/retest_check_result.json",
     "evidence/stata-adb-2026-10-17/professor_system_gmm_stats.csv",
     "evidence/stata-adb-2026-10-17/diff_l23_two_outcomes_stats.csv",
@@ -97,6 +105,10 @@ def require_sources() -> None:
                   "Unemployment","Inflation","RnD")
     }
     assert all((r["N"],r["countries"],r["instruments"])==("799","47","31") for r in rows)
+    # Independent noncausal cross-engine fixed-effects audit on the same historical data.
+    subprocess.run([sys.executable, "-m", "src.python.audit_phase1_twfe_r_stata"],
+                   cwd=ROOT, check=True)
+    assert "پیوست ب. آزمون‌های استحکام" in REPORT.read_text(encoding="utf-8")
     # Verify the new independent licensed-Stata rerun, not merely its claims.
     fresh_dir = ROOT / "evidence/stata-adb-2026-10-17"
     fresh_qc = json.loads((fresh_dir / "retest_check_result.json").read_text(encoding="utf-8"))
