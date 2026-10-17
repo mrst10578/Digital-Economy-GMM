@@ -4,6 +4,7 @@ on:
     branches: [research/digital-economy-extended-data]
     paths:
       - 'data/extended/comtrade/oecd_missing_hs4_2008_2022/eight_receivers_coverage_2005_2022.csv'
+      - '.github/workflows/58-phase2-nine-receiver-year-coverage.yml'
   workflow_dispatch:
 permissions:
   contents: write
