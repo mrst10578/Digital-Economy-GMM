@@ -1,0 +1,37 @@
+name: Phase 2 ICT-relevant HS8471 HS8517 all partner preview
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_partner_8471_8517.py'
+      - '.github/workflows/51-phase2-ict-hs4-partner-screen.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  four-query-ict-hs4-geography:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ISO country codes
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Test public bilateral-partner coverage in 2005 and 2022 for HS8471 and 8517, without Stata
+        run: python src/python/extended/pilot_comtrade_partner_8471_8517.py
+      - name: Display validated partner counts
+        if: always()
+        run: |
+          if test -f outputs/extended/comtrade_aze_multi_partner_computers_telecom/four_query_summary.csv; then
+            cat outputs/extended/comtrade_aze_multi_partner_computers_telecom/four_query_summary.csv
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-ICT-relevant-HS8471-HS8517-2005-2022-partner-preview
+          path: outputs/extended/comtrade_aze_multi_partner_computers_telecom/
+          if-no-files-found: warn
+          retention-days: 30
