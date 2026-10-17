@@ -1,0 +1,45 @@
+name: Phase 2 authenticated 8 goods per year real bilateral country-partner pilot
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/78-phase2-eight-HS6-multicode-bilateral.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  authenticated-multicode-real-country-partners:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Collect real HS6 multicode origins and independently reconcile the existing World pilot
+        env:
+          COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
+        run: |
+          set -eu
+          if test -z "$COMTRADE_API_KEY"; then echo "Comtrade secret missing, no request performed"; exit 2; fi
+          python src/python/extended/collect_full_HS6_multicode_bilateral_batched.py
+      - name: Publish raw SHA-verified multi-code bilateral evidence but no FTECH
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/authenticated_HS6_multicode_bilateral_batch_pilot/
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): audit true HS6 multi-code all-partner imports against original World and single-good sources"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-authenticated-8-official-ICT-HS6-each-two-reporters-multicode-partners
+          path: data/extended/comtrade/authenticated_HS6_multicode_bilateral_batch_pilot/
+          if-no-files-found: warn
+          retention-days: 30
