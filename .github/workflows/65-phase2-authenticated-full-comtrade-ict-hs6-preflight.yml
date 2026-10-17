@@ -1,5 +1,9 @@
 name: Phase 2 manual secure Comtrade full ICT HS6 source preflight
 on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/65-phase2-authenticated-full-comtrade-ict-hs6-preflight.yml'
   workflow_dispatch:
 permissions:
   contents: read
