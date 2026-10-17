@@ -1,0 +1,72 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "source": "UN Comtrade public preview, potentially incomplete irrespective of record count",
+  "original_baseline_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "reporter_countries": [
+    "KGZ",
+    "MAC",
+    "MDA",
+    "MKD",
+    "MNG",
+    "PAN",
+    "TTO",
+    "URY"
+  ],
+  "years_coverage_2005_2022": [
+    2005,
+    2022
+  ],
+  "HS4_headings_only": [
+    "8471",
+    "8517"
+  ],
+  "extended_queries_2008_2022": 240,
+  "all_eight_reporter_year_hs_queries_2005_2022": 288,
+  "additional_partner_rows_including_world": 11196,
+  "total_eight_reporter_partner_rows_including_world": 13226,
+  "quality_by_cohort": {
+    "A": {
+      "requests": 60,
+      "partner_records_including_world": 2163,
+      "status_counts": {
+        "VALID_PREVIEW": 60
+      }
+    },
+    "B": {
+      "requests": 60,
+      "partner_records_including_world": 3175,
+      "status_counts": {
+        "VALID_PREVIEW": 60
+      }
+    },
+    "C": {
+      "requests": 60,
+      "partner_records_including_world": 2627,
+      "status_counts": {
+        "EMPTY_UNREPORTED_NOT_ZERO": 10,
+        "VALID_PREVIEW": 50
+      }
+    },
+    "D": {
+      "requests": 60,
+      "partner_records_including_world": 3231,
+      "status_counts": {
+        "VALID_PREVIEW": 60
+      }
+    }
+  },
+  "all_historical_status_counts": {
+    "VALID_PREVIEW": 278,
+    "EMPTY_UNREPORTED_NOT_ZERO": 10
+  },
+  "status_empty_means_unreported_not_zero": true,
+  "raw_JSON_SHA256_per_query_verified": 240,
+  "HS_subheadings_not_harmonized": true,
+  "year_heading_slices_with_unique_original_revision_metadata": 230,
+  "revision_provenance_slices_recorded": 240,
+  "source_country_territory_crosswalk_not_final": true,
+  "not_complete_ICT_commodity_basket": true,
+  "not_complete_47_receivers": true,
+  "not_final_FTECH_or_causal_evidence": true,
+  "phase_A_professor_data_unchanged": true
+}
