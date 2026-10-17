@@ -1,0 +1,44 @@
+name: Phase 2 actual 47 reporters by 18 years original HS revision coverage
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/72-phase2-full47x18-original-HS-editions.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit-47-by-18-reported-HS-editions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'pycountry>=24,<30'
+      - name: Retrieve official source classification for 47 reporters across all 2005-2022 years
+        run: python src/python/extended/collect_47_reporter_year_source_HS_all_18_years.py
+      - name: Publish only strictly validated original reporter-year source revisions and provenance
+        run: |
+          set -eu
+          mkdir -p data/extended/comtrade/source_hs_revisions_47
+          cp outputs/extended/source_47_edition_all_years/47_country_18_year_HS_revision_2005_2022.csv data/extended/comtrade/source_hs_revisions_47/
+          cp outputs/extended/source_47_edition_all_years/FULL_COVERAGE_AND_PROVENANCE.json data/extended/comtrade/source_hs_revisions_47/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/source_hs_revisions_47/
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): verify 47x18 country-year original HS revisions from 18 Comtrade getDA years"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-ALL-47-BY-18-UN-Comtrade-source-HS-metadata-raw
+          path: outputs/extended/source_47_edition_all_years/
+          if-no-files-found: warn
+          retention-days: 30
