@@ -138,6 +138,18 @@ def word_styles(path:Path) -> None:
         if p.style.name.startswith("Heading"):
             p.paragraph_format.space_before=Pt(11)
             p.paragraph_format.space_after=Pt(5)
+            # Make the subtitle / subsection weight actually use the font file,
+            # rather than only applying synthetic bold to the regular font.
+            if p.style.name in ("Heading 2", "Heading 3"):
+                for run in p.runs:
+                    run.font.name="Mikhak SemiBold"
+                    run.font.bold=False
+                    rpr=run._r.get_or_add_rPr()
+                    face=rpr.rFonts
+                    if face is None:
+                        face=OxmlElement("w:rFonts"); rpr.insert(0,face)
+                    for attr in ("w:ascii","w:hAnsi","w:cs","w:eastAsia"):
+                        face.set(qn(attr),"Mikhak SemiBold")
     for table in doc.tables:
         table.alignment=WD_TABLE_ALIGNMENT.CENTER
         # Use the available A4 text width: keep 95% confidence intervals on
@@ -167,8 +179,15 @@ def word_styles(path:Path) -> None:
                 for p in cell.paragraphs:
                     bidi_paragraph(p)
                     for run in p.runs:
+                        run.font.name="Mikhak Medium"
                         run.font.size=Pt(8.2)
-                        if row_i==0:run.font.bold=True
+                        run.font.bold=False
+                        rpr=run._r.get_or_add_rPr()
+                        face=rpr.rFonts
+                        if face is None:
+                            face=OxmlElement("w:rFonts"); rpr.insert(0,face)
+                        for attr in ("w:ascii","w:hAnsi","w:cs","w:eastAsia"):
+                            face.set(qn(attr),"Mikhak Medium")
     header=section.header.paragraphs[0]
     header.text="پژوهش اقتصاد دیجیتال | نسخه مخصوص استاد، فقط داده اولیه"
     bidi_paragraph(header)
