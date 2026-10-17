@@ -1,0 +1,53 @@
+name: Phase 2 preserve validated AZE all-source trade data in extended branch
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - '.github/workflows/53-phase2-archive-aze-multisource-artifact.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  promote-audited-data-not-model-results:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Retrieve known successful previous native Comtrade API artifact, do not re-query
+        uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-AZE-all-partners-HS8471-HS8517-2005-2022-raw-audit
+          run-id: 39017139253
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/artefact_run_39017139253
+      - name: Verify all 36 original API responses and publish source-level normalized tables
+        run: python src/python/extended/archive_aze_multisource_action_evidence.py
+      - name: Confirm only Phase-B additions and commit normalized validated CSV (no raw JSON)
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/AZE_HS8471_8517_all_origins_2005_2022.csv
+          git add data/extended/comtrade/AZE_HS8471_8517_annual_source_coverage.csv
+          git add data/extended/comtrade/AZE_2005_2007_preliminary_source_weight_screen.csv
+          git add data/extended/comtrade/PROVENANCE_AND_QUALITY.json
+          git diff --cached --stat
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): permanently archive audited 1863 AZE origin flows and preliminary noncausal source-weight screen"
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-permanent-AZE-HS4-audited-origin-CSVs-and-quality-check
+          path: data/extended/comtrade/AZE_*
+          if-no-files-found: warn
+          retention-days: 30
