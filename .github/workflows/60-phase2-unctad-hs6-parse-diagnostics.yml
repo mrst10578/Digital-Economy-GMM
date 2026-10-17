@@ -24,7 +24,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: PHASE2-official-UNCTAD-Eurostat-original-HS6-assets
-          run-id: 39020262375
+          run-id: 39020521332
           repository: mrst10578/Digital-Economy-GMM
           github-token: ${{ github.token }}
           path: outputs/extended/official_ict_hs6_probe
