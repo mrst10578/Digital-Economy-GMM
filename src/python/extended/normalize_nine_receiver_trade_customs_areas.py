@@ -23,6 +23,7 @@ INPUTS = (
     ("eight_receivers_baseperiod",
      ROOT / "data/extended/comtrade/oecd_missing_hs4_preperiod/partner_records_2005_2007.csv"),
 )
+EXTENSION = ROOT / "data/extended/comtrade/oecd_missing_hs4_2008_2022/partner_records_2008_2022.csv"
 OUT = ROOT / "data/extended/comtrade/normalized"
 CUSTOMS_PROXIES = {251: ("FRA", "FRANCE_CUSTOMS_AREA_INCL_MONACO_OVERSEAS"),
                    842: ("USA", "US_CUSTOMS_AREA_INCL_PUERTO_RICO_USVI")}
@@ -78,21 +79,25 @@ def main():
     assert len(originals) == 47
     clean = []
     source_counts = {}
-    for source_name, path in INPUTS:
+    selected_sources = INPUTS + (("eight_receivers_2008_2022", EXTENSION),) if EXTENSION.is_file() else INPUTS
+    for source_name, path in selected_sources:
         with path.open(encoding="utf-8", newline="") as handle:
             raw_rows = list(csv.DictReader(handle))
         source_counts[source_name] = len(raw_rows)
         clean.extend(normalized_record(r, source_name, originals) for r in raw_rows)
-    assert source_counts == {"AZE_18year": 1863, "eight_receivers_baseperiod": 2030}
+    assert source_counts["AZE_18year"] == 1863
+    assert source_counts["eight_receivers_baseperiod"] == 2030
+    if "eight_receivers_2008_2022" in source_counts:
+        assert source_counts["eight_receivers_2008_2022"] > 0
     unique_keys = {(r["receiver_ISO3"], r["Year"], r["HS4"],
                     r["partner_M49_as_reported"]) for r in clean}
     assert len(unique_keys) == len(clean), "Duplicate reporter-year-heading-partner"
     clean.sort(key=lambda r: (r["receiver_ISO3"], r["Year"], r["HS4"],
                               r["partner_M49_as_reported"]))
     totals = Counter(r["partner_mapping_status"] for r in clean)
-    assert len(clean) == 3893
-    assert totals["WORLD_AGGREGATE_NOT_ORIGIN"] == 84
-    assert totals["CUSTOMS_AREA_CANDIDATE_NOT_EXACT_ISO3"] == 167
+    assert len(clean) == sum(source_counts.values())
+    assert totals["WORLD_AGGREGATE_NOT_ORIGIN"] >= 84
+    assert totals["CUSTOMS_AREA_CANDIDATE_NOT_EXACT_ISO3"] >= 167
     OUT.mkdir(parents=True, exist_ok=True)
     name = "nine_receiver_HS4_partner_code_provenance.csv"
     with (OUT / name).open("w", encoding="utf-8", newline="") as handle:
