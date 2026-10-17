@@ -1,0 +1,67 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "timestamp_utc": "2026-10-17T09:19:20.872236+00:00",
+  "dataset": "UNCTAD ICT goods: Bilateral trade by category - Annual",
+  "no_subscription_key_used": true,
+  "only_bounded_16KB_HTTP_range_samples": true,
+  "no_dataset_claimed_downloaded": true,
+  "results": [
+    {
+      "name": "metadata_ict_en",
+      "url": "https://unctadstat-api.unctad.org/api/reportMetadata/US.IctGoodsValue/en",
+      "http_status": 400,
+      "content_type": "",
+      "response_prefix_sha256": null,
+      "content_length_claimed": null,
+      "bytes_sampled": 0,
+      "JSON_keys": [],
+      "CSV_first_field_names": [],
+      "error": "HTTPError: HTTP Error 400: Bad Request",
+      "authenticated_key_used": false,
+      "is_complete_dataset": false
+    },
+    {
+      "name": "metadata_ict",
+      "url": "https://unctadstat-api.unctad.org/api/reportMetadata/US.IctGoodsValue",
+      "http_status": 400,
+      "content_type": "",
+      "response_prefix_sha256": null,
+      "content_length_claimed": null,
+      "bytes_sampled": 0,
+      "JSON_keys": [],
+      "CSV_first_field_names": [],
+      "error": "HTTPError: HTTP Error 400: Bad Request",
+      "authenticated_key_used": false,
+      "is_complete_dataset": false
+    },
+    {
+      "name": "csv_report_files",
+      "url": "https://unctadstat-api.unctad.org/api/report-files/US.IctGoodsValue.csv",
+      "http_status": 404,
+      "content_type": "",
+      "response_prefix_sha256": null,
+      "content_length_claimed": null,
+      "bytes_sampled": 0,
+      "JSON_keys": [],
+      "CSV_first_field_names": [],
+      "error": "HTTPError: HTTP Error 404: Not Found",
+      "authenticated_key_used": false,
+      "is_complete_dataset": false
+    },
+    {
+      "name": "csv_reportfiles",
+      "url": "https://unctadstat-api.unctad.org/api/reportfiles/US.IctGoodsValue.csv",
+      "http_status": 404,
+      "content_type": "",
+      "response_prefix_sha256": null,
+      "content_length_claimed": null,
+      "bytes_sampled": 0,
+      "JSON_keys": [],
+      "CSV_first_field_names": [],
+      "error": "HTTPError: HTTP Error 404: Not Found",
+      "authenticated_key_used": false,
+      "is_complete_dataset": false
+    }
+  ],
+  "source_website": "https://unctadstat.unctad.org/datacentre/"
+}
