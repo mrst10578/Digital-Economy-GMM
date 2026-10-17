@@ -1,0 +1,69 @@
+{
+  "timestamp_utc": "2026-10-17T09:50:39.847814+00:00",
+  "exclusively_official_Comtrade_endpoints": true,
+  "secret_not_stored": true,
+  "missing_not_zero": true,
+  "eight_second_spacing": true,
+  "requests": [
+    {
+      "case": "USA_H6_2022_847130_FULL",
+      "edition": "H6",
+      "reporter": 842,
+      "year": 2022,
+      "cmdCode": "847130",
+      "endpoint": "data/v1/get",
+      "status": 500,
+      "rows": null,
+      "reported_count": null,
+      "response_error": null,
+      "body_sha256": null,
+      "first_two_trade_rows": [],
+      "http_error": "HTTP 500"
+    },
+    {
+      "case": "USA_H6_2022_847130_PREVIEW",
+      "edition": "H6",
+      "reporter": 842,
+      "year": 2022,
+      "cmdCode": "847130",
+      "endpoint": "public/v1/preview",
+      "status": 500,
+      "rows": null,
+      "reported_count": null,
+      "response_error": null,
+      "body_sha256": null,
+      "first_two_trade_rows": [],
+      "http_error": "HTTP 500"
+    },
+    {
+      "case": "AZE_H4_2017_8471_FULL",
+      "edition": "H4",
+      "reporter": 31,
+      "year": 2017,
+      "cmdCode": "8471",
+      "endpoint": "data/v1/get",
+      "status": 500,
+      "rows": null,
+      "reported_count": null,
+      "response_error": null,
+      "body_sha256": null,
+      "first_two_trade_rows": [],
+      "http_error": "HTTP 500"
+    },
+    {
+      "case": "AZE_H4_2017_8471_PREVIEW",
+      "edition": "H4",
+      "reporter": 31,
+      "year": 2017,
+      "cmdCode": "8471",
+      "endpoint": "public/v1/preview",
+      "status": 500,
+      "rows": null,
+      "reported_count": null,
+      "response_error": null,
+      "body_sha256": null,
+      "first_two_trade_rows": [],
+      "http_error": "HTTP 500"
+    }
+  ]
+}
