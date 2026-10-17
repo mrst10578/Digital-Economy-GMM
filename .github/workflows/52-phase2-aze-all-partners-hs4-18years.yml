@@ -1,0 +1,37 @@
+name: Phase 2 AZE 18-year multi-partner HS4 origin trade
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/audit_comtrade_aze_multi_partner_18years_hs4.py'
+      - '.github/workflows/52-phase2-aze-all-partners-hs4-18years.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-azerbaijan-multiple-source-economies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ISO country code mapping only
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Verify all 18 years and two HS4 categories against real partner breakdown, preserve API raw
+        run: python src/python/extended/audit_comtrade_aze_multi_partner_18years_hs4.py
+      - name: Display actual world/supplier coverage before constructing weight series
+        if: always()
+        run: |
+          if test -f outputs/extended/comtrade_aze_2005_2022_all_source_countries_hs4/year_HS4_36_coverage.csv; then
+            cat outputs/extended/comtrade_aze_2005_2022_all_source_countries_hs4/year_HS4_36_coverage.csv
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-AZE-all-partners-HS8471-HS8517-2005-2022-raw-audit
+          path: outputs/extended/comtrade_aze_2005_2022_all_source_countries_hs4/
+          if-no-files-found: warn
+          retention-days: 30
