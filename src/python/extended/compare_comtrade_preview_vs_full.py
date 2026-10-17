@@ -12,12 +12,12 @@ from urllib.request import Request,urlopen
 from urllib.error import HTTPError,URLError
 
 ROOT=Path(__file__).resolve().parents[3]
-OUT=ROOT/"evidence/extended/COMTRADE_PREVIEW_VS_FULL_IDENTICAL_HS_CODES_2026-10-17.json"
+OUT=ROOT/"evidence/extended/COMTRADE_HS_AS_REPORTED_FULL_VS_PREVIEW_DIAG_2026-10-17.json"
 CASES=[
- ("USA_H6_2022_847130_FULL","data", "H6",842,2022,"847130"),
- ("USA_H6_2022_847130_PREVIEW","public","H6",842,2022,"847130"),
- ("AZE_H4_2017_8471_FULL","data","H4",31,2017,"8471"),
- ("AZE_H4_2017_8471_PREVIEW","public","H4",31,2017,"8471"),
+ ("USA_HS_2022_847130_FULL","data","HS",842,2022,"847130"),
+ ("USA_HS_2022_847130_PREVIEW","public","HS",842,2022,"847130"),
+ ("AZE_HS_2017_8471_FULL","data","HS",31,2017,"8471"),
+ ("AZE_HS_2017_8471_PREVIEW","public","HS",31,2017,"8471"),
 ]
 def main():
  key=os.environ.get("COMTRADE_API_KEY","").strip()
