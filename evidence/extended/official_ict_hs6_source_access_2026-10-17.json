@@ -1,0 +1,98 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "timestamp_utc": "2026-10-17T09:13:03.284339+00:00",
+  "sources": [
+    {
+      "name": "UNCTAD_HS1992_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS1992Products_Ict_Hierarchy.pdf",
+      "status": "ERROR",
+      "http_code": 404,
+      "size_bytes": 0,
+      "sha256": null,
+      "file_kind_verified": "NONE",
+      "stored_relpath": "",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "name": "UNCTAD_HS1996_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS1996Products_Ict_Hierarchy.pdf",
+      "status": "ERROR",
+      "http_code": 404,
+      "size_bytes": 0,
+      "sha256": null,
+      "file_kind_verified": "NONE",
+      "stored_relpath": "",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "name": "UNCTAD_HS2002_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2002Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 248179,
+      "sha256": "8d8a2d4748cf35bb4d007435795b39d8169b8c84ed974de72f1695f6c0b47dd7",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS2002_PDF.pdf",
+      "error": ""
+    },
+    {
+      "name": "UNCTAD_HS2007_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2007Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 238998,
+      "sha256": "9f4be12e0eec16698d35843280851162a8f019354fd721e65eb3ece65bd92041",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS2007_PDF.pdf",
+      "error": ""
+    },
+    {
+      "name": "UNCTAD_HS2012_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2012Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 242935,
+      "sha256": "5573221b3041722267aa5bd210d7cb2b3c64fd1ea7c5d4d4b78df3857e436e72",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS2012_PDF.pdf",
+      "error": ""
+    },
+    {
+      "name": "UNCTAD_HS2017_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2017Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 238459,
+      "sha256": "91844dc759583aa0af41ceaa32a446f7df574b82f2ee280b9e4aacc7e6bdd5e3",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS2017_PDF.pdf",
+      "error": ""
+    },
+    {
+      "name": "UNCTAD_HS2022_PDF",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2022Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 245631,
+      "sha256": "67a84e39051d3edff899a0e9a18f25bc600dbdd6f984106fb81dec3cd302ff82",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS2022_PDF.pdf",
+      "error": ""
+    },
+    {
+      "name": "EUROSTAT_HS2017_XLS",
+      "url": "https://ec.europa.eu/eurostat/cache/metadata/Annexes/isoc_it_ict_esmsip2_an_ICT_goods_categories_and_compo.xls",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 83456,
+      "sha256": "c1de029c657f1ddfcf145b5a8c4f10846ad939e5d173de1dbcba0d434e535695",
+      "file_kind_verified": "xls",
+      "stored_relpath": "EUROSTAT_HS2017_XLS.xls",
+      "error": ""
+    }
+  ],
+  "available_valid_sources": 6,
+  "no_HS6_codes_inferred_or_invented": true,
+  "not_yet_approved_ICT_goods_basket": true,
+  "no_Stata_or_original_professor_data_change": true
+}
