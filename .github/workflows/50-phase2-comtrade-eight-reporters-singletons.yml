@@ -1,0 +1,43 @@
+name: Phase 2 annual Comtrade 8 reporters 2005-2022 from China HS85
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_8_reporters_18years_singletons.py'
+      - '.github/workflows/50-phase2-comtrade-eight-reporters-singletons.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-single-reporter-annual-trade:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: ['1', '2']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ISO3 to M49 country code mapping only
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Fetch 4 countries x 18 separate annual HS85 imports-from-China; no Stata, no GMM
+        run: python src/python/extended/pilot_comtrade_8_reporters_18years_singletons.py --group "${{ matrix.group }}"
+      - name: Display per-country completeness
+        if: always()
+        run: |
+          echo "Group ${{ matrix.group }}. Missing preview is not zero."
+          if test -f outputs/extended/comtrade_8_reporters_18_years_china_hs85/group_${{ matrix.group }}/country_coverage.csv; then
+            cat outputs/extended/comtrade_8_reporters_18_years_china_hs85/group_${{ matrix.group }}/country_coverage.csv
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-COMTRADE-China-HS85-8-reporters-group-${{ matrix.group }}
+          path: outputs/extended/comtrade_8_reporters_18_years_china_hs85/group_${{ matrix.group }}/
+          if-no-files-found: warn
+          retention-days: 30
