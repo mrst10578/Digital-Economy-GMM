@@ -1,0 +1,38 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "source": "UN Comtrade public preview (keyless)",
+  "original_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "receiver_countries": [
+    "KGZ",
+    "MAC",
+    "MDA",
+    "MKD",
+    "MNG",
+    "PAN",
+    "TTO",
+    "URY"
+  ],
+  "years": [
+    2005,
+    2006,
+    2007
+  ],
+  "hs4": [
+    "8471",
+    "8517"
+  ],
+  "requests_expected": 48,
+  "requests_observed_valid": 48,
+  "status_counts": {
+    "VALID_PREVIEW": 48
+  },
+  "partner_rows_from_valid_responses_including_world": 2030,
+  "not_exhaustive_or_harmonized_ict": true,
+  "no_zero_imputation": true,
+  "no_valid_ftech_or_causal_identification": true,
+  "not_complete_47_by_47_network": true,
+  "no_stata_or_professor_dataset_mutation": true,
+  "raw_payloads_in_short_lived_actions_artifact_only": true,
+  "raw_payload_sha256_logged_for_successful_responses": true,
+  "run_utc": "2026-10-17T08:43:22.059045+00:00"
+}
