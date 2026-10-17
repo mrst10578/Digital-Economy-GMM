@@ -1,0 +1,92 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "created_on": "2026-10-17",
+  "scientific_guard": "NO_FULL_ICT_BASKET_OR_HARMONIZED_HS6_HAS_YET_BEEN_CONSTRUCTED",
+  "source_priority": [
+    {
+      "organization": "UNCTAD",
+      "url": "https://unctadstat.unctad.org/EN/Classifications.html",
+      "role": "Edition-specific six-digit ICT product lists"
+    },
+    {
+      "organization": "UNCTAD",
+      "url": "https://unctad.org/publication/trade-ict-goods-statistics-impacts-2022-update-harmonized-commodity-description-and",
+      "role": "HS2022 revision impacts and interpretive method"
+    },
+    {
+      "organization": "UNSD",
+      "url": "https://unstats.un.org/unsd/classifications/Econ/",
+      "role": "Cross-edition HS correspondences"
+    },
+    {
+      "organization": "UN Comtrade",
+      "url": "https://uncomtrade.org/docs/why-are-some-converted-datasets-not-accessible-in-the-ui/",
+      "role": "As-reported and historical HS revision codes"
+    },
+    {
+      "organization": "UN Comtrade",
+      "url": "https://uncomtrade.org/docs/un-comtrade-api/",
+      "role": "Preview vs full API extraction limits"
+    }
+  ],
+  "hs6_edition_tables": [
+    {
+      "code": "H2",
+      "revision": "HS2002",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2002Products_Ict_Hierarchy.pdf",
+      "verified_codes": 0,
+      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+    },
+    {
+      "code": "H3",
+      "revision": "HS2007",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2007Products_Ict_Hierarchy.pdf",
+      "verified_codes": 0,
+      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+    },
+    {
+      "code": "H4",
+      "revision": "HS2012",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2012Products_Ict_Hierarchy.pdf",
+      "verified_codes": 0,
+      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+    },
+    {
+      "code": "H5",
+      "revision": "HS2017",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2017Products_Ict_Hierarchy.pdf",
+      "verified_codes": 0,
+      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+    },
+    {
+      "code": "H6",
+      "revision": "HS2022",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2022Products_Ict_Hierarchy.pdf",
+      "verified_codes": 0,
+      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+    }
+  ],
+  "original_hs_series": {
+    "query_classification": "HS",
+    "meaning": "as reported country-year; revision MUST be read from API metadata or original record; NEVER infer from year alone",
+    "status": "MUST_AUDIT_PER_RECEIVER_YEAR"
+  },
+  "current_trial_hs4": [
+    "8471",
+    "8517"
+  ],
+  "current_trial_hs4_valid_as_complete_ICT_goods": false,
+  "current_trial_hs4_valid_as_causal_technology_transfer": false,
+  "gating_rules": [
+    "Any HS6 term must be sourced to exact official UNCTAD ICT goods classification edition with code-label evidence.",
+    "Never simply union different HS editions without official concordance handling many-to-many splits/merges.",
+    "Do not label HS4 8471 or 8517 as exhaustive ICT goods for any year.",
+    "Do not infer a source country's HS revision solely from calendar year.",
+    "Exclude World aggregation from partner network; preserve absence as missing.",
+    "Do not compute final FTECH or GMM from incomplete preview data."
+  ],
+  "six_digit_basket_approved": false,
+  "cross_edition_mapping_approved": false,
+  "dynamic_original_country_year_revisions_audited": false,
+  "downstream_model_data_merge_authorized": false
+}
