@@ -125,3 +125,23 @@
 - Roodman, D. (2009). *How to do xtabond2: An introduction to difference and system GMM in Stata*. Stata Journal, 9(1), 86–136.
 
 **برچسب تحویل:** ORIGINAL_DATA_ONLY. **فاز توسعه با داده جدید، خارج از این نسخه و در برنچ مستقل پس از فریز این خروجی تعریف می‌شود.**
+
+---
+
+## پیوست الف. بازآزمایی مستقل با Stata/MP 17 در ۱۷ اکتبر ۲۰۲۶
+
+پس از آماده‌سازی نسخه استاد، یک اجرای **کاملاً تازه** در پوشه‌ای مجزا روی تبلت (Winlator از طریق ADB) انجام شد؛ نه فقط بازخوانی نتایج قدیمی. با همان داده تاریخی اصلی و هش یکسان، **۴ System GMM** (دو پیامد × یک‌مرحله‌ای/دو‌مرحله‌ای) و **۴ Difference GMM** اجرا شدند. شمار خطاهای اجرایی هر مجموعه صفر بود و تمام ارقام CSV تازه و آرشیو قبلی با حداکثر اختلاف مطلق **صفر** منطبق بودند.
+
+| شاخص در مدل دو‌مرحله‌ای | رشد اقتصادی | سطح لگاریتم بهره‌وری |
+|---|---:|---:|
+| System GMM: Hansen p | ۰٫۷۷۱۵۸۳۴ | **۰٫۰۳۵۴۴۸۷** |
+| System GMM: Difference-in-Hansen ابزار سطح p | ۰٫۷۰۵۲۰۶۸ | **۰٫۰۰۰۷۹۳۶** |
+| System GMM: AR(2) p | ۰٫۴۱۲۸۹۰۳ | ۰٫۴۵۱۶۲۰۱ |
+| Difference GMM: Hansen p | ۰٫۴۶۵۵۶۱۱ | ۰٫۳۲۴۳۹۵۱ |
+| Difference GMM: AR(2) p | ۰٫۴۷۶۲۴۴۶ | ۰٫۴۵۶۸۲۶۰ |
+
+**حکم:** بازتولید محاسباتی تأیید می‌شود، اما رد اعتبار ابزارهای System GMM بهره‌وری **همچنان برقرار است**. این پیوست نتیجه علّی تازه‌ای تولید نمی‌کند و مشکل روش‌شناختی را حل‌شده معرفی نمی‌کند.
+
+شواهد کامل قابل رسیدگی: [گزارش بازآزمایی واقعی](PHASE1_STATA_ADB_RETEST_2026-10-17_FA.md)، [CSV جدید System](../evidence/stata-adb-2026-10-17/professor_system_gmm_stats.csv)، [CSV جدید Difference](../evidence/stata-adb-2026-10-17/diff_l23_two_outcomes_stats.csv)، [لاگ واقعی System](../evidence/stata-adb-2026-10-17/PROFESSOR_SYSTEM_GMM_FOUR_RUNS.log)، [لاگ واقعی Difference](../evidence/stata-adb-2026-10-17/DIFFERENCE_GMM_OVERIDENTIFIED_L23_BOTH_MODELS.log) و [کنترل مستقل یکپارچگی](../evidence/stata-adb-2026-10-17/retest_check_result.json).
+
+نسخه اولیه استاد مربوط به ۱۶ اکتبر حفظ شده؛ این پیوست در ۱۷ اکتبر افزوده شده و هیچ تغییری در داده تاریخی، متغیرهای وابسته یا مدل‌های مرجع نداده است.
