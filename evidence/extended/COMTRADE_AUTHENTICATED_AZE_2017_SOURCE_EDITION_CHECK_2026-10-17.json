@@ -1,0 +1,105 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "UTC": "2026-10-17T09:43:50.910210+00:00",
+  "API_key_value_never_logged": true,
+  "source_revision_from_data_availability_not_calendar": true,
+  "rate_limit_throttled_5s_between_requests": true,
+  "missing_never_assumed_zero": true,
+  "country_year_results": [
+    {
+      "ISO3": "AZE",
+      "reporterCode": 31,
+      "year": 2017,
+      "source_url_without_key": "/data/v1/getDa/C/A/HS",
+      "available_rows": 1,
+      "reply": {
+        "status": 200,
+        "body_sha256": "13e007409f4b2d0658c93faf7d97bf9618dbe298d9b5143c88be2feaacb2e685",
+        "count": 1,
+        "error": ""
+      },
+      "source_revisions": [
+        "H4"
+      ],
+      "available_public_metadata": [
+        {
+          "reporterCode": 31,
+          "period": 2017,
+          "classificationCode": "H4",
+          "isOriginalClassification": true,
+          "isPartnerDetail": null,
+          "isCmdDetail": null,
+          "isAggregate": null,
+          "isNetWgtEstimated": null
+        }
+      ],
+      "source_specific_hs4_full_api_probe": {
+        "source_edition": "H4",
+        "response": {
+          "status": 500,
+          "error": "HTTP 500",
+          "count": null,
+          "body_sha256": null
+        },
+        "n_records": 0,
+        "first_2_records": []
+      }
+    },
+    {
+      "ISO3": "USA",
+      "reporterCode": 842,
+      "year": 2017,
+      "source_url_without_key": "/data/v1/getDa/C/A/HS",
+      "available_rows": 1,
+      "reply": {
+        "status": 200,
+        "body_sha256": "0ab6bb0c18e6be5be29a270efa41fdeacb544ea45978468e64335e2b23d9bc2d",
+        "count": 1,
+        "error": ""
+      },
+      "source_revisions": [
+        "H5"
+      ],
+      "available_public_metadata": [
+        {
+          "reporterCode": 842,
+          "period": 2017,
+          "classificationCode": "H5",
+          "isOriginalClassification": true,
+          "isPartnerDetail": null,
+          "isCmdDetail": null,
+          "isAggregate": null,
+          "isNetWgtEstimated": null
+        }
+      ]
+    },
+    {
+      "ISO3": "TTO",
+      "reporterCode": 780,
+      "year": 2022,
+      "source_url_without_key": "/data/v1/getDa/C/A/HS",
+      "available_rows": 1,
+      "reply": {
+        "status": 200,
+        "body_sha256": "83b2c2b45a8ea99d034db647325311de1e3d5387050f4edc3050f130f2f47dc1",
+        "count": 1,
+        "error": ""
+      },
+      "source_revisions": [
+        "H4"
+      ],
+      "available_public_metadata": [
+        {
+          "reporterCode": 780,
+          "period": 2022,
+          "classificationCode": "H4",
+          "isOriginalClassification": true,
+          "isPartnerDetail": null,
+          "isCmdDetail": null,
+          "isAggregate": null,
+          "isNetWgtEstimated": null
+        }
+      ]
+    }
+  ]
+}
