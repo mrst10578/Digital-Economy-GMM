@@ -1,0 +1,44 @@
+name: Phase 2 nine-receiver annual HS4 coverage without technology claims
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'data/extended/comtrade/oecd_missing_hs4_2008_2022/eight_receivers_coverage_2005_2022.csv'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble-country-year-source-coverage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Require validated 8-country full-year source-coverage file before proceeding
+        run: test -s data/extended/comtrade/oecd_missing_hs4_2008_2022/eight_receivers_coverage_2005_2022.csv
+      - name: Build exactly 162 receiver-year slices without data interpolation
+        run: python src/python/extended/summarize_nine_receiver_hs4_2005_2022_coverage.py
+      - name: Persist only descriptive audit on independent branch
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/normalized/nine_receiver_annual_two_heading_coverage_2005_2022.csv
+          git add data/extended/comtrade/normalized/nine_receiver_coverage_by_country_2005_2022.csv
+          git add data/extended/comtrade/normalized/nine_receiver_annual_two_heading_coverage_2005_2022.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): archive 162 annual receiver coverage diagnostics with honest missingness"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-nine-receiver-annual-2005-2022-coverage
+          path: data/extended/comtrade/normalized/nine_receiver_*coverage_2005_2022.*
+          if-no-files-found: warn
+          retention-days: 30
