@@ -1,0 +1,23 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "source_run": 39017650352,
+  "original_professor_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "raw_API_payloads_verified": 18,
+  "all_partner_records": 773,
+  "all_year_heading_summary_rows": 18,
+  "receiver_countries": [
+    "KGZ",
+    "MDA",
+    "PAN"
+  ],
+  "source_country_weight_rows": 138,
+  "missing_cell_count_never_filled_zero": true,
+  "raw_API_json_in_30_day_actions_artifact": true,
+  "world_M49_0_only_denominator_not_source": true,
+  "HS8471_8517_only_not_full_ICT_basket": true,
+  "weights_partial_not_identified_for_causal_models": true,
+  "Stata_executed": false,
+  "phase_A_modified": false,
+  "redistribution_source": "UN Comtrade",
+  "data_policy": "https://uncomtrade.org/docs/re-dissemination-of-data/"
+}
