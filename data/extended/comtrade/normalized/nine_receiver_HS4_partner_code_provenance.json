@@ -1,0 +1,33 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "original_baseline_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "sources_and_counts": {
+    "AZE_18year": 1863,
+    "eight_receivers_baseperiod": 2030
+  },
+  "normalized_rows": 3893,
+  "mapping_status_counts": {
+    "WORLD_AGGREGATE_NOT_ORIGIN": 84,
+    "OTHER_ORIGIN_NOT_IN_ORIGINAL_47": 1470,
+    "EXACT_ISO3_SOURCE_MAPPING": 2172,
+    "CUSTOMS_AREA_CANDIDATE_NOT_EXACT_ISO3": 167
+  },
+  "number_of_world_records_excluded_as_sources": 84,
+  "customs_areas_not_equivalent_to_ISO_countries": {
+    "251": {
+      "candidate_iso3": "FRA",
+      "provenance": "FRANCE_CUSTOMS_AREA_INCL_MONACO_OVERSEAS"
+    },
+    "842": {
+      "candidate_iso3": "USA",
+      "provenance": "US_CUSTOMS_AREA_INCL_PUERTO_RICO_USVI"
+    }
+  },
+  "official_customs_area_documentation": "https://uncomtrade.org/docs/reporter-country-codes-and-their-custom-areas/",
+  "never_renormalize_incomplete_trade_partner_weights": true,
+  "HS_versions_not_harmonized": true,
+  "not_a_complete_multi-country_18year_network": true,
+  "no_FTECH_or_GMM_estimated": true,
+  "source_data_unchanged": true,
+  "run_utc": "2026-10-17T08:47:22.079712+00:00"
+}
