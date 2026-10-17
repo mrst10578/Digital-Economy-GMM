@@ -1,0 +1,41 @@
+name: Phase 2 permanently archive 8 authenticated actual HS6 World goods with source hashes
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/75-phase2-archive-eight-authenticated-HS6.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  independently-verify-source-artifact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-authenticated-8-HS6-goods-source-verified-classic-2017
+          run-id: 39022943597
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/official_comtrade_full_api_preflight
+      - name: Independently verify all genuine Comtrade world rows against original source raw SHA and UNCTAD product catalog
+        run: python src/python/extended/archive_authenticated_8_HS6_world_source_pilot.py
+      - name: Commit source data raw JSON, eight official HS6 records and provenance with zero secrets
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/authenticated_HS6_2017_AZE_source_pilot/
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): preserve 8 authentic full API ICT HS6 2017 goods with raw SHA and verified HS revision"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
