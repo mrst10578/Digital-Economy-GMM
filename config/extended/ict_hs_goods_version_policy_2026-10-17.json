@@ -1,7 +1,7 @@
 {
   "phase": "EXTENDED_DATA_EXPERIMENTAL",
   "created_on": "2026-10-17",
-  "scientific_guard": "NO_FULL_ICT_BASKET_OR_HARMONIZED_HS6_HAS_YET_BEEN_CONSTRUCTED",
+  "scientific_guard": "SEVEN_OFFICIAL_UNCTAD_EDITION_SPECIFIC_ICT_HS6_LISTS_VERIFIED; NO_HS_EDITION_MERGE_OR_FTECH",
   "source_priority": [
     {
       "organization": "UNCTAD",
@@ -31,39 +31,60 @@
   ],
   "hs6_edition_tables": [
     {
+      "code": "H0",
+      "revision": "HS1992",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS92Products_Ict_Hierarchy.pdf",
+      "sha256": "cf2d5a0afbccf93a34998eb0bae5d972dbf7e8c60582fac0c8e6efc2fe36ba15",
+      "verified_codes": 90,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
+    },
+    {
+      "code": "H1",
+      "revision": "HS1996",
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS96Products_Ict_Hierarchy.pdf",
+      "sha256": "dd08a2cfab92c3f99726f99aff3e6f65ef0ee93251ce452be119d54f3d32b735",
+      "verified_codes": 110,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
+    },
+    {
       "code": "H2",
       "revision": "HS2002",
       "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2002Products_Ict_Hierarchy.pdf",
-      "verified_codes": 0,
-      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+      "sha256": "8d8a2d4748cf35bb4d007435795b39d8169b8c84ed974de72f1695f6c0b47dd7",
+      "verified_codes": 108,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
     },
     {
       "code": "H3",
       "revision": "HS2007",
       "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2007Products_Ict_Hierarchy.pdf",
-      "verified_codes": 0,
-      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+      "sha256": "9f4be12e0eec16698d35843280851162a8f019354fd721e65eb3ece65bd92041",
+      "verified_codes": 93,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
     },
     {
       "code": "H4",
       "revision": "HS2012",
       "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2012Products_Ict_Hierarchy.pdf",
-      "verified_codes": 0,
-      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+      "sha256": "5573221b3041722267aa5bd210d7cb2b3c64fd1ea7c5d4d4b78df3857e436e72",
+      "verified_codes": 91,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
     },
     {
       "code": "H5",
       "revision": "HS2017",
       "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2017Products_Ict_Hierarchy.pdf",
-      "verified_codes": 0,
-      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+      "sha256": "91844dc759583aa0af41ceaa32a446f7df574b82f2ee280b9e4aacc7e6bdd5e3",
+      "verified_codes": 92,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
     },
     {
       "code": "H6",
       "revision": "HS2022",
       "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2022Products_Ict_Hierarchy.pdf",
-      "verified_codes": 0,
-      "status": "REFERENCE_IDENTIFIED_NOT_PARSED"
+      "sha256": "67a84e39051d3edff899a0e9a18f25bc600dbdd6f984106fb81dec3cd302ff82",
+      "verified_codes": 107,
+      "status": "UNCTAD_SHA256_VERIFIED_EXACT_PDF_SIX_DIGIT_CODES"
     }
   ],
   "original_hs_series": {
@@ -85,8 +106,14 @@
     "Exclude World aggregation from partner network; preserve absence as missing.",
     "Do not compute final FTECH or GMM from incomplete preview data."
   ],
-  "six_digit_basket_approved": false,
+  "six_digit_basket_approved": true,
   "cross_edition_mapping_approved": false,
   "dynamic_original_country_year_revisions_audited": false,
-  "downstream_model_data_merge_authorized": false
+  "downstream_model_data_merge_authorized": false,
+  "official_hs6_catalog_file": "data/extended/official_ict_hs6/unctad_ict_goods_official_hs6_1992_to_2022.csv",
+  "official_hs6_entries": 691,
+  "official_hs6_editions_source_verified": true,
+  "HS2017_independent_Eurostat_exact_92_code_category_match": true,
+  "HS2017_website_descriptive_93_vs_code_list_92_explained_as_source_count_discrepancy": true,
+  "six_digit_basket_approved_scope": "SOURCE_OBSERVED_EDITION_SPECIFIC_CODE_LISTS_ONLY_NOT_A_LONGITUDINAL_SERIES"
 }
