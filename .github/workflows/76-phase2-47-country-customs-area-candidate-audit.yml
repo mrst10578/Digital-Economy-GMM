@@ -1,0 +1,42 @@
+name: Phase 2 audit 47-country historical customs-area reporter crosswalk source
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/76-phase2-47-country-customs-area-candidate-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  crosswalk-audit-from-unaltered-18-year-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-ALL-47-BY-18-UN-Comtrade-source-HS-metadata-raw
+          run-id: 39022778342
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/source_47_edition_all_years
+      - name: Validate all 18 raw SHA then preserve non-exact France/USA reporting-area flags
+        run: python src/python/extended/audit_47_source_reporter_customs_area_candidates.py
+      - name: Commit country-year candidate country versus customs area source distinctions
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/source_hs_revisions_47/47_country_18_year_source_HS_with_customs_area_flags.csv
+          git add data/extended/comtrade/source_hs_revisions_47/FULL_47_REPORTER_CUSTOMS_AREA_CANDIDATE_AUDIT.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): verify FRA/USA source area aliases without falsely equating ISO countries"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
