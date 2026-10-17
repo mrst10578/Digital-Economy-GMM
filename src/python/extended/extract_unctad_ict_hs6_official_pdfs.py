@@ -20,7 +20,7 @@ ROOT=Path(__file__).resolve().parents[3]
 DIR=ROOT/"outputs/extended/official_ict_hs6_probe"
 OUT=ROOT/"data/extended/official_ict_hs6"
 INFO=DIR/"SOURCE_ACCESS_PROBE.json"
-EXPECTED={2002:108,2007:93,2012:91,2017:92,2022:107}
+EXPECTED={1992:90,1996:110,2002:108,2007:93,2012:91,2017:92,2022:107}
 HSCODE=re.compile(r"^\s*(\d{6})\s+(.+?)\s*$")
 CATCODE=re.compile(r"^\s*(ICT0[1-5])\s+(.+?)\s*$")
 SIXDIGIT=re.compile(r"(?<!\d)\d{6}(?!\d)")
@@ -78,7 +78,7 @@ def extract_pdf(path, year, url, digest):
                     raise ValueError(f"Uncategorized official HS6 code in {year}:{page_no}")
                 current={
                   "HS_edition":f"HS{year}",
-                  "Comtrade_classificationCode":{2002:"H2",2007:"H3",2012:"H4",2017:"H5",2022:"H6"}[year],
+                  "Comtrade_classificationCode":{1992:"H0",1996:"H1",2002:"H2",2007:"H3",2012:"H4",2017:"H5",2022:"H6"}[year],
                   "ICT_group":category,"ICT_group_label":category_label,
                   "HS6":goods.group(1),"description_as_published":goods.group(2),
                   "UNCTAD_source_url":url,"UNCTAD_pdf_sha256":digest,
@@ -125,9 +125,9 @@ def main():
         all_rows.extend(goods)
         print("OFFICIAL_UNCTAD_ICT_HS6_EXTRACTED",year,len(goods),dict(groups),flush=True)
 
-    assert len(all_rows)==sum(EXPECTED.values())==491
+    assert len(all_rows)==sum(EXPECTED.values())==691
     OUT.mkdir(parents=True,exist_ok=True)
-    path=OUT/"unctad_ict_goods_official_hs6_2002_2007_2012_2017_2022.csv"
+    path=OUT/"unctad_ict_goods_official_hs6_1992_to_2022.csv"
     with path.open("w",newline="",encoding="utf-8") as fp:
         writer=csv.DictWriter(fp,fieldnames=FIELDS,lineterminator="\n")
         writer.writeheader();writer.writerows(all_rows)
