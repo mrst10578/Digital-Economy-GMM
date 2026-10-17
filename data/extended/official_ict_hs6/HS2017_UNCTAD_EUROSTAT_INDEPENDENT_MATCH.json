@@ -1,0 +1,19 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "UNCTAD_pdf_code_rows": 92,
+  "Eurostat_XLS_code_rows": 92,
+  "all_codes_and_ICT01_through_ICT05_categories_match": true,
+  "missing_in_UNCTAD": [],
+  "missing_in_Eurostat": [],
+  "category_disagreements": [],
+  "UNCTAD_pdf_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS2017Products_Ict_Hierarchy.pdf",
+  "EUROSTAT_xls_url": "https://ec.europa.eu/eurostat/cache/metadata/Annexes/isoc_it_ict_esmsip2_an_ICT_goods_categories_and_compo.xls",
+  "EUROSTAT_xls_sha256": "c1de029c657f1ddfcf145b5a8c4f10846ad939e5d173de1dbcba0d434e535695",
+  "UNCTAD_pdf_sha256": "91844dc759583aa0af41ceaa32a446f7df574b82f2ee280b9e4aacc7e6bdd5e3",
+  "general_UNCTAD_and_Eurostat_webpage_claims_93_goods": true,
+  "independently_source_verified_catalog_has_92_codes": true,
+  "scientific_treatment": "Use 92 exact codes from two matching original code lists; document website narrative inconsistency; NEVER manufacture a missing 93rd code",
+  "full_ICT_HS_1992_1996_coding_not_yet_verified": true,
+  "all_HS_editions_harmonized": false,
+  "no_FTECH_or_GMM": true
+}
