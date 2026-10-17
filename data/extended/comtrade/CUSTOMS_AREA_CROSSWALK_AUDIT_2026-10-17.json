@@ -1,0 +1,28 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "source_territory_mapping": "https://uncomtrade.org/docs/reporter-country-codes-and-their-custom-areas/",
+  "original_dataset_SHA256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "source_aze_n_rows": 1863,
+  "source_eight_n_rows": 2030,
+  "historical_customs_area_codes": {
+    "251": {
+      "proxy_iso3": "FRA",
+      "equivalence": "NOT_EXACT",
+      "scope": "France customs area includes Monaco and overseas territories"
+    },
+    "842": {
+      "proxy_iso3": "USA",
+      "equivalence": "NOT_EXACT",
+      "scope": "US customs area includes Puerto Rico and US Virgin Islands"
+    }
+  },
+  "definition": "Observed strict ISO-mapped original 47 source trade versus descriptive what-if including 2 UN Comtrade customs-area proxies",
+  "descriptive_what_if_is_not_complete_coverage": true,
+  "crosswalk_not_applied_to_source_records": true,
+  "world_aggregate_excluded_from_partner_sum": true,
+  "no_missing_as_zero_or_causal_ftech": true,
+  "no_data_from_future_years": true,
+  "no_stata_or_gmm": true,
+  "rows": 9,
+  "run_utc": "2026-10-17T08:45:28.502902+00:00"
+}
