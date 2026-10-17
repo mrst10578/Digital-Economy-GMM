@@ -1,0 +1,25 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "original_data_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "original_phase_professor_modified": false,
+  "source_run": 39017139253,
+  "source_artifact": "PHASE2-AZE-all-partners-HS8471-HS8517-2005-2022-raw-audit",
+  "original_partner_source_rows": 1863,
+  "annual_headings_checked": 36,
+  "raw_response_sha256_verified_count": 36,
+  "preperiod_2005_2007_world_import_HS8471_plus_8517_USD": 273172057.0,
+  "preperiod_observed_origins_in_original_47_import_USD": 247764706.0,
+  "reported_47_origin_share": 0.9069913984650341,
+  "origins_ever_observed": 42,
+  "origins_preperiod_all_six_cells_observed": 19,
+  "raw_json_retention": "Underlying GitHub Actions artifact expires after 30 days. Original raw payload hashes remain in annual source coverage file.",
+  "data_quality": "No duplicate country-partner-year-heading rows; 36/36 source hashes match; no imputation.",
+  "scientific_boundaries": [
+    "These two HS headings are neither exhaustive nor time-harmonized ICT goods.",
+    "Comtrade preview partner absence is missing, not a zero-trade claim.",
+    "Partial origin shares over 2005-2007 World are not valid fully observed final trade weights.",
+    "No FTECH index is computed. No valid causal instrument or external knowledge spillover is established.",
+    "Only receiver Azerbaijan is represented for all-source historical HS4 lines."
+  ],
+  "st_ata_required": false
+}
