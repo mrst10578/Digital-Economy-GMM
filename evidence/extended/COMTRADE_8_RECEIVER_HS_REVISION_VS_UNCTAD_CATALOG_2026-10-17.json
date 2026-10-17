@@ -1,0 +1,230 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "observed_source_year_hs4_slices": 240,
+  "eight_country_year_pairs": 120,
+  "verified_code_source_rows": 230,
+  "missing_classification_source_rows": 10,
+  "edition_source_heading_counts": {
+    "H3": 74,
+    "H4": 76,
+    "H5": 66,
+    "H6": 12,
+    "H2": 2,
+    "MISSING": 10
+  },
+  "mixed_revision_in_one_country_year": [],
+  "country_results": [
+    {
+      "receiver_ISO3": "KGZ",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 7,
+        "H4": 2,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2015,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "MAC",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 4,
+        "H4": 5,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2012,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "MDA",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H2": 1,
+        "H3": 6,
+        "H4": 5,
+        "H5": 3
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2009,
+          "from": "H2",
+          "to": "H3"
+        },
+        {
+          "year": 2015,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2020,
+          "from": "H4",
+          "to": "H5"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "MKD",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 4,
+        "H4": 5,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2012,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "MNG",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 10,
+      "edition_counts_by_year": {
+        "MISSING": 5,
+        "H4": 4,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "PAN",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 4,
+        "H4": 5,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2012,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "TTO",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 8,
+        "H4": 7
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2016,
+          "from": "H3",
+          "to": "H4"
+        }
+      ]
+    },
+    {
+      "receiver_ISO3": "URY",
+      "years": 15,
+      "years_two_headings_same_revision_with_observed_data": 15,
+      "edition_counts_by_year": {
+        "H3": 4,
+        "H4": 5,
+        "H5": 5,
+        "H6": 1
+      },
+      "observed_revision_transitions": [
+        {
+          "year": 2012,
+          "from": "H3",
+          "to": "H4"
+        },
+        {
+          "year": 2017,
+          "from": "H4",
+          "to": "H5"
+        },
+        {
+          "year": 2022,
+          "from": "H5",
+          "to": "H6"
+        }
+      ]
+    }
+  ],
+  "all_seven_UNCTAD_editions_catalog_verified": true,
+  "cross_edition_economic_comparability_not_proven": true,
+  "final_ICT_goods_HS6_trade_value_not_downloaded": true,
+  "no_FTECH_GMM_or_stata": true,
+  "baseline_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b"
+}
