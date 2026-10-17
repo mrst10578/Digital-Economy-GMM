@@ -1,0 +1,89 @@
+name: Phase 2 safely archive independently validated 532 real bilateral HS6 rows
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/80-phase2-recover-532-real-multicode-HS6.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  archive-source-data-with-rebase-race-retry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-authenticated-8-official-ICT-HS6-each-two-reporters-multicode-partners
+          run-id: 39023322378
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/recovered_multicode_source
+      - name: Independently verify all four original source responses, 532 rows and 16 product-year cells
+        run: |
+          set -eu
+          python - <<'PY'
+          import csv,hashlib,json,collections,pathlib
+          d=pathlib.Path("outputs/extended/recovered_multicode_source")
+          q=json.loads((d/"QUALITY_AND_PROVENANCE.json").read_text(encoding="utf-8"))
+          assert q["full_source_partner_rows_including_world"]==532
+          assert len(q["raw_sources"])==4 and len(q["coverage_by_code"])==16
+          assert q["matched_8_2017_AZE_World_values_against_previous_independent_source"]
+          assert q["matched_847130_World_values_against_previous_bilateral_source"]
+          with (d/"two_reporter_years_eight_ict_HS6_bilateral_origins.csv").open(
+             encoding="utf-8",newline="") as f:
+             records=list(csv.DictReader(f))
+          assert len(records)==532
+          reference={}
+          for item in q["raw_sources"]:
+             b=(d/item["raw_response_file"]).read_bytes()
+             assert hashlib.sha256(b).hexdigest()==item["raw_sha256"]
+             data=json.loads(b)["data"]
+             assert len(data)==item["source_records"]
+             for r in data:
+                key=(str(r["reporterCode"]),str(r["period"]),str(r["cmdCode"]),str(r["partnerCode"]))
+                assert key not in reference
+                assert r["flowCode"]=="M"
+                assert r["classificationCode"]==item["source_HS_revision"]
+                reference[key]=(str(r["primaryValue"]),item["raw_sha256"])
+          assert len(reference)==len(records)
+          seen=set()
+          from decimal import Decimal
+          for r in records:
+             key=(str(r["reporter_M49_as_reported"]),str(r["Year"]),r["HS6"],str(r["partner_M49_as_reported"]))
+             assert key in reference and key not in seen
+             seen.add(key)
+             value,sha=reference[key]
+             assert Decimal(value)==Decimal(r["nominal_import_value_usd"])
+             assert r["source_SHA256"]==sha
+          print("REVALIDATED_532_BILATERAL_HS6_SOURCE_ROWS_FROM_FOUR_SHA_MATCHED_HTTP_BODIES")
+          PY
+      - name: Archive source evidence with guarded concurrent GitHub push retries
+        run: |
+          set -eu
+          dest=data/extended/comtrade/authenticated_HS6_multicode_bilateral_batch_pilot
+          mkdir -p "$dest"
+          cp -a outputs/extended/recovered_multicode_source/. "$dest/"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$dest"
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): permanently preserve 532 verified real multicode ICT HS6 bilateral source rows"
+            for n in 1 2 3 4 5; do
+              git pull --rebase origin research/digital-economy-extended-data
+              if git push origin HEAD:research/digital-economy-extended-data; then
+                echo "SAFE_ARCHIVE_PUSH_SUCCESS"
+                exit 0
+              fi
+              sleep 4
+            done
+            echo "Could not safely archive due to concurrent branch changes"
+            exit 1
+          fi
