@@ -1,0 +1,50 @@
+name: Phase 2 extract layouts of authenticated UNCTAD HS6 publication PDFs
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - 'src/python/extended/inspect_unctad_official_ict_pdfs.py'
+      - '.github/workflows/60-phase2-unctad-hs6-parse-diagnostics.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  audit-authentic-pdf-layout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'pymupdf>=1.24,<2'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-official-UNCTAD-Eurostat-original-HS6-assets
+          run-id: 39020262375
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/official_ict_hs6_probe
+      - name: Verify all PDF SHA from original successful source run and inspect unmodified page layout
+        run: python src/python/extended/inspect_unctad_official_ict_pdfs.py
+      - name: Persist parser QA observations, not guessed goods codes
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/extended/official_ict_hs6_layout_diagnostics_2026-10-17.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): verify official HS6 PDF table layouts and full token counts"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-UNCTAD-HS6-official-PDF-parser-diagnostics
+          path: evidence/extended/official_ict_hs6_layout_diagnostics_2026-10-17.json
+          if-no-files-found: warn
+          retention-days: 30
