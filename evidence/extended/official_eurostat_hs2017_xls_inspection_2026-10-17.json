@@ -1,0 +1,354 @@
+{
+  "source_sha256": "c1de029c657f1ddfcf145b5a8c4f10846ad939e5d173de1dbcba0d434e535695",
+  "source_url": "https://ec.europa.eu/eurostat/cache/metadata/Annexes/isoc_it_ict_esmsip2_an_ICT_goods_categories_and_compo.xls",
+  "sheets": [
+    {
+      "name": "DimHS2017Products_Ict_Hierarchy",
+      "nrows": 102,
+      "ncols": 4,
+      "first_35_rows": [
+        {
+          "row": 1,
+          "values": [
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "row": 2,
+          "values": [
+            "",
+            "ICT goods categories and composition (HS 2017)",
+            "",
+            ""
+          ]
+        },
+        {
+          "row": 3,
+          "values": [
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "row": 4,
+          "values": [
+            "",
+            "",
+            "Code",
+            "Label"
+          ]
+        },
+        {
+          "row": 5,
+          "values": [
+            "",
+            "",
+            "ICT00",
+            "Total ICT goods"
+          ]
+        },
+        {
+          "row": 6,
+          "values": [
+            "",
+            "",
+            "ICT01",
+            "Computers and peripheral equipment"
+          ]
+        },
+        {
+          "row": 7,
+          "values": [
+            "",
+            "",
+            "844331",
+            "Printing, copying, and facsimile machines; machines which perform two or more of the functions of printing, copying or facsimile transmission, capable of connecting to an automatic data processing machine or to a network"
+          ]
+        },
+        {
+          "row": 8,
+          "values": [
+            "",
+            "",
+            "844332",
+            "Printing, copying, and facsimile machines; single-function printing, copying or facsimile machines, capable of connecting to an automatic data processing machine or to a network"
+          ]
+        },
+        {
+          "row": 9,
+          "values": [
+            "",
+            "",
+            "847050",
+            "Cash registers"
+          ]
+        },
+        {
+          "row": 10,
+          "values": [
+            "",
+            "",
+            "847130",
+            "Automatic data processing machines; portable, weighing not more than 10kg, consisting of at least a central processing unit, a keyboard and a display"
+          ]
+        },
+        {
+          "row": 11,
+          "values": [
+            "",
+            "",
+            "847141",
+            "Automatic data processing machines; comprising in the same housing at least a central processing unit and an input and output unit, whether or not combined, n.e.c. in item no. 8471.30"
+          ]
+        },
+        {
+          "row": 12,
+          "values": [
+            "",
+            "",
+            "847149",
+            "Automatic data processing machines; presented in the form of systems, n.e.c. in item no. 8471.30 or 8471.41"
+          ]
+        },
+        {
+          "row": 13,
+          "values": [
+            "",
+            "",
+            "847150",
+            "Units of automatic data processing machines; processing units other than those of item no. 8471.41 or 8471.49, whether or not containing in the same housing one or two of the following types of unit: storage units, input units or output units"
+          ]
+        },
+        {
+          "row": 14,
+          "values": [
+            "",
+            "",
+            "847160",
+            "Units of automatic data processing machines; input or output units, whether or not containing storage units in the same housing"
+          ]
+        },
+        {
+          "row": 15,
+          "values": [
+            "",
+            "",
+            "847170",
+            "Units of automatic data processing machines; storage units"
+          ]
+        },
+        {
+          "row": 16,
+          "values": [
+            "",
+            "",
+            "847180",
+            "Units of automatic data processing machines; n.e.c. in item no. 8471.50, 8471.60 or 8471.70"
+          ]
+        },
+        {
+          "row": 17,
+          "values": [
+            "",
+            "",
+            "847190",
+            "Magnetic or optical readers, machines for transcribing data onto data media in coded form and machines for processing such data, not elsewhere specified or included"
+          ]
+        },
+        {
+          "row": 18,
+          "values": [
+            "",
+            "",
+            "847290",
+            "Office machines; not elsewhere classified"
+          ]
+        },
+        {
+          "row": 19,
+          "values": [
+            "",
+            "",
+            "847330",
+            "Machinery; parts and accessories (other than covers, carrying cases and the like) of the machines of heading no. 8471"
+          ]
+        },
+        {
+          "row": 20,
+          "values": [
+            "",
+            "",
+            "847340",
+            "Machinery; parts and accessories (other than covers, carrying cases and the like) of the machines of heading no. 8472"
+          ]
+        },
+        {
+          "row": 21,
+          "values": [
+            "",
+            "",
+            "847350",
+            "Machines; parts and accessories (other than covers, carrying cases and the like) equally suitable for use with machines of two or more of the headings 8470 to 8472"
+          ]
+        },
+        {
+          "row": 22,
+          "values": [
+            "",
+            "",
+            "852842",
+            "Monitors; cathode-ray tube, capable of directly connecting to and designed for use with an automatic data processing machine of heading 84.71"
+          ]
+        },
+        {
+          "row": 23,
+          "values": [
+            "",
+            "",
+            "852852",
+            "Monitors; other than cathode-ray tube; capable of directly connecting to and designed for use with an automatic data processing machine of heading 84.71"
+          ]
+        },
+        {
+          "row": 24,
+          "values": [
+            "",
+            "",
+            "ICT02",
+            "Communication equipment"
+          ]
+        },
+        {
+          "row": 25,
+          "values": [
+            "",
+            "",
+            "851711",
+            "Line telephone sets with cordless handsets"
+          ]
+        },
+        {
+          "row": 26,
+          "values": [
+            "",
+            "",
+            "851712",
+            "Telephones for cellular networks or for other wireless networks"
+          ]
+        },
+        {
+          "row": 27,
+          "values": [
+            "",
+            "",
+            "851718",
+            "Telephone sets n.e.c. in item no. 8517.1"
+          ]
+        },
+        {
+          "row": 28,
+          "values": [
+            "",
+            "",
+            "851761",
+            "Base stations"
+          ]
+        },
+        {
+          "row": 29,
+          "values": [
+            "",
+            "",
+            "851762",
+            "Communication apparatus (excluding telephone sets or base stations); machines for the reception, conversion and transmission or regeneration of voice, images or other data, including switching and routing apparatus"
+          ]
+        },
+        {
+          "row": 30,
+          "values": [
+            "",
+            "",
+            "851769",
+            "Communication apparatus (excluding telephone sets or base stations); machines for the transmission or reception of voice, images or other data (including wired/wireless networks), n.e.c. in item no. 8517.6"
+          ]
+        },
+        {
+          "row": 31,
+          "values": [
+            "",
+            "",
+            "851770",
+            "Telephone sets and other apparatus for the transmission or reception of voice, images or other data, via a wired or wireless network; parts"
+          ]
+        },
+        {
+          "row": 32,
+          "values": [
+            "",
+            "",
+            "852550",
+            "Transmission apparatus for radio-broadcasting or television, whether or not incorporating sound recording or reproducing apparatus, not incorporating reception apparatus"
+          ]
+        },
+        {
+          "row": 33,
+          "values": [
+            "",
+            "",
+            "852560",
+            "Transmission apparatus for radio-broadcasting or television, whether or not incorporating sound recording or reproducing apparatus, incorporating reception apparatus"
+          ]
+        },
+        {
+          "row": 34,
+          "values": [
+            "",
+            "",
+            "853110",
+            "Signalling apparatus; electric, sound or visual, burglar or fire alarms and similar, other than those of heading no. 8512 or 8530"
+          ]
+        },
+        {
+          "row": 35,
+          "values": [
+            "",
+            "",
+            "ICT03",
+            "Consumer electronic equipment"
+          ]
+        }
+      ],
+      "six_digit_cell_values_count": 92,
+      "unique_six_digit_cell_values": 92,
+      "first_20_six_digit_codes": [
+        "844331",
+        "844332",
+        "847050",
+        "847130",
+        "847141",
+        "847149",
+        "847150",
+        "847160",
+        "847170",
+        "847180",
+        "847190",
+        "847290",
+        "847330",
+        "847340",
+        "847350",
+        "852842",
+        "852852",
+        "851711",
+        "851712",
+        "851718"
+      ]
+    }
+  ],
+  "no_classification_approved": true,
+  "timestamp_utc": "2026-10-17T09:14:35.669643+00:00"
+}
