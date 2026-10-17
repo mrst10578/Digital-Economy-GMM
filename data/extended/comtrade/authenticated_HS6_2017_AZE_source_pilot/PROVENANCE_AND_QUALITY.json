@@ -1,0 +1,18 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "authenticated_full_source_response_verified": true,
+  "original_professor_panel_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "original_raw_comtrade_sha256": "0ff316bbde77f1ee957ce6dd019f38cfd380bdfb6c46f8c812667e6f7138fe90",
+  "original_getDA_response_sha256": "13e007409f4b2d0658c93faf7d97bf9618dbe298d9b5143c88be2feaacb2e685",
+  "UNCTAD_official_catalog_sha256": "872da231613d6251f8e620a3634bf68569843793464119dc37dbc48b64f65ff3",
+  "official_reporter_year_HS": "H4",
+  "original_source_world_rows": 8,
+  "verified_unique_official_ict_HS6_codes": 8,
+  "nominal_usd_fields": true,
+  "World_only_no_individual_foreign_origins": true,
+  "HS6_historical_cross_edition_concordance_not_yet_verified": true,
+  "source_2017_country_specific_data_only": true,
+  "FTECH_or_GMM_ready": false,
+  "secret_not_stored": true,
+  "all_source_values_observed_not_imputed": true
+}
