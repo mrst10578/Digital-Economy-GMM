@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """One-call credential-gated feasibility of full UN Comtrade HS6 annual imports.
 
-Uses 8 real UNCTAD HS2017 ICT products; no hard-coded/traced API key. This is
-NOT the 47-country production collector. Only manual workflow_dispatch with
+Uses 8 genuine UNCTAD HS6 ICT products in verified reporter-year classification; no hard-coded/traced API key. This is
+NOT the 47-country production collector. Only explicitly triggered workflow with
 an authorized free subscription key. Never print, embed, or log credentials.
 """
 from __future__ import annotations
@@ -20,8 +20,8 @@ BASE=ROOT/"data/raw/Balanced_Panel_Data.xlsx"
 LOCK=ROOT/"config/extended/phase2_original_47_country_sample_lock.json"
 OUT=ROOT/"outputs/extended/official_comtrade_full_api_preflight"
 API_ROOT="https://comtradeapi.un.org/data/v1"
-LIMIT=100_000
-MAX_RAW=48_000_000
+LIMIT=500
+MAX_RAW=8_000_000
 def main():
     key=os.environ.get("COMTRADE_API_KEY","").strip()
     if not key: raise RuntimeError("COMTRADE_API_KEY not configured; zero API calls made")
@@ -50,9 +50,10 @@ def main():
     time.sleep(8)
     assert all(len(code)==6 and code.isdigit() for code in edition)
     goods=edition[:8]
-    endpoint=API_ROOT+"/get/C/A/"+source_edition
+    endpoint=API_ROOT+"/get/C/A/HS"  # as-reported routing; direct /H4 or /H6 gave HTTP 500
     url=endpoint+"?"+urlencode({
         "reporterCode":31,"period":2017,"flowCode":"M","cmdCode":",".join(goods),
+        "partnerCode":0,"partner2Code":0,"motCode":0,"customsCode":"C00",
         "maxRecords":LIMIT,"breakdownMode":"classic"
     })
     req=Request(url,headers={"User-Agent":"Academic-Research-ICT-HS6-Secure-Preflight/1.0",
@@ -83,7 +84,11 @@ def main():
             val=float(rec["primaryValue"])
             assert math.isfinite(val) and val>=0
             partner=int(rec["partnerCode"])
-            assert partner>=0
+            assert partner==0
+            assert int(rec.get("partner2Code",-1))==0
+            assert int(rec.get("motCode",-1))==0
+            assert rec.get("customsCode")=="C00"
+            assert rec.get("isOriginalClassification") is True
             k=(2017,code,partner)
             assert k not in seen
             seen.add(k)
@@ -106,6 +111,9 @@ def main():
       "http_status":http_status,"observed_rows_including_world":len(data),
       "expected_product_codes":goods,"codes_with_at_least_one_reported_record":dict(count),
       "all_8_products_present":set(count)==set(goods),
+      "goods_with_missing_source_rows_not_zero":sorted(set(goods)-set(count)),
+      "source_query_breakdownMode":"classic",
+      "source_world_partner_and_all_transport_customs_only":True,
       "records_uniquely_identified":True,"no_truncation_under_free_100K_cap":True,
       "key_was_never_stored_or_logged":True,"year_2017_revision_is_source_verified":True,
       "is_complete_47_country_18_year_network":False,
