@@ -1,0 +1,46 @@
+name: Phase 2 real bilateral HS6 imports original source classification pilot
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/77-phase2-true-ict-HS6-full-bilateral-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verified-two-reporter-source-bilateral:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'pycountry>=24,<30'
+      - name: Download authenticated single ICT HS6 bilateral trade by all origins for two source reporters
+        env:
+          COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
+        run: |
+          set -eu
+          if test -z "$COMTRADE_API_KEY"; then echo "Comtrade subscription secret unavailable"; exit 2; fi
+          python src/python/extended/collect_authenticated_hs6_bilateral_two_reporters.py
+      - name: Commit only verified original HS6 bilateral data and original response SHA
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/authenticated_HS6_two_bilateral_source_pilot/
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): archive real full API bilateral ICT HS6 pilot with world and strict territory flags"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-verified-full-HS6-all-partners-bilateral-source
+          path: data/extended/comtrade/authenticated_HS6_two_bilateral_source_pilot/
+          if-no-files-found: warn
+          retention-days: 30
