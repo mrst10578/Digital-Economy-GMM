@@ -7,6 +7,8 @@ on:
       - 'src/python/build_professor_original_only_final.py'
       - 'docs/PROFESSOR_ORIGINAL_DATA_ONLY_HANDOFF_REPORT_2026-10-16_FA.md'
       - 'data/raw/Balanced_Panel_Data.xlsx'
+      - 'evidence/stata-adb-2026-10-17/**'
+      - 'docs/PHASE1_STATA_ADB_RETEST_2026-10-17_FA.md'
       - 'src/python/to_stata.py'
       - 'evidence/scientific-gates-2026-10-16/professor_two_primary_system_gmm_full_coefficients.csv'
       - '.github/workflows/41-professor-original-only-final-package.yml'
@@ -53,16 +55,16 @@ jobs:
         run: |
           set -euo pipefail
           O=outputs/professor_original_only_final
-          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.docx"
-          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf"
-          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip"
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.docx"
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.pdf"
+          test -s "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17_FINAL.zip"
           test -s "$O/MANIFEST_ORIGINAL_DATA_ONLY.json"
           python - <<'PY'
           import json,hashlib,zipfile
           from pathlib import Path
           folder=Path('outputs/professor_original_only_final')
           m=json.loads((folder/'MANIFEST_ORIGINAL_DATA_ONLY.json').read_text())
-          a=folder/'PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip'
+          a=folder/'PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17_FINAL.zip'
           with zipfile.ZipFile(a) as z:
               assert z.testzip() is None
               assert len(z.namelist())==len(set(z.namelist()))
@@ -74,18 +76,18 @@ jobs:
           assert m['scientific_causal_identification_status']=='NOT_VERIFIED'
           print('INDEPENDENT_PROFESSOR_ORIGINAL_PACKAGE_AUDIT_PASS',len(m['entries']))
           PY
-          pdffonts "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" | grep Mikhak
-          pdfinfo "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" | grep Pages
-          pdftotext "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf" - | grep -m 1 'System GMM'
+          pdffonts "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.pdf" | grep Mikhak
+          pdfinfo "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.pdf" | grep Pages
+          pdftotext "$O/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.pdf" - | grep -m 1 'System GMM'
       - name: Upload the actual original-data-only professor deliverables
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_VERIFIED
+          name: PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17_VERIFIED
           path: |
-            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.docx
-            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16.pdf
-            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-16_FINAL.zip
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.docx
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17.pdf
+            outputs/professor_original_only_final/PROFESSOR_ORIGINAL_DATA_ONLY_2026-10-17_FINAL.zip
             outputs/professor_original_only_final/MANIFEST_ORIGINAL_DATA_ONLY.json
             outputs/professor_original_only_final/BUILD_RESULT_ORIGINAL_DATA_ONLY.json
           retention-days: 60
