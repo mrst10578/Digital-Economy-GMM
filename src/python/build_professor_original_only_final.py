@@ -183,7 +183,7 @@ def word_styles(path:Path) -> None:
         if p.style.name.startswith("Heading"):
             p.paragraph_format.space_before=Pt(11)
             p.paragraph_format.space_after=Pt(5)
-            if "پیوست الف. بازآزمایی مستقل" in p.text:
+            if "پیوست الف. بازآزمایی مستقل" in p.text or "پیوست ب. آزمون‌های استحکام" in p.text:
                 p.paragraph_format.page_break_before=True
             # Make the subtitle / subsection weight actually use the font file,
             # rather than only applying synthetic bold to the regular font.
