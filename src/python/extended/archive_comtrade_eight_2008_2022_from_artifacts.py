@@ -145,6 +145,45 @@ def main():
                 for r in full_obs]
     assert len(set(all_keys)) == len(full_obs)
     status = dict(Counter(r["status"] for r in full_coverage))
+    # Source-level original-classification audit; never infer HS edition from calendar year.
+    edition_labels = {
+        "H0": "HS1992", "H1": "HS1996", "H2": "HS2002",
+        "H3": "HS2007", "H4": "HS2012", "H5": "HS2017", "H6": "HS2022",
+    }
+    revision_rows = []
+    for row in all_coverage:
+        iso, year, hs = row["reporter_ISO3"], int(row["Year"]), row["HS4"]
+        cohort = next(c for c, members in COHORTS.items() if iso in members)
+        source_path = IN_ROOT / ("PHASE2-EIGHT-2008-2022-" + cohort)
+        doc = json.loads((source_path / "raw_API" /
+            f"{iso}_{year}_HS{hs}_all_partners.json").read_text(encoding="utf-8"))
+        source_records = doc["data"]
+        def distinct_values(field):
+            return sorted({str(rec[field]) for rec in source_records
+                           if rec.get(field) is not None and str(rec[field]) != ""})
+        codes = distinct_values("classificationCode")
+        search_codes = distinct_values("classificationSearchCode")
+        original_flags = distinct_values("isOriginalClassification")
+        levels = distinct_values("aggrLevel")
+        one = codes[0] if len(codes) == 1 else ""
+        revision_rows.append({
+            "reporter_ISO3": iso, "Year": year, "HS4": hs,
+            "query_classification": "HS_AS_REPORTED",
+            "observed_classificationCode_values": ";".join(codes),
+            "observed_classificationSearchCode_values": ";".join(search_codes),
+            "observed_isOriginalClassification_values": ";".join(original_flags),
+            "observed_aggrLevel_values": ";".join(levels),
+            "unambiguous_HS_revision_if_reported": edition_labels.get(one, ""),
+            "revision_established_from_metadata_not_year":
+                "TRUE" if one in edition_labels and original_flags == ["True"] else "FALSE",
+            "requires_official_UNCTAD_HS6_concordance": "TRUE",
+            "classification_not_inferred_from_calendar": "TRUE",
+        })
+    rev_columns = list(revision_rows[0])
+    write_csv(OUT / "source_classification_revisions_2008_2022.csv",
+              rev_columns, revision_rows)
+    revision_known = sum(r["revision_established_from_metadata_not_year"] == "TRUE"
+                         for r in revision_rows)
     meta = {
         "phase": "EXTENDED_DATA_EXPERIMENTAL",
         "source": "UN Comtrade public preview, potentially incomplete irrespective of record count",
@@ -161,6 +200,8 @@ def main():
         "status_empty_means_unreported_not_zero": True,
         "raw_JSON_SHA256_per_query_verified": 240,
         "HS_subheadings_not_harmonized": True,
+        "year_heading_slices_with_unique_original_revision_metadata": revision_known,
+        "revision_provenance_slices_recorded": len(revision_rows),
         "source_country_territory_crosswalk_not_final": True,
         "not_complete_ICT_commodity_basket": True,
         "not_complete_47_receivers": True,
