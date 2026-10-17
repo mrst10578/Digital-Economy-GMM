@@ -1,0 +1,89 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "baseline_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "source_aze_csv_sha256": "9a15faf42a8d058d48697db408af98b033a29171bceb24712e5f2f0c00f99225",
+  "source_eight_csv_sha256": "9fbff78302670d4ec60ea9c5627a81710ae4b6eb58c6208a345a11cbfc4bee67",
+  "receiver_year_slices": 162,
+  "receiver_year_heading_slices": 324,
+  "fully_valid_two_heading_receiver_years": 157,
+  "country_level": [
+    {
+      "receiver_ISO3": "AZE",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "KGZ",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "MAC",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "MDA",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "MKD",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "MNG",
+      "valid_both_heading_years": 13,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "FALSE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "PAN",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "TTO",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    },
+    {
+      "receiver_ISO3": "URY",
+      "valid_both_heading_years": 18,
+      "years_expected": 18,
+      "fully_observed_all_18_annual_two_heading_aggregates": "TRUE",
+      "data_are_preview_not_proven_exhaustive": "TRUE",
+      "FTECH_ready": "FALSE"
+    }
+  ],
+  "not_all_47_original_receivers": true,
+  "both_trial_HS4_are_not_harmonized_full_ICT": true,
+  "preview_coverage_not_verified_as_exhaustive": true,
+  "all_missing_fields_remain_blank": true,
+  "no_technology_spillover_or_causal_model_estimated": true,
+  "no_stata_run_or_phase_A_update": true
+}
