@@ -1,0 +1,163 @@
+{
+  "timestamp_utc": "2026-10-17T09:42:24.893970+00:00",
+  "authorization_secret_not_recorded": true,
+  "query_count": 6,
+  "no_missing_replaced_by_zero": true,
+  "cases": [
+    {
+      "name": "AZE_H5_2017_HS6_one_world",
+      "version": "H5",
+      "params_without_credentials": {
+        "reporterCode": "31",
+        "period": "2017",
+        "cmdCode": "847130",
+        "flowCode": "M",
+        "partnerCode": "0",
+        "maxRecords": "30"
+      },
+      "http_status": 200,
+      "response_fields": [
+        "elapsedTime",
+        "count",
+        "data",
+        "error"
+      ],
+      "reported_count": 0,
+      "validation_status": null,
+      "server_error": "",
+      "data_records": 0,
+      "first_records_public_fields": [],
+      "body_sha256": "abfcedadc0d00b569b74638799519831d5e902e849c7a0e480ad2bf9740c068f",
+      "error": null
+    },
+    {
+      "name": "AZE_H5_2017_HS4_world",
+      "version": "H5",
+      "params_without_credentials": {
+        "reporterCode": "31",
+        "period": "2017",
+        "cmdCode": "8471",
+        "flowCode": "M",
+        "partnerCode": "0",
+        "maxRecords": "30"
+      },
+      "http_status": 200,
+      "response_fields": [
+        "elapsedTime",
+        "count",
+        "data",
+        "error"
+      ],
+      "reported_count": 0,
+      "validation_status": null,
+      "server_error": "",
+      "data_records": 0,
+      "first_records_public_fields": [],
+      "body_sha256": "a7913c6a1f764f18a8afefe331da796eb112ed72aa5cc984612aa4f2f79ee8da",
+      "error": null
+    },
+    {
+      "name": "USA_H5_2017_HS6_world",
+      "version": "H5",
+      "params_without_credentials": {
+        "reporterCode": "842",
+        "period": "2017",
+        "cmdCode": "847130",
+        "flowCode": "M",
+        "partnerCode": "0",
+        "maxRecords": "30"
+      },
+      "http_status": 500,
+      "response_fields": [],
+      "reported_count": null,
+      "validation_status": null,
+      "server_error": null,
+      "data_records": 0,
+      "first_records_public_fields": [],
+      "body_sha256": null,
+      "error": "HTTPError: HTTP Error 500: Internal Server Error"
+    },
+    {
+      "name": "USA_H6_2022_HS6_world",
+      "version": "H6",
+      "params_without_credentials": {
+        "reporterCode": "842",
+        "period": "2022",
+        "cmdCode": "847130",
+        "flowCode": "M",
+        "partnerCode": "0",
+        "maxRecords": "30"
+      },
+      "http_status": 429,
+      "response_fields": [],
+      "reported_count": null,
+      "validation_status": null,
+      "server_error": null,
+      "data_records": 0,
+      "first_records_public_fields": [],
+      "body_sha256": null,
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+    },
+    {
+      "name": "USA_HS_2022_TOTAL_world",
+      "version": "HS",
+      "params_without_credentials": {
+        "reporterCode": "842",
+        "period": "2022",
+        "cmdCode": "TOTAL",
+        "flowCode": "M",
+        "partnerCode": "0",
+        "maxRecords": "30"
+      },
+      "http_status": 200,
+      "response_fields": [
+        "elapsedTime",
+        "count",
+        "data",
+        "error"
+      ],
+      "reported_count": 1,
+      "validation_status": null,
+      "server_error": "",
+      "data_records": 1,
+      "first_records_public_fields": [
+        {
+          "reporterCode": "842",
+          "period": "2022",
+          "classificationCode": "H6",
+          "cmdCode": "TOTAL",
+          "partnerCode": "0",
+          "flowCode": "M",
+          "primaryValue": "3372902165775.0"
+        }
+      ],
+      "body_sha256": "9f9761151fa221d138def12eaec6f1f3b30ff066ca5d137ef2e2f0f9fc93762c",
+      "error": null
+    },
+    {
+      "name": "AZE_H5_2017_HS6_one_all_origins",
+      "version": "H5",
+      "params_without_credentials": {
+        "reporterCode": "31",
+        "period": "2017",
+        "cmdCode": "847130",
+        "flowCode": "M",
+        "maxRecords": "80"
+      },
+      "http_status": 200,
+      "response_fields": [
+        "elapsedTime",
+        "count",
+        "data",
+        "error"
+      ],
+      "reported_count": 0,
+      "validation_status": null,
+      "server_error": "",
+      "data_records": 0,
+      "first_records_public_fields": [],
+      "body_sha256": "0f48794e774fadb67770df6eadb0f3844d14aca4dc4c12226de2e63facc771ad",
+      "error": null
+    }
+  ]
+}
