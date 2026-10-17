@@ -1,28 +1,28 @@
 {
   "phase": "EXTENDED_DATA_EXPERIMENTAL",
-  "timestamp_utc": "2026-10-17T09:13:03.284339+00:00",
+  "timestamp_utc": "2026-10-17T09:17:05.191002+00:00",
   "sources": [
     {
       "name": "UNCTAD_HS1992_PDF",
-      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS1992Products_Ict_Hierarchy.pdf",
-      "status": "ERROR",
-      "http_code": 404,
-      "size_bytes": 0,
-      "sha256": null,
-      "file_kind_verified": "NONE",
-      "stored_relpath": "",
-      "error": "HTTPError: HTTP Error 404: Not Found"
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS92Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 226472,
+      "sha256": "cf2d5a0afbccf93a34998eb0bae5d972dbf7e8c60582fac0c8e6efc2fe36ba15",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS1992_PDF.pdf",
+      "error": ""
     },
     {
       "name": "UNCTAD_HS1996_PDF",
-      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS1996Products_Ict_Hierarchy.pdf",
-      "status": "ERROR",
-      "http_code": 404,
-      "size_bytes": 0,
-      "sha256": null,
-      "file_kind_verified": "NONE",
-      "stored_relpath": "",
-      "error": "HTTPError: HTTP Error 404: Not Found"
+      "url": "https://unctadstat.unctad.org/EN/Classifications/DimHS96Products_Ict_Hierarchy.pdf",
+      "status": "VALID_SOURCE_BYTES",
+      "http_code": 200,
+      "size_bytes": 230744,
+      "sha256": "dd08a2cfab92c3f99726f99aff3e6f65ef0ee93251ce452be119d54f3d32b735",
+      "file_kind_verified": "pdf",
+      "stored_relpath": "UNCTAD_HS1996_PDF.pdf",
+      "error": ""
     },
     {
       "name": "UNCTAD_HS2002_PDF",
@@ -91,7 +91,7 @@
       "error": ""
     }
   ],
-  "available_valid_sources": 6,
+  "available_valid_sources": 8,
   "no_HS6_codes_inferred_or_invented": true,
   "not_yet_approved_ICT_goods_basket": true,
   "no_Stata_or_original_professor_data_change": true
