@@ -1,0 +1,118 @@
+{
+  "timestamp_utc": "2026-10-17T09:52:29.759225+00:00",
+  "exclusively_official_Comtrade_endpoints": true,
+  "secret_not_stored": true,
+  "missing_not_zero": true,
+  "eight_second_spacing": true,
+  "requests": [
+    {
+      "case": "USA_HS_2022_847130_FULL",
+      "edition": "HS",
+      "reporter": 842,
+      "year": 2022,
+      "cmdCode": "847130",
+      "endpoint": "data/v1/get",
+      "status": 200,
+      "rows": 1,
+      "reported_count": 1,
+      "response_error": "",
+      "body_sha256": "b715e7b016c8b247dbbb518233d5d8d2d351c3a7a7fbd5f91ed938728c9ae17a",
+      "first_two_trade_rows": [
+        {
+          "classificationCode": "H6",
+          "cmdCode": "847130",
+          "period": "2022",
+          "reporterCode": 842,
+          "partnerCode": 0,
+          "flowCode": "M",
+          "primaryValue": 54530351570.0
+        }
+      ],
+      "http_error": null
+    },
+    {
+      "case": "USA_HS_2022_847130_PREVIEW",
+      "edition": "HS",
+      "reporter": 842,
+      "year": 2022,
+      "cmdCode": "847130",
+      "endpoint": "public/v1/preview",
+      "status": 200,
+      "rows": 1,
+      "reported_count": 1,
+      "response_error": "",
+      "body_sha256": "3410e2cc77dd734aa802e5d7ed9c97e26d0396762999e391d342a64dae7bbf41",
+      "first_two_trade_rows": [
+        {
+          "classificationCode": "H6",
+          "cmdCode": "847130",
+          "period": "2022",
+          "reporterCode": 842,
+          "partnerCode": 0,
+          "flowCode": "M",
+          "primaryValue": 54530351570.0
+        }
+      ],
+      "http_error": null
+    },
+    {
+      "case": "AZE_HS_2017_8471_FULL",
+      "edition": "HS",
+      "reporter": 31,
+      "year": 2017,
+      "cmdCode": "8471",
+      "endpoint": "data/v1/get",
+      "status": 200,
+      "rows": 13,
+      "reported_count": 13,
+      "response_error": "",
+      "body_sha256": "9ab0c30657767faff5b2e4367d771b9905c1564298c4eae3b3cbcf396f96d34d",
+      "first_two_trade_rows": [
+        {
+          "classificationCode": "H4",
+          "cmdCode": "8471",
+          "period": "2017",
+          "reporterCode": 31,
+          "partnerCode": 0,
+          "flowCode": "M",
+          "primaryValue": 362.25
+        },
+        {
+          "classificationCode": "H4",
+          "cmdCode": "8471",
+          "period": "2017",
+          "reporterCode": 31,
+          "partnerCode": 0,
+          "flowCode": "M",
+          "primaryValue": 362.25
+        }
+      ],
+      "http_error": null
+    },
+    {
+      "case": "AZE_HS_2017_8471_PREVIEW",
+      "edition": "HS",
+      "reporter": 31,
+      "year": 2017,
+      "cmdCode": "8471",
+      "endpoint": "public/v1/preview",
+      "status": 200,
+      "rows": 1,
+      "reported_count": 1,
+      "response_error": "",
+      "body_sha256": "4b84f287d25554a24ca6ae71585550f76865ed8f0965aaa8b03d6dde5cb7aa19",
+      "first_two_trade_rows": [
+        {
+          "classificationCode": "H4",
+          "cmdCode": "8471",
+          "period": "2017",
+          "reporterCode": 31,
+          "partnerCode": 0,
+          "flowCode": "M",
+          "primaryValue": 69128471.94
+        }
+      ],
+      "http_error": null
+    }
+  ]
+}
