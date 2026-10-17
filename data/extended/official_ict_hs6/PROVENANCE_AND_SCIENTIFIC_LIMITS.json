@@ -1,9 +1,43 @@
 {
   "phase": "EXTENDED_DATA_EXPERIMENTAL",
   "source": "UNCTAD Data Hub official ICT categories and HS edition catalogs",
-  "source_files_verified_sha256": 5,
-  "total_official_HS6_entries": 491,
+  "source_files_verified_sha256": 7,
+  "total_official_HS6_entries": 691,
   "editions": [
+    {
+      "edition": "HS1992",
+      "Comtrade_classificationCode": "H0",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS92Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "cf2d5a0afbccf93a34998eb0bae5d972dbf7e8c60582fac0c8e6efc2fe36ba15",
+      "pages": 4,
+      "distinct_six_digit_codes": 90,
+      "category_counts": {
+        "ICT01": 16,
+        "ICT02": 8,
+        "ICT03": 36,
+        "ICT04": 25,
+        "ICT05": 5
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
+    {
+      "edition": "HS1996",
+      "Comtrade_classificationCode": "H1",
+      "official_source_url": "https://unctadstat.unctad.org/EN/Classifications/DimHS96Products_Ict_Hierarchy.pdf",
+      "official_source_sha256": "dd08a2cfab92c3f99726f99aff3e6f65ef0ee93251ce452be119d54f3d32b735",
+      "pages": 4,
+      "distinct_six_digit_codes": 110,
+      "category_counts": {
+        "ICT01": 19,
+        "ICT02": 10,
+        "ICT03": 43,
+        "ICT04": 30,
+        "ICT05": 8
+      },
+      "completeness_against_current_pdf": "ALL_PDF_SIX_DIGIT_ROWS_EXTRACTED",
+      "cross_edition_mapping_verified": false
+    },
     {
       "edition": "HS2002",
       "Comtrade_classificationCode": "H2",
@@ -93,7 +127,9 @@
   "HS2017_current_pdf_rows": 92,
   "HS2017_website_descriptive_count": 93,
   "HS2017_discrepancy_with_website_UNRESOLVED": true,
-  "independent_eurostat_HS2017_crosscheck_required": true,
+  "independent_eurostat_HS2017_crosscheck_required": false,
+  "independent_eurostat_HS2017_match_file": "data/extended/official_ict_hs6/HS2017_UNCTAD_EUROSTAT_INDEPENDENT_MATCH.json",
+  "scientific_HS2017_website_prose_not_used_to_fabricate_missing_code": true,
   "raw_HS6_editions_never_assumed_interchangeable": true,
   "HS6_partner_trade_data_yet_downloaded": false,
   "trade_weight_data_quality_yet_validated": false,

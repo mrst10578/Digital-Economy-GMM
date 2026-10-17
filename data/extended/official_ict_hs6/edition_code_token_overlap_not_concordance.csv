@@ -1,4 +1,6 @@
 from_HS_edition,to_HS_edition,identical_six_digit_strings,only_earlier_strings,only_later_strings,UNSD_split_merge_concordance_performed
+HS1992,HS1996,65,25,45,FALSE
+HS1996,HS2002,104,6,4,FALSE
 HS2002,HS2007,56,52,37,FALSE
 HS2007,HS2012,90,3,1,FALSE
 HS2012,HS2017,88,3,4,FALSE
