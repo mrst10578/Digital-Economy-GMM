@@ -1,0 +1,42 @@
+name: Phase 2 permanently preserve 18 original authenticated-free UN Comtrade getDA source responses
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/79-phase2-permanent-18-getDA-source-archive.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  preserve-all-18-public-source-responses:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: PHASE2-ALL-47-BY-18-UN-Comtrade-source-HS-metadata-raw
+          run-id: 39022778342
+          repository: mrst10578/Digital-Economy-GMM
+          github-token: ${{ github.token }}
+          path: outputs/extended/source_47_edition_all_years
+      - name: Recheck 18 original yearly source SHA then persist compressed full raw original evidence
+        run: python src/python/extended/archive_all_18_original_getDA_response_files.py
+      - name: Commit compact original public source bytes and source audit metadata
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/extended/comtrade/source_hs_revisions_47/UN_Comtrade_public_getDA_18_original_year_responses_2005_2022.tar.gz
+          git add data/extended/comtrade/source_hs_revisions_47/PERMANENT_18_RAW_GETDA_SOURCE_ARCHIVE_PROVENANCE.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data(phase2): permanently preserve every genuine 2005-22 Comtrade HS source metadata reply"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
