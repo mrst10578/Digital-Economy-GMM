@@ -1,0 +1,38 @@
+name: Phase 2 verify historical HS editions from authenticated Comtrade availability
+on:
+  push:
+    branches: [research/digital-economy-extended-data]
+    paths:
+      - '.github/workflows/68-phase2-source-revision-verified-authenticated.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  real-reporter-year-revision-probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/digital-economy-extended-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read actual Comtrade country-year editions and sample imports with protected key
+        env:
+          COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
+        run: |
+          set -eu
+          if test -z "$COMTRADE_API_KEY"; then echo "Comtrade secret missing"; exit 2; fi
+          python src/python/extended/check_auth_comtrade_reporter_hs_revision.py
+      - name: Archive source-revision evidence with SHA, not secrets or inferred zeroes
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/extended/COMTRADE_AUTHENTICATED_AZE_2017_SOURCE_EDITION_CHECK_2026-10-17.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(phase2): verify source-specific HS edition for imports from authenticated API"
+            git pull --rebase origin research/digital-economy-extended-data
+            git push origin HEAD:research/digital-economy-extended-data
+          fi
