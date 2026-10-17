@@ -1,0 +1,32 @@
+name: Phase 2 OECD ICIO official source file-size preflight
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/audit_oecd_archive_headers.py'
+      - '.github/workflows/47-phase2-oecd-icio-archive-headers.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-archives-without-downloading:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Discover official OECD download URLs and HEAD file sizes (no bulk downloads)
+        run: python src/python/extended/audit_oecd_archive_headers.py
+      - name: Print OECD archive metadata without data transfer
+        if: success()
+        run: cat outputs/extended/oecd_icio_2025_archive_preflight/official_download_size_manifest.csv
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-oecd-icio-2025-archive-metadata-no-bulk-data
+          path: outputs/extended/oecd_icio_2025_archive_preflight/
+          if-no-files-found: warn
+          retention-days: 30
