@@ -1,0 +1,64 @@
+name: Phase 1 original-only R reproducibility and Stata parity
+on:
+  push:
+    branches:
+      - delivery/phase1-original-data-only-20261016
+    paths:
+      - 'src/r/phase1_robust_twfe_same_data.R'
+      - 'src/python/audit_phase1_twfe_r_stata.py'
+      - 'evidence/phase1-robust-2026-10-17/**'
+      - '.github/workflows/42-phase1-robust-r-parity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-data-twfe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require the untouched professor workbook
+        shell: bash
+        run: |
+          echo '474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b  data/raw/Balanced_Panel_Data.xlsx' | sha256sum -c -
+          test ! -e data/raw/Phase2_External_Data.xlsx
+      - name: Install open-source R replication tools
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends r-base-core r-cran-plm r-cran-readxl
+      - name: Re-estimate the three original-only two-way FE equations in R
+        shell: bash
+        run: Rscript src/r/phase1_robust_twfe_same_data.R
+      - name: Crosscheck rerun against archived R output and authentic licensed Stata coefficient CSV
+        shell: bash
+        run: |
+          python3 -m src.python.audit_phase1_twfe_r_stata
+          python3 - <<'PY'
+          import csv,math
+          from pathlib import Path
+          expected=Path('evidence/phase1-robust-2026-10-17')
+          fresh=Path('outputs/phase1_robust_twfe_20261017')
+          pairs=[
+            ('twfe_r_dk_coefficients.csv','TWFE_3_MODELS_COEFFICIENTS.csv'),
+            ('twfe_r_diagnostics.csv','TWFE_3_MODELS_DIAGNOSTICS.csv'),
+          ]
+          for archived,live in pairs:
+              with (expected/archived).open(newline='',encoding='utf-8-sig') as h: a=list(csv.DictReader(h))
+              with (fresh/live).open(newline='',encoding='utf-8-sig') as h: b=list(csv.DictReader(h))
+              assert len(a)==len(b)>0,(archived,len(a),len(b))
+              for old,new in zip(a,b):
+                  assert list(old)==list(new),(archived,old.keys(),new.keys())
+                  for k in old:
+                      if old[k]==new[k]:continue
+                      x=float(old[k]);y=float(new[k])
+                      assert math.isclose(x,y,rel_tol=0.00001,abs_tol=0.0000001),(archived,k,x,y)
+              print('REAL_R_RERUN_MATCHED_ARCHIVE',archived,len(a))
+          PY
+      - name: Publish fully recomputed reproducibility evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: PHASE1_ORIGINAL_DATA_TWFE_R_RERUN_VALIDATED
+          path: outputs/phase1_robust_twfe_20261017/*.csv
+          retention-days: 30
+          if-no-files-found: error
