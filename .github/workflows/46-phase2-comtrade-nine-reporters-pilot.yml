@@ -1,0 +1,35 @@
+name: Phase 2 UN Comtrade public bilateral reporter preview 9x2
+on:
+  push:
+    branches:
+      - research/digital-economy-extended-data
+    paths:
+      - 'src/python/extended/pilot_comtrade_nine_oecd_absent_reporters.py'
+      - '.github/workflows/46-phase2-comtrade-nine-reporters-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  keyless-bilateral-pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ISO M49 code library
+        run: python -m pip install 'pycountry>=23,<27'
+      - name: Check nine missing OECD ICIO reporters through bounded public Comtrade preview
+        run: python src/python/extended/pilot_comtrade_nine_oecd_absent_reporters.py
+      - name: Show results and count successful coverage observations
+        run: |
+          cat outputs/extended/comtrade_preview_country_pilot/reporter_pilot_9x2.csv
+          echo "Public preview is capped; zero preview rows must not be converted to zero trade."
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PHASE2-comtrade-9x2-public-preview-not-full-coverage
+          path: outputs/extended/comtrade_preview_country_pilot/
+          if-no-files-found: warn
+          retention-days: 30
