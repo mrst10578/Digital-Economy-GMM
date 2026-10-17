@@ -3,16 +3,17 @@
   "original_baseline_sha256_verified": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
   "sources_and_counts": {
     "AZE_18year": 1863,
-    "eight_receivers_baseperiod": 2030
+    "eight_receivers_baseperiod": 2030,
+    "eight_receivers_2008_2022": 11196
   },
-  "normalized_rows": 3893,
+  "normalized_rows": 15089,
   "mapping_status_counts": {
-    "WORLD_AGGREGATE_NOT_ORIGIN": 84,
-    "OTHER_ORIGIN_NOT_IN_ORIGINAL_47": 1470,
-    "EXACT_ISO3_SOURCE_MAPPING": 2172,
-    "CUSTOMS_AREA_CANDIDATE_NOT_EXACT_ISO3": 167
+    "WORLD_AGGREGATE_NOT_ORIGIN": 314,
+    "OTHER_ORIGIN_NOT_IN_ORIGINAL_47": 6041,
+    "EXACT_ISO3_SOURCE_MAPPING": 8113,
+    "CUSTOMS_AREA_CANDIDATE_NOT_EXACT_ISO3": 621
   },
-  "number_of_world_records_excluded_as_sources": 84,
+  "number_of_world_records_excluded_as_sources": 314,
   "customs_areas_not_equivalent_to_ISO_countries": {
     "251": {
       "candidate_iso3": "FRA",
@@ -29,5 +30,5 @@
   "not_a_complete_multi-country_18year_network": true,
   "no_FTECH_or_GMM_estimated": true,
   "source_data_unchanged": true,
-  "run_utc": "2026-10-17T09:00:01.965037+00:00"
+  "run_utc": "2026-10-17T09:05:47.770730+00:00"
 }
