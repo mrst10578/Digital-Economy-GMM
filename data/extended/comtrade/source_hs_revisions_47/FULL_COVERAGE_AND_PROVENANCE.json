@@ -1,0 +1,179 @@
+{
+  "phase": "EXTENDED_DATA_EXPERIMENTAL",
+  "status": {
+    "VERIFIED_SINGLE_SOURCE_REVISION": 804,
+    "MISSING_SOURCE_NOT_ZERO": 42
+  },
+  "sample_country_year_slots": 846,
+  "source_metadata_requests": 18,
+  "source": [
+    {
+      "Year": 2005,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2005",
+      "http_status": 200,
+      "declared_count": 175,
+      "raw_rows": 175,
+      "sha256": "c5213ba87b762287e961ad45e0b8e81d179ebe0229f796ffcdaa3ffbfc75a5f6",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2006,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2006",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "a2182ef572544c038e9137812328949257f1e4d39a2510951162f415d186fde0",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2007,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2007",
+      "http_status": 200,
+      "declared_count": 180,
+      "raw_rows": 180,
+      "sha256": "8d1cde0029886c73c950672f794044c94bd78b0ddaefe34ed2f2f7b60b7f7996",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2008,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2008",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "8236db24cf6bf0d1ad8eaf694385fef13ceda303707cec81023d6c78e646bfcc",
+      "matching_47_country_rows": 44
+    },
+    {
+      "Year": 2009,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2009",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "dc0a049a27b266b0015c27213425d8157e6b598f221c7807425f1e2a701e8495",
+      "matching_47_country_rows": 44
+    },
+    {
+      "Year": 2010,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2010",
+      "http_status": 200,
+      "declared_count": 180,
+      "raw_rows": 180,
+      "sha256": "fc2b10feb4a0a736b7b61bf99a2efffeb93dab6b260253f1f478fb41319f4b6e",
+      "matching_47_country_rows": 44
+    },
+    {
+      "Year": 2011,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2011",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "8505703c1057b48173045b9f5955e068f0365190fd9ef97c8ab7c1668114082d",
+      "matching_47_country_rows": 44
+    },
+    {
+      "Year": 2012,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2012",
+      "http_status": 200,
+      "declared_count": 175,
+      "raw_rows": 175,
+      "sha256": "2aef4efd20aff357c0b5b0ca50f7958db79ae8ec9eae0d41cc49fb0a7997f279",
+      "matching_47_country_rows": 44
+    },
+    {
+      "Year": 2013,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2013",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "81519a0f37cd954bacdb473c54712e08bcc4db954c32095863a2fbfe1e702b38",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2014,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2014",
+      "http_status": 200,
+      "declared_count": 175,
+      "raw_rows": 175,
+      "sha256": "e8f00a4ca99ee7cf8e43398b15ae89ee23c36ad2660bae28baf6bad34bd84dc9",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2015,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2015",
+      "http_status": 200,
+      "declared_count": 178,
+      "raw_rows": 178,
+      "sha256": "40552bd92530035ebb93260269f171da04070ae5c7771e298a2ca47e1db4c734",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2016,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2016",
+      "http_status": 200,
+      "declared_count": 180,
+      "raw_rows": 180,
+      "sha256": "882e2a5815d928729529c44db46037ee8ff3d70adae8930bf3ae0d886b88b41d",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2017,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2017",
+      "http_status": 200,
+      "declared_count": 183,
+      "raw_rows": 183,
+      "sha256": "b631d724091161cce34e4ccf753bc9c822964bc5336438bac47b615991fd58b2",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2018,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2018",
+      "http_status": 200,
+      "declared_count": 180,
+      "raw_rows": 180,
+      "sha256": "7fa52de1a4b787cd228b40f4531171444c2079d14bc79e201b41a0fb34f34083",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2019,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2019",
+      "http_status": 200,
+      "declared_count": 174,
+      "raw_rows": 174,
+      "sha256": "1f62a282da8f580053a47a1d49c8afaca0475cc9676d72feea15278e4ef6319f",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2020,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2020",
+      "http_status": 200,
+      "declared_count": 171,
+      "raw_rows": 171,
+      "sha256": "f0d1b8ce69be572b08737e2babff280b97118fba13c75d4dab95cae0c5f33c1e",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2021,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2021",
+      "http_status": 200,
+      "declared_count": 172,
+      "raw_rows": 172,
+      "sha256": "e3d5d6d31bf8fdbd0205df2a858e404f1beb3c3fbc0b1bc446bcabda1338ad76",
+      "matching_47_country_rows": 45
+    },
+    {
+      "Year": 2022,
+      "source_url_no_secret": "https://comtradeapi.un.org/public/v1/getDA/C/A/HS?period=2022",
+      "http_status": 200,
+      "declared_count": 170,
+      "raw_rows": 170,
+      "sha256": "b2a3dbff544287ee046a8e6d02ed2ceafa60c36b0d475b2e87f040babd49ef7f",
+      "matching_47_country_rows": 44
+    }
+  ],
+  "raw_source_files_retained_as_actions_artifact": true,
+  "country_year_trade_values_downloaded": false,
+  "HS6_comparability_not_established": true,
+  "metadata_absent_never_imputed": true,
+  "original_professor_data_sha256": "474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b",
+  "utc": "2026-10-17T09:55:27.338588+00:00"
+}
