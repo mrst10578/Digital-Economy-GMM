@@ -1,0 +1,36 @@
+name: Phase 1 professor scientific validity decision guard
+on:
+  push:
+    branches:
+      - delivery/phase1-original-data-only-20261016
+    paths:
+      - 'src/python/audit_phase1_professor_scientific_decision.py'
+      - 'docs/PHASE1_FINAL_STRICT_SCIENTIFIC_AUDIT_2026-10-17_FA.md'
+      - 'docs/PHASE1_PRODUCTIVITY_METHOD_DECISION_2026-10-17_FA.md'
+      - 'evidence/stata-adb-2026-10-17/**'
+      - 'evidence/scientific-gates-2026-10-16/theory_led_productivity_growth_system_gmm_stats.csv'
+      - 'evidence/phase1-robust-2026-10-17/**'
+      - '.github/workflows/43-phase1-scientific-decision-guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-decision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce professor's unchanged source
+        run: echo '474d5525a37ecfbb424c9dd25d832a9ffa6eed1942bd4f4900454204810d215b  data/raw/Balanced_Panel_Data.xlsx' | sha256sum -c -
+      - name: Independently audit causal-claim decision, diagnostic gates and historical models
+        run: python3 -m src.python.audit_phase1_professor_scientific_decision
+      - name: Disallow unsupported positive-certification language
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/PHASE1_PRODUCTIVITY_METHOD_DECISION_2026-10-17_FA.md').read_text(encoding='utf-8')
+          assert 'DO_NOT_CERTIFY_CAUSAL_PROOF' in p
+          assert 'راهکار معتبری برای پذیرش System GMM سطح بهره‌وری' in p
+          assert 'هیچ فایل داده یا برنچ فاز دوم تغییر نکرد' in p
+          print('SCIENTIFIC_DECISION_GUARD_PASS')
+          PY
