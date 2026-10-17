@@ -235,16 +235,13 @@ def word_styles(path:Path) -> None:
                             face=OxmlElement("w:rFonts"); rpr.insert(0,face)
                         for attr in ("w:ascii","w:hAnsi","w:cs","w:eastAsia"):
                             face.set(qn(attr),"Mikhak Medium")
-    header=section.header.paragraphs[0]
-    header.text="پژوهش اقتصاد دیجیتال | نسخه مخصوص استاد، فقط داده اولیه"
-    bidi_paragraph(header)
-    for run in header.runs:
-        run.font.size=Pt(8)
-    footer=section.footer.paragraphs[0]
-    footer.text="ORIGINAL_DATA_ONLY | بدون ادعای اعتبار علّی تأییدشده"
-    bidi_paragraph(footer)
-    for run in footer.runs:
-        run.font.size=Pt(8)
+    # Professor-facing pages intentionally have no running header or footer.
+    # Clear the stories explicitly so DOCX and its PDF export contain body text only.
+    for story in (section.header, section.footer):
+        for paragraph in story.paragraphs:
+            paragraph.clear()
+    assert not any(p.text for p in section.header.paragraphs)
+    assert not any(p.text for p in section.footer.paragraphs)
     doc.core_properties.title="گزارش اقتصاد دیجیتال، فقط داده اولیه استاد"
     doc.core_properties.subject="دو مدل اصلی System GMM رشد و بهره‌وری"
     doc.core_properties.author="پروژه اقتصاد دیجیتال"
@@ -268,6 +265,8 @@ def make_documents() -> tuple[Path,Path]:
     text=sp.run(["pdftotext","-layout",str(pdf),"-"],capture_output=True,check=True).stdout.decode("utf-8",errors="replace")
     assert len(text)>2800, ("PDF has too little extractable content",len(text))
     assert "System GMM" in text and "Hansen" in text and "Internet" in text
+    assert "نسخه مخصوص استاد، فقط داده اولیه" not in text
+    assert "بدون ادعای اعتبار علّی تأییدشده" not in text
     info=sp.run(["pdfinfo",str(pdf)],capture_output=True,check=True,text=True).stdout
     pages=int(next(x.split(":",1)[1].strip() for x in info.splitlines() if x.startswith("Pages:")))
     assert 4<=pages<=26,pages
